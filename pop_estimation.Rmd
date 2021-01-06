@@ -23,6 +23,7 @@ library(lubridate)
 library(knitr)
 library(raster)
 library(rgdal)
+library(rgeos)
 library(sf)
 library(sp)
 library(tmap)
@@ -348,23 +349,24 @@ nachulu <- function(water, distance, catchment, raster_population){
   # returns:
   #    finalized: sf objects with a data frame containing estimated population
   
+  
   #Buffer the 'water' vector file by 'distance' meters
   buffer_radiusk <- st_buffer(water, distance)
   
-  # Dissolve the buffers
-  buffer_radiusk_union <- st_as_sf(st_cast(st_union(buffer_radiusk),"POLYGON"))
+  # Dissolve the buffers. Unioning geometries dissolves for instance internal polygon boundaries, which otherwise would lead to invalid MULTIPOLYGON errors in subsequent analysis.
+  buffer_radiusk_union <- sf::st_as_sf(st_cast(st_union(buffer_radiusk),"POLYGON"))
   
   # Assign Attributes of the 'catchment' to each of the waterbodies. 
   int_radiusk <- st_intersection(buffer_radiusk_union, catchment)
-  water_int_radiusk <- st_as_sf(int_radiusk)
+  water_int_radiusk <- sf::st_as_sf(int_radiusk)
   
   # Convert the MULTIPOLYGON object into several POLYGON objects
-  #water_int_radiusk <- st_cast(water_int_radiusk, "POLYGON")
+  water_int_radiusk <- st_cast(water_int_radiusk, "POLYGON")
   
   # Polygons being seen to be in multiple catchments
   st_intersects(water_int_radiusk, catchment)
   
-  # Estimation of population within X kilometer buffer: extracting zonal statistics from a population raster layer. The population raster is a continuous gridded surface layer that assign an estimated population density value to  every  square in their grid. The population statistics are then summed and apportioned to the buffer polygons
+  # Estimation of population within X kilometer buffer:extracting zonal statistics from a population raster layer. The population raster is a continuous gridded surface layer that assign an estimated population density value to every square in their grid. The population statistics are then summed and apportioned to the buffer polygons
   water_int_radiusk$pop_est<- raster::extract(raster_population, water_int_radiusk, 
                                               fun = sum, na.rm = TRUE)
   
@@ -375,8 +377,9 @@ nachulu <- function(water, distance, catchment, raster_population){
   # Find which catchment each polygon belongs to using its centroid - a point dataset representing the geographic center-points of the polygons 
   assign_catchment <- st_intersection(st_centroid(water_int_radiusk), catchment)
   
+  
   # Calculated total population living X distance for each facility  
-  # Notice that the assign_catchment is comprised of separate POLYGONS (assign_catchment$x). The first step is to “dissolve” away these POLYGONS into one MULTIPOLYGON. There is no sf equivalent to the ArcMap “dissolve” operation. Instead we use a combination of group_by and summarize from the dplyr package
+  # Notice that the assign_catchment is comprised of separate POLYGONS (assign_catchment$x). The first step is to “dissolve” away these POLYGONS into one MULTIPOLYGON. There is no sf equivalent to the ArcMap “dissolve” operation. Instead we use a combination of group_by and summarize from the dplyr package. Stats::aggregate from sf package, and dplyr::summarize both do essentially the same.
   npeople <- assign_catchment %>% dplyr::group_by(FACILITY_N) %>%
     summarize(pop_estimate = sum(pop_est, na.rm = TRUE))
   
@@ -393,11 +396,12 @@ Using the `nachulu` function, here we estimate the number of people surrounding 
 
 ```{r, message= FALSE, warning = FALSE}
 
-### commented lines are producing errors: Error in ClosePol(x) : polygons require at least 4 points ###
+### Commented lines are producing errors: 1) "Error in ClosePol(x) : polygons require at least 4 points", 2) "Error in h(simpleError(msg, call)) : error in evaluating the argument 'x' in selecting a method for function 'addAttrToGeom': conversion from feature type sfc_GEOMETRY to sp is not supported" ###
+
 # For 2017 ----------------------------------------------------------------------------------------------
 # Estimate population living within 1km radius from water bodies
-#run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,    
-                     #raster_population = kasungu_population_2017)
+# run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,
+#                      raster_population = kasungu_population_2017)
 
 #run1k_2017$pop_1k <- run1k_2017$pop_distance
 
@@ -428,10 +432,10 @@ run3k_2017$pop_3k<-run3k_2017$pop_distance
 #run2k_2018$pop_2k <- run2k_2018$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
-run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 4000, catchment = malire, 
-                      raster_population = kasungu_population_2018)
-
-run3k_2018$pop_3k<-run3k_2018$pop_estimate
+# run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 3000, catchment = malire, 
+#                       raster_population = kasungu_population_2018)
+# 
+# run3k_2018$pop_3k<-run3k_2018$pop_estimate
 
 
 # For 2019 ----------------------------------------------------------------------------------------------
@@ -515,7 +519,7 @@ tmap_arrange(run2k_2017_map, run3k_2017_map, run1k_2019_map, run2k_2020_map, run
 
 ```{r, eval = FALSE}
 
-### I'm yet to work on the following chunks as it appears that some arguments e.g. water_in_sf, are missing
+### I'm yet to work on the following chunks as it appears that some arguments e.g. water_int_sf, are missing
 
 # For 2017
 finalized_2017<- merge.data.frame(run2k_2017, run3k_2017, by = "FACILITY_N")
