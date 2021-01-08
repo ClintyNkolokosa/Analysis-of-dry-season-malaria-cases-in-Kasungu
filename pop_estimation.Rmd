@@ -1,7 +1,7 @@
 ---
 title: "Analysis of Role of Dams on Recorded Dry Season Malaria Incidences in Kasungu"
 output: html_document
-latex_engine: MiKTeX
+#latex_engine: MiKTeX
 date: " Last edited `r format(Sys.time(),'%d %B %Y')`"
 ---
 This geospatial model uses routinely collected malaria case data, population data and remotely sensed data, such as open and vegetated water bodies, to estimate population living around open water bodies, and ultimately quantify the association between proximity to larval habitat and malaria risk in health facility catchment areas in Kasungu. The buffer layer around waterbodies are created and then combined with population data in raster format to estimate the total population that is within the buffer. The data used spans from 2017 to 2020 and was derived from digitized DHIS2 malaria records, aggregated population geospatial layer and TropWet tool in Google Earth Engine. 
@@ -36,7 +36,7 @@ library(exactextractr)
 ```
 
 ### Set path name
-
+Not required.
 ```{r}
 pathname <- "~/Pre-MSc/Kasungu/upscaled/"
 ```
@@ -48,25 +48,25 @@ The total dry season malaria cases recorded at health-care facilities in Kasungu
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
 # 2017, 2018 and 2019 dry season malaria cases 
-dry_season_malaria_cases <- read.csv(paste0(pathname, "KasunguData.csv"))
+dry_season_malaria_cases <- read.csv("KasunguData.csv")
 
 # Kasungu district boundary shapefile 
-kasungu_district <- st_read(paste0(pathname, "kasungu_district.shp"))
+kasungu_district <- st_read("kasungu_district.shp")
   
 # Kasungu health facility catchment boundary shapefile 
-malire <- st_read(paste0(pathname, "kasungu_health_facility_catchments.shp")) 
+malire <- st_read("kasungu_health_facility_catchments.shp") 
 
 # Kasungu population raster layer
-kasungu_population_2017 <- raster(paste0(pathname, "ku_pop_2017_1km_aggregated.tif"))
-kasungu_population_2018 <- raster(paste0(pathname, "ku_pop_2018_1km_aggregated.tif"))
-kasungu_population_2019 <- raster(paste0(pathname, "ku_pop_2019_1km_aggregated.tif"))
-kasungu_population_2020 <- raster(paste0(pathname, "ku_pop_2020_1km_aggregated.tif"))
+kasungu_population_2017 <- raster("ku_pop_2017_1km_aggregated.tif")
+kasungu_population_2018 <- raster("ku_pop_2018_1km_aggregated.tif")
+kasungu_population_2019 <- raster("ku_pop_2019_1km_aggregated.tif")
+kasungu_population_2020 <- raster("ku_pop_2020_1km_aggregated.tif")
 
 # Open waterbodies polygons 
-water_2017 <- st_read(paste0(pathname, "water_bodies_2017.shp"))
-water_2018 <- st_read(paste0(pathname, "kasungu_2018_water.shp"))
-water_2019 <- st_read(paste0(pathname, "kasungu_2019_water.shp"))
-water_2020 <- st_read(paste0(pathname, "water_bodies_2020.shp"))
+water_2017 <- st_read("water_bodies_2017.shp")
+water_2018 <- st_read("kasungu_2018_water.shp")
+water_2019 <- st_read("kasungu_2019_water.shp")
+water_2020 <- st_read("water_bodies_2020.shp")
 
 # Add a field ID to water bodies polygons 
 water_2017$ID <- 1:nrow(water_2017)
@@ -216,6 +216,7 @@ tmap_arrange(pop_2017, pop_2018, pop_2019, pop_2020, nrow = 2) # Layout the maps
 Buffers of 30m radius have been created around open waterbodies and the geometries of overlapping polygons are unioned together. `st_union` returns a single geometry `sfc` object, which is why `st_cast` and `st_as_sf` functions have been used to cast and convert the multipolygon buffer geometries to a dissolved or split polygon geometry collection.
 
 ```{r}
+st_crs(water_2017) <- crs(water_2018) # CRS was missing for 2017
 
 surfaceWater_2017 <- st_as_sf(st_cast(st_union(st_buffer(water_2017, dist = 30)), "POLYGON"))
 surfaceWater_2018 <- st_as_sf(st_cast(st_union(st_buffer(water_2018, dist = 30)), "POLYGON"))
@@ -356,12 +357,12 @@ nachulu <- function(water, distance, catchment, raster_population){
   # Dissolve the buffers. Unioning geometries dissolves for instance internal polygon boundaries, which otherwise would lead to invalid MULTIPOLYGON errors in subsequent analysis.
   buffer_radiusk_union <- sf::st_as_sf(st_cast(st_union(buffer_radiusk),"POLYGON"))
   
-  # Assign Attributes of the 'catchment' to each of the waterbodies. 
-  int_radiusk <- st_intersection(buffer_radiusk_union, catchment)
+  # Split the buffered water file by the boundaries of the catchment area. We don't want to allocate the attributes in this step
+  int_radiusk <- st_intersection(buffer_radiusk_union, st_geometry(catchment))
   water_int_radiusk <- sf::st_as_sf(int_radiusk)
   
-  # Convert the MULTIPOLYGON object into several POLYGON objects
-  water_int_radiusk <- st_cast(water_int_radiusk, "POLYGON")
+  # Convert the MULTIPOLYGON object into several POLYGON objects. .
+  water_int_radiusk <- st_cast(st_buffer(water_int_radiusk,0.0), "MULTIPOLYGON") %>% st_cast("POLYGON")
   
   # Polygons being seen to be in multiple catchments
   st_intersects(water_int_radiusk, catchment)
@@ -396,14 +397,14 @@ Using the `nachulu` function, here we estimate the number of people surrounding 
 
 ```{r, message= FALSE, warning = FALSE}
 
-### Commented lines are producing errors: 1) "Error in ClosePol(x) : polygons require at least 4 points", 2) "Error in h(simpleError(msg, call)) : error in evaluating the argument 'x' in selecting a method for function 'addAttrToGeom': conversion from feature type sfc_GEOMETRY to sp is not supported" ###
+### Commented lines are producing errors: 2) "Error in h(simpleError(msg, call)) : error in evaluating the argument 'x' in selecting a method for function 'addAttrToGeom': conversion from feature type sfc_GEOMETRY to sp is not supported" ###
 
 # For 2017 ----------------------------------------------------------------------------------------------
 # Estimate population living within 1km radius from water bodies
-# run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,
-#                      raster_population = kasungu_population_2017)
+run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,
+                      raster_population = kasungu_population_2017)
 
-#run1k_2017$pop_1k <- run1k_2017$pop_distance
+run1k_2017$pop_1k <- run1k_2017$pop_distance
 
 # Estimate population living within 2km radius from water bodies
 run2k_2017<- nachulu(water = surfaceWater_2017, distance = 2000, catchment = malire, 
@@ -420,22 +421,22 @@ run3k_2017$pop_3k<-run3k_2017$pop_distance
 
 # For 2018 ----------------------------------------------------------------------------------------------
 # Estimate population living within 1km radius from water bodies
-#run1k_2018<- nachulu(water = surfaceWater_2018, distance = 1000, catchment = malire, 
-                    # raster_population = kasungu_population_2018)
+run1k_2018<- nachulu(water = surfaceWater_2018, distance = 1000, catchment = malire, 
+                     raster_population = kasungu_population_2018)
 
-#run1k_2018$pop_1k <- run1k_2018$pop_estimate
+run1k_2018$pop_1k <- run1k_2018$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
-#run2k_2018<- nachulu(water = surfaceWater_2018, distance = 2000, catchment = malire, 
-                     #raster_population = kasungu_population_2018)
+run2k_2018<- nachulu(water = surfaceWater_2018, distance = 2000, catchment = malire, 
+                     raster_population = kasungu_population_2018)
 
-#run2k_2018$pop_2k <- run2k_2018$pop_estimate
+run2k_2018$pop_2k <- run2k_2018$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
-# run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 3000, catchment = malire, 
-#                       raster_population = kasungu_population_2018)
-# 
-# run3k_2018$pop_3k<-run3k_2018$pop_estimate
+run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 3000, catchment = malire, 
+                       raster_population = kasungu_population_2018)
+ 
+run3k_2018$pop_3k<-run3k_2018$pop_estimate
 
 
 # For 2019 ----------------------------------------------------------------------------------------------
@@ -446,24 +447,24 @@ run1k_2019 <- nachulu(water = surfaceWater_2019, distance = 1000, catchment = ma
 run1k_2019$pop_1k <- run1k_2019$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
-#run2k_2019<- nachulu(water = surfaceWater_2019, distance = 2000, catchment = malire, 
-                    # raster_population = kasungu_population_2019)
+run2k_2019<- nachulu(water = surfaceWater_2019, distance = 2000, catchment = malire, 
+                     raster_population = kasungu_population_2019)
 
-#run2k_2019$pop_2k <- run2k_2019$pop_estimate
+run2k_2019$pop_2k <- run2k_2019$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
-#run3k_2019<- nachulu(water = surfaceWater_2019, distance = 3000, catchment = malire, 
-                   #  raster_population = kasungu_population_2019)
+run3k_2019<- nachulu(water = surfaceWater_2019, distance = 3000, catchment = malire, 
+                     raster_population = kasungu_population_2019)
 
-#run3k_2019$pop_3k<-run3k_2019$pop_estimate
+run3k_2019$pop_3k<-run3k_2019$pop_estimate
 
 
 # For 2020 ----------------------------------------------------------------------------------------------
 # # Estimate population living within 1km radius from water bodies
-#run1k_2020 <- nachulu(water = surfaceWater_2020, distance = 1000, catchment = malire, 
-                     #raster_population = kasungu_population_2020)
+run1k_2020 <- nachulu(water = surfaceWater_2020, distance = 1000, catchment = malire, 
+                     raster_population = kasungu_population_2020)
 
-#run1k_2020$pop_1k <- run1k_2020$pop_estimate
+run1k_2020$pop_1k <- run1k_2020$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
 run2k_2020 <- nachulu(water = surfaceWater_2020, distance = 2000, catchment = malire, 
