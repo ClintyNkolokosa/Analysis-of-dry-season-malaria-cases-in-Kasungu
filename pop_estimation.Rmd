@@ -356,12 +356,12 @@ nachulu <- function(water, distance, catchment, raster_population){
   # Dissolve the buffers. Unioning geometries dissolves for instance internal polygon boundaries, which otherwise would lead to invalid MULTIPOLYGON errors in subsequent analysis.
   buffer_radiusk_union <- sf::st_as_sf(st_cast(st_union(buffer_radiusk),"POLYGON"))
   
-  # Assign Attributes of the 'catchment' to each of the waterbodies. 
-  int_radiusk <- st_intersection(buffer_radiusk_union, catchment)
+  # Split the buffered water file by the boundaries of the catchment area. We don't want to allocate the attributes in this step 
+  int_radiusk <- st_intersection(buffer_radiusk_union, st_geometry(catchment))
   water_int_radiusk <- sf::st_as_sf(int_radiusk)
   
   # Convert the MULTIPOLYGON object into several POLYGON objects
-  water_int_radiusk <- st_cast(water_int_radiusk, "POLYGON")
+  water_int_radiusk <- st_cast(st_buffer(water_int_radiusk,0.0), "MULTIPOLYGON") %>% st_cast("POLYGON")
   
   # Polygons being seen to be in multiple catchments
   st_intersects(water_int_radiusk, catchment)
