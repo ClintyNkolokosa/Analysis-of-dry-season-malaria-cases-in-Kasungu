@@ -35,10 +35,10 @@ library(exactextractr)
 `%>%` <- magrittr::`%>%`
 ```
 
-### Set path name
+### Tell R where the data is
 
 ```{r}
-pathname <- "~/Pre-MSc/Kasungu/upscaled/"
+here::here()
 ```
 
 ### Load datasets
@@ -48,25 +48,25 @@ The total dry season malaria cases recorded at health-care facilities in Kasungu
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
 # 2017, 2018 and 2019 dry season malaria cases 
-dry_season_malaria_cases <- read.csv(paste0(pathname, "KasunguData.csv"))
+dry_season_malaria_cases <- read.csv(here("data", "KasunguData.csv"))
 
 # Kasungu district boundary shapefile 
-kasungu_district <- st_read(paste0(pathname, "kasungu_district.shp"))
+kasungu_district <- st_read(here("data", "kasungu_district.shp"))
   
 # Kasungu health facility catchment boundary shapefile 
-malire <- st_read(paste0(pathname, "kasungu_health_facility_catchments.shp")) 
+malire <- st_read(here("data", "kasungu_health_facility_catchments.shp")) 
 
 # Kasungu population raster layer
-kasungu_population_2017 <- raster(paste0(pathname, "ku_pop_2017_1km_aggregated.tif"))
-kasungu_population_2018 <- raster(paste0(pathname, "ku_pop_2018_1km_aggregated.tif"))
-kasungu_population_2019 <- raster(paste0(pathname, "ku_pop_2019_1km_aggregated.tif"))
-kasungu_population_2020 <- raster(paste0(pathname, "ku_pop_2020_1km_aggregated.tif"))
+kasungu_population_2017 <- raster(here("data", "ku_pop_2017_1km_aggregated.tif"))
+kasungu_population_2018 <- raster(here("data", "ku_pop_2018_1km_aggregated.tif"))
+kasungu_population_2019 <- raster(here("data", "ku_pop_2019_1km_aggregated.tif"))
+kasungu_population_2020 <- raster(here("data", "ku_pop_2020_1km_aggregated.tif"))
 
 # Open waterbodies polygons 
-water_2017 <- st_read(paste0(pathname, "water_bodies_2017.shp"))
-water_2018 <- st_read(paste0(pathname, "kasungu_2018_water.shp"))
-water_2019 <- st_read(paste0(pathname, "kasungu_2019_water.shp"))
-water_2020 <- st_read(paste0(pathname, "water_bodies_2020.shp"))
+water_2017 <- st_read(here("data", "water_bodies_2017.shp"))
+water_2018 <- st_read(here("data", "kasungu_2018_water.shp"))
+water_2019 <- st_read(here("data", "kasungu_2019_water.shp"))
+water_2020 <- st_read(here("data", "water_bodies_2020.shp"))
 
 # Add a field ID to water bodies polygons 
 water_2017$ID <- 1:nrow(water_2017)
@@ -194,7 +194,7 @@ populationmap <- function(df, legend.title = NA){
   # returns:
   #   a tmap-element (plots a map)
   tm_shape(df)+
-    tm_raster(palette = "Reds", title = legend.title, style = "quantile")+
+    tm_raster(palette = "Reds", breaks=c(0,100,200,400,600,800,1000,2000,4000,6000,8000), title = legend.title)+
     tm_layout(legend.position = c("right", "bottom"))+
     tm_scale_bar(position = c("left", "bottom"))
  }
@@ -396,14 +396,12 @@ Using the `nachulu` function, here we estimate the number of people surrounding 
 
 ```{r, message= FALSE, warning = FALSE}
 
-### Commented lines are producing errors: 1) "Error in ClosePol(x) : polygons require at least 4 points", 2) "Error in h(simpleError(msg, call)) : error in evaluating the argument 'x' in selecting a method for function 'addAttrToGeom': conversion from feature type sfc_GEOMETRY to sp is not supported" ###
-
 # For 2017 ----------------------------------------------------------------------------------------------
 # Estimate population living within 1km radius from water bodies
-# run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,
-#                      raster_population = kasungu_population_2017)
+ run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,
+                      raster_population = kasungu_population_2017)
 
-#run1k_2017$pop_1k <- run1k_2017$pop_distance
+run1k_2017$pop_1k <- run1k_2017$pop_distance
 
 # Estimate population living within 2km radius from water bodies
 run2k_2017<- nachulu(water = surfaceWater_2017, distance = 2000, catchment = malire, 
@@ -420,50 +418,50 @@ run3k_2017$pop_3k<-run3k_2017$pop_distance
 
 # For 2018 ----------------------------------------------------------------------------------------------
 # Estimate population living within 1km radius from water bodies
-#run1k_2018<- nachulu(water = surfaceWater_2018, distance = 1000, catchment = malire, 
-                    # raster_population = kasungu_population_2018)
+run1k_2018<- nachulu(water = surfaceWater_2018, distance = 1000, catchment = malire, 
+                     raster_population = kasungu_population_2018)
 
-#run1k_2018$pop_1k <- run1k_2018$pop_estimate
+run1k_2018$pop_1k <- run1k_2018$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
-#run2k_2018<- nachulu(water = surfaceWater_2018, distance = 2000, catchment = malire, 
-                     #raster_population = kasungu_population_2018)
+run2k_2018<- nachulu(water = surfaceWater_2018, distance = 2000, catchment = malire, 
+                     raster_population = kasungu_population_2018)
 
-#run2k_2018$pop_2k <- run2k_2018$pop_estimate
+run2k_2018$pop_2k <- run2k_2018$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
-# run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 3000, catchment = malire, 
-#                       raster_population = kasungu_population_2018)
-# 
-# run3k_2018$pop_3k<-run3k_2018$pop_estimate
+ run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 3000, catchment = malire, 
+                       raster_population = kasungu_population_2018)
+ 
+ run3k_2018$pop_3k<-run3k_2018$pop_estimate
 
 
 # For 2019 ----------------------------------------------------------------------------------------------
-# # Estimate population living within 1km radius from water bodies
+# Estimate population living within 1km radius from water bodies
 run1k_2019 <- nachulu(water = surfaceWater_2019, distance = 1000, catchment = malire, 
                      raster_population = kasungu_population_2019)
 
 run1k_2019$pop_1k <- run1k_2019$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
-#run2k_2019<- nachulu(water = surfaceWater_2019, distance = 2000, catchment = malire, 
-                    # raster_population = kasungu_population_2019)
+run2k_2019<- nachulu(water = surfaceWater_2019, distance = 2000, catchment = malire, 
+                     raster_population = kasungu_population_2019)
 
-#run2k_2019$pop_2k <- run2k_2019$pop_estimate
+run2k_2019$pop_2k <- run2k_2019$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
-#run3k_2019<- nachulu(water = surfaceWater_2019, distance = 3000, catchment = malire, 
-                   #  raster_population = kasungu_population_2019)
+run3k_2019<- nachulu(water = surfaceWater_2019, distance = 3000, catchment = malire, 
+                     raster_population = kasungu_population_2019)
 
-#run3k_2019$pop_3k<-run3k_2019$pop_estimate
+run3k_2019$pop_3k<-run3k_2019$pop_estimate
 
 
 # For 2020 ----------------------------------------------------------------------------------------------
-# # Estimate population living within 1km radius from water bodies
-#run1k_2020 <- nachulu(water = surfaceWater_2020, distance = 1000, catchment = malire, 
-                     #raster_population = kasungu_population_2020)
+#  Estimate population living within 1km radius from water bodies
+run1k_2020 <- nachulu(water = surfaceWater_2020, distance = 1000, catchment = malire, 
+                     raster_population = kasungu_population_2020)
 
-#run1k_2020$pop_1k <- run1k_2020$pop_estimate
+run1k_2020$pop_1k <- run1k_2020$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
 run2k_2020 <- nachulu(water = surfaceWater_2020, distance = 2000, catchment = malire, 
@@ -485,11 +483,11 @@ Map the outputs from the `nachulu` function: layers of polygons representing hea
 ```{r, message = FALSE, warning = FALSE, fig.height = 8, fig.width = 10, fig.cap='Fig 6. Estimated population in Kasungu health facility catchments'}
 
 # Function to create maps of estimated population out of sf objects from the nachulu function
-estimatedpop <- function(df, vname = "pop_estimate", pal, legend.title = NA){
+estimatedpop <- function(df, vname = "pop_estimate", title, legend.title = NA){
   # estimated population map
   # df: estimated population layer from nachulu function
   # vname: variable name (as character, in qoutes)
-  # pal: color palette
+  # title: map title in quotes
   # legend.title: legend title in qoutes
   # returns:
   #   a tmap-element (plots a map)
@@ -497,21 +495,39 @@ estimatedpop <- function(df, vname = "pop_estimate", pal, legend.title = NA){
     tm_fill(col = vname, style = "quantile", 
             palette = "Reds", n = 5, title = legend.title)+
     tm_borders()+
-    tm_layout(legend.position = c("right","bottom"))
+    tm_layout(legend.position = c("right","bottom"),
+              frame = FALSE)+
+    tm_credits(title, position = c(0,0.75), size = 1)
 }
 
-run2k_2017_map <- estimatedpop(run2k_2017, legend.title = "Estimated population \n within 2km, 2017")
+run1k_2017_map <- estimatedpop(run1k_2017, title = "2017", legend.title = "Estimated population \n within 1km")
 
-run3k_2017_map <- estimatedpop(run3k_2017, legend.title = "Estimated population \n within 3km, 2017")
+run2k_2017_map <- estimatedpop(run2k_2017, title = "2017", legend.title = "Estimated population \n within 2km")
 
-run1k_2019_map <- estimatedpop(run1k_2019, legend.title = "Estimated population \n within 1km, 2019")
+run3k_2017_map <- estimatedpop(run3k_2017, title = "2017", legend.title = "Estimated population \n within 3km")
 
-run2k_2020_map <- estimatedpop(run2k_2020, legend.title = "Estimated population \n within 2km, 2020")
+run1k_2018_map <- estimatedpop(run1k_2018, title = "2018", legend.title = "Estimated population \n within 1km")
 
-run3k_2020_map <- estimatedpop(run3k_2020, legend.title = "Estimated population \n within 3km, 2020")
+run2k_2018_map <- estimatedpop(run2k_2018, title = "2018", legend.title = "Estimated population \n within 2km")
 
+run3k_2018_map <- estimatedpop(run3k_2018, title = "2018", legend.title = "Estimated population \n within 3km")
 
-tmap_arrange(run2k_2017_map, run3k_2017_map, run1k_2019_map, run2k_2020_map, run3k_2020_map, ncol = 3)
+run1k_2019_map <- estimatedpop(run1k_2019, title = "2019", legend.title = "Estimated population \n within 1km")
+
+run2k_2019_map <- estimatedpop(run2k_2019, title = "2019", legend.title = "Estimated population \n within 2km")
+
+run3k_2019_map <- estimatedpop(run3k_2019, title = "2019", legend.title = "Estimated population \n within 3km")
+
+run1k_2020_map <- estimatedpop(run1k_2020, title = "2020", legend.title = "Estimated population \n within 1km")
+
+run2k_2020_map <- estimatedpop(run2k_2020, title = "2020", legend.title = "Estimated population \n within 2km")
+
+run3k_2020_map <- estimatedpop(run3k_2020, title = "2020", legend.title = "Estimated population \n within 3km")
+
+tmap_arrange(run1k_2017_map, run2k_2017_map, run3k_2017_map, 
+             run1k_2018_map, run2k_2018_map, run3k_2018_map,
+             run1k_2019_map, run2k_2019_map, run3k_2019_map,
+             run1k_2020_map, run2k_2020_map, run3k_2020_map, ncol = 3)
 ```
 
 
@@ -601,51 +617,8 @@ write.csv(merged_2018_19, "~/Pre-MSc/Kasungu/practice/")
 
 ```
 
-
-### Create a table with columns  name, distance, SMR, cases, population
-
-```{r, eval = FALSE}
-
-#FIt a model into the data
-
-# For 2017
-run1k_2017 <- nachulu(water=water_int_sf, distance=1000, 
-                      catchment=malire, raster_population = kasungu_population_2017)
-
-run2k_2017 <- nachulu(water=water_int_sf, distance=2000, 
-                      catchment=malire, raster_population = kasungu_population_2017)
-
-run3k_2017 <- nachulu(water=water_int_sf, distance=3000, 
-                      catchment=malire, raster_population = kasungu_population_2017)
-
-#For 2018
-run1k_2018<- nachulu(water=water_int_sf, distance=1000, 
-                     catchment=malire, raster_population = kasungu_population_2018)
-
-run2k_2018<- nachulu(water=water_int_sf, distance=2000, 
-                     catchment=malire, raster_population = kasungu_population_2018)
-
-run3k_2018<- nachulu(water=water_int_sf, distance=3000, 
-                     catchment=malire, raster_population = kasungu_population_2018)
-
-#For 2019
-run1k_2019<- nachulu(water=water_int_sf, distance=1000, 
-                     catchment=malire, raster_population = kasungu_population_2019)
-
-run2k_2019<- nachulu(water=water_int_sf, distance=2000, 
-                     catchment=malire, raster_population = kasungu_population_2019)
-
-run3k_2019<- nachulu(water=water_int_sf, distance=3000, 
-                     catchment=malire, raster_population = kasungu_population_2019)
-
-
-sum(run1k$pop_distance, na.rm=TRUE)
-sum(run2k$pop_distance, na.rm=TRUE)
-sum(run3k$pop_distance, na.rm=TRUE)
-
-
 ######################################################################################################################
-## AFter finishing joining data from 2017b to 2020 re-run these lines of code in the code sheet Model Fitting  ###
+## AFter finishing joining data from 2017 to 2020 re-run these lines of code in the code sheet Model Fitting  ###
 ######################################################################################################################
 
 ```
