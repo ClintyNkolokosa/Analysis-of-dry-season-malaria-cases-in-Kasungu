@@ -539,24 +539,24 @@ First, we need to convert the sf outputs from the `nachulu function` to a plain 
 
 # Convert sf objects to plain data frame
 # 2017 ------------------------------------------------------------------------------------------------
-run1k_2017_df <- as.data.frame(run1k_2017)[,c("FACILITY_N", "pop_1km")]
-run2k_2017_df <- as.data.frame(run2k_2017)[,c("FACILITY_N", "pop_2km")]
-run3k_2017_df <- as.data.frame(run3k_2017)[,c("FACILITY_N", "pop_3km")]
+run1k_2017_df <- as.data.frame(run1k_2017)[,c("FACILITY_N", "DISTRICT", "pop_1km")]
+run2k_2017_df <- as.data.frame(run2k_2017)[,c("FACILITY_N", "DISTRICT", "pop_2km")]
+run3k_2017_df <- as.data.frame(run3k_2017)[,c("FACILITY_N", "DISTRICT", "pop_3km")]
 
 # 2018 ------------------------------------------------------------------------------------------------
-run1k_2018_df <- as.data.frame(run1k_2018)[,c("FACILITY_N", "pop_1km")]
-run2k_2018_df <- as.data.frame(run2k_2018)[,c("FACILITY_N", "pop_2km")]
-run3k_2018_df <- as.data.frame(run3k_2018)[,c("FACILITY_N", "pop_3km")]
+run1k_2018_df <- as.data.frame(run1k_2018)[,c("FACILITY_N", "DISTRICT", "pop_1km")]
+run2k_2018_df <- as.data.frame(run2k_2018)[,c("FACILITY_N", "DISTRICT", "pop_2km")]
+run3k_2018_df <- as.data.frame(run3k_2018)[,c("FACILITY_N", "DISTRICT", "pop_3km")]
 
 # 2019 ------------------------------------------------------------------------------------------------
-run1k_2019_df <- as.data.frame(run1k_2019)[,c("FACILITY_N", "pop_1km")]
-run2k_2019_df <- as.data.frame(run2k_2019)[,c("FACILITY_N", "pop_2km")]
-run3k_2019_df <- as.data.frame(run3k_2019)[,c("FACILITY_N", "pop_3km")]
+run1k_2019_df <- as.data.frame(run1k_2019)[,c("FACILITY_N", "DISTRICT", "pop_1km")]
+run2k_2019_df <- as.data.frame(run2k_2019)[,c("FACILITY_N", "DISTRICT", "pop_2km")]
+run3k_2019_df <- as.data.frame(run3k_2019)[,c("FACILITY_N", "DISTRICT", "pop_3km")]
 
 # 2020 ------------------------------------------------------------------------------------------------
-run1k_2020_df <- as.data.frame(run1k_2020)[,c("FACILITY_N", "pop_1km")]
-run2k_2020_df <- as.data.frame(run2k_2020)[,c("FACILITY_N", "pop_2km")]
-run3k_2020_df <- as.data.frame(run3k_2020)[,c("FACILITY_N", "pop_3km")]
+run1k_2020_df <- as.data.frame(run1k_2020)[,c("FACILITY_N", "DISTRICT", "pop_1km")]
+run2k_2020_df <- as.data.frame(run2k_2020)[,c("FACILITY_N", "DISTRICT", "pop_2km")]
+run3k_2020_df <- as.data.frame(run3k_2020)[,c("FACILITY_N", "DISTRICT", "pop_3km")]
 
 # Merge the data frames. NB: one important variable: dry season malaria cases, is yet to be added to the data frames
 finalized_2017_df <- cbind.data.frame(run1k_2017_df, run2k_2017_df, run3k_2017_df)
