@@ -401,19 +401,19 @@ Using the `nachulu` function, here we estimate the number of people surrounding 
  run1k_2017<- nachulu(water = surfaceWater_2017, distance = 1000, catchment = malire,
                       raster_population = kasungu_population_2017)
 
-run1k_2017$pop_1k <- run1k_2017$pop_distance
+run1k_2017$pop_1km <- run1k_2017$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
 run2k_2017<- nachulu(water = surfaceWater_2017, distance = 2000, catchment = malire, 
                      raster_population = kasungu_population_2017)
 
-run2k_2017$pop_2k <- run2k_2017$pop_distance
+run2k_2017$pop_2km <- run2k_2017$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
 run3k_2017<- nachulu(water = surfaceWater_2017, distance = 3000, catchment = malire, 
                      raster_population = kasungu_population_2017)
 
-run3k_2017$pop_3k<-run3k_2017$pop_distance
+run3k_2017$pop_3km <- run3k_2017$pop_estimate
 
 
 # For 2018 ----------------------------------------------------------------------------------------------
@@ -421,19 +421,19 @@ run3k_2017$pop_3k<-run3k_2017$pop_distance
 run1k_2018<- nachulu(water = surfaceWater_2018, distance = 1000, catchment = malire, 
                      raster_population = kasungu_population_2018)
 
-run1k_2018$pop_1k <- run1k_2018$pop_estimate
+run1k_2018$pop_1km <- run1k_2018$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
 run2k_2018<- nachulu(water = surfaceWater_2018, distance = 2000, catchment = malire, 
                      raster_population = kasungu_population_2018)
 
-run2k_2018$pop_2k <- run2k_2018$pop_estimate
+run2k_2018$pop_2km <- run2k_2018$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
  run3k_2018 <- nachulu(water = surfaceWater_2018, distance = 3000, catchment = malire, 
                        raster_population = kasungu_population_2018)
  
- run3k_2018$pop_3k<-run3k_2018$pop_estimate
+ run3k_2018$pop_3km <- run3k_2018$pop_estimate
 
 
 # For 2019 ----------------------------------------------------------------------------------------------
@@ -441,19 +441,19 @@ run2k_2018$pop_2k <- run2k_2018$pop_estimate
 run1k_2019 <- nachulu(water = surfaceWater_2019, distance = 1000, catchment = malire, 
                      raster_population = kasungu_population_2019)
 
-run1k_2019$pop_1k <- run1k_2019$pop_estimate
+run1k_2019$pop_1km <- run1k_2019$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
 run2k_2019<- nachulu(water = surfaceWater_2019, distance = 2000, catchment = malire, 
                      raster_population = kasungu_population_2019)
 
-run2k_2019$pop_2k <- run2k_2019$pop_estimate
+run2k_2019$pop_2km <- run2k_2019$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
 run3k_2019<- nachulu(water = surfaceWater_2019, distance = 3000, catchment = malire, 
                      raster_population = kasungu_population_2019)
 
-run3k_2019$pop_3k<-run3k_2019$pop_estimate
+run3k_2019$pop_3km <- run3k_2019$pop_estimate
 
 
 # For 2020 ----------------------------------------------------------------------------------------------
@@ -461,19 +461,19 @@ run3k_2019$pop_3k<-run3k_2019$pop_estimate
 run1k_2020 <- nachulu(water = surfaceWater_2020, distance = 1000, catchment = malire, 
                      raster_population = kasungu_population_2020)
 
-run1k_2020$pop_1k <- run1k_2020$pop_estimate
+run1k_2020$pop_1km <- run1k_2020$pop_estimate
 
 # Estimate population living within 2km radius from water bodies
 run2k_2020 <- nachulu(water = surfaceWater_2020, distance = 2000, catchment = malire, 
                      raster_population = kasungu_population_2020)
 
-run2k_2020$pop_2k <- run2k_2020$pop_estimate
+run2k_2020$pop_2km <- run2k_2020$pop_estimate
 
 # Estimate population living within 3km radius from water bodies
 run3k_2020 <- nachulu(water = surfaceWater_2020, distance = 3000, catchment = malire, 
                      raster_population = kasungu_population_2020)
 
-run3k_2020$pop_3k <- run3k_2020$pop_estimate
+run3k_2020$pop_3km <- run3k_2020$pop_estimate
 ```
 
 
@@ -533,29 +533,40 @@ tmap_arrange(run1k_2017_map, run2k_2017_map, run3k_2017_map,
 
 ### Merge estimated population within the various buffers into a single data frame
 
-```{r, eval = FALSE}
+First, we need to convert the sf outputs from the `nachulu function` to a plain data frame with `as.data.frame`, which drops the geometry and gives back a plain data frame
 
-### I'm yet to work on the following chunks as it appears that some arguments e.g. water_int_sf, are missing
+```{r, message=FALSE, warning=FALSE}
 
-# For 2017
-finalized_2017<- merge.data.frame(run2k_2017, run3k_2017, by = "FACILITY_N")
+# Convert sf objects to plain data frame
+# 2017 ------------------------------------------------------------------------------------------------
+run1k_2017_df <- as.data.frame(run1k_2017)[,c("FACILITY_N", "pop_1km")]
+run2k_2017_df <- as.data.frame(run2k_2017)[,c("FACILITY_N", "pop_2km")]
+run3k_2017_df <- as.data.frame(run3k_2017)[,c("FACILITY_N", "pop_3km")]
 
-data_2017 <- finalized_2017[,c("FACILITY_N",  "dr_2017", "pop_2k", "pop_3k")]
+# 2018 ------------------------------------------------------------------------------------------------
+run1k_2018_df <- as.data.frame(run1k_2018)[,c("FACILITY_N", "pop_1km")]
+run2k_2018_df <- as.data.frame(run2k_2018)[,c("FACILITY_N", "pop_2km")]
+run3k_2018_df <- as.data.frame(run3k_2018)[,c("FACILITY_N", "pop_3km")]
 
-# For 2018 
-#finalized_2018<- merge.data.frame(run1k_2018, run2k_2018, run3k_2018, by = "FACILITY_N")
+# 2019 ------------------------------------------------------------------------------------------------
+run1k_2019_df <- as.data.frame(run1k_2019)[,c("FACILITY_N", "pop_1km")]
+run2k_2019_df <- as.data.frame(run2k_2019)[,c("FACILITY_N", "pop_2km")]
+run3k_2019_df <- as.data.frame(run3k_2019)[,c("FACILITY_N", "pop_3km")]
 
-#data_2018 <- finalized_2018[,c("Names", "dr_2018", "pop_1k", "pop_2k", "pop_3k")]
+# 2020 ------------------------------------------------------------------------------------------------
+run1k_2020_df <- as.data.frame(run1k_2020)[,c("FACILITY_N", "pop_1km")]
+run2k_2020_df <- as.data.frame(run2k_2020)[,c("FACILITY_N", "pop_2km")]
+run3k_2020_df <- as.data.frame(run3k_2020)[,c("FACILITY_N", "pop_3km")]
 
-# For 2019 
-#finalized_2019<- merge.data.frame(run1k_2019,run2k_2019, run3k_2019, by = "FACILITY_N")
+# Merge the data frames. NB: one important variable: dry season malaria cases, is yet to be added to the data frames
+finalized_2017_df <- cbind.data.frame(run1k_2017_df, run2k_2017_df, run3k_2017_df)
 
-#data_2019 <- finalized_2019[,c("Names",  "dr_2019", "pop_1k", "pop_2k", "pop_3k")]
+finalized_2018_df <- cbind.data.frame(run1k_2018_df, run2k_2018_df, run3k_2018_df)
 
-# For 2020
-finalized_2020 <- merge.data.frame(run2k_2020, run3k_2020, by = "FACILITY_N")
+finalized_2019_df <- cbind.data.frame(run1k_2019_df, run2k_2019_df, run3k_2019_df)
 
-data_2020 <- finalized_2020[,c("FACILITY_N", "run2k_2020", "run3k_2020", by = "FACILITY_N")]
+finalized_2020_df <- cbind.data.frame(run1k_2020_df, run2k_2020_df, run3k_2020_df)
+
 
 ```
 
