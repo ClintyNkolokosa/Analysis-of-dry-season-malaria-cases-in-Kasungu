@@ -568,6 +568,32 @@ finalized_2019_df <- cbind.data.frame(run1k_2019_df, run2k_2019_df, run3k_2019_d
 finalized_2020_df <- cbind.data.frame(run1k_2020_df, run2k_2020_df, run3k_2020_df)
 
 
+# Exclude unnecessary columns and rows
+df_2017 <- finalized_2017_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+             tidyr::drop_na() %>% 
+             dplyr::filter(DISTRICT != "Mzimba",
+                             DISTRICT != "Dowa",
+                             DISTRICT != "Lilongwe")
+
+df_2018 <- finalized_2018_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+             tidyr::drop_na() %>% 
+             dplyr::filter(DISTRICT != "Mzimba",
+                             DISTRICT != "Dowa",
+                             DISTRICT != "Lilongwe")
+
+df_2019 <- finalized_2019_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+             tidyr::drop_na() %>% 
+             dplyr::filter(DISTRICT != "Mzimba",
+                             DISTRICT != "Dowa",
+                             DISTRICT != "Lilongwe")
+
+df_2020 <- finalized_2020_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+             tidyr::drop_na() %>% 
+             dplyr::filter(DISTRICT != "Mzimba",
+                             DISTRICT != "Dowa",
+                             DISTRICT != "Lilongwe")
+
+
 ```
 
 
