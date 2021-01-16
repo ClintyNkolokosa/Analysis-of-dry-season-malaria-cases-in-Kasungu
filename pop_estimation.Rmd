@@ -573,25 +573,25 @@ df_2017 <- finalized_2017_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", 
              tidyr::drop_na() %>% 
              dplyr::filter(DISTRICT == "Kasungu")
              
-df_2017$Fid <- 1:nrow(df_2017)
+finalized_2017_df <- cbind("Fid" = rownames(finalized_2017_df), finalized_2017_df)
 
 df_2018 <- finalized_2018_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
              tidyr::drop_na() %>% 
              dplyr::filter(DISTRICT == "Kasungu")
 
-df_2018$Fid <- 1:nrow(df_2018)
+finalized_2018_df <- cbind("Fid" = rownames(finalized_2018_df), finalized_2018_df)
 
 df_2019 <- finalized_2019_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
              tidyr::drop_na() %>% 
              dplyr::filter(DISTRICT == "Kasungu")
-
-df_2019$Fid <- 1:nrow(df_2019)
+             
+finalized_2019_df <- cbind("Fid" = rownames(finalized_2019_df), finalized_2019_df)
 
 df_2020 <- finalized_2020_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
              tidyr::drop_na() %>% 
              dplyr::filter(DISTRICT == "Kasungu")
-
-df_2020$Fid <- 1:nrow(df_2020)
+             
+finalized_2020_df <- cbind("Fid" = rownames(finalized_2020_df), finalized_2020_df)
 
 ```
 
