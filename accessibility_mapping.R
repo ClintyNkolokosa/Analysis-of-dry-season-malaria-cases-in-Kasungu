@@ -33,14 +33,14 @@ require(gdistance)
 transition.matrix.exists.flag <- 0 # if the geo-corrected graph has already been made, this can save time.  Uses the same T.GC.filename as specified using the T.GC.filename variable.
 
 # Input Files
-friction.surface.filename <- here::here('friction_surface_clip.tif') # Clipped Kasungu friction surface raster
+friction.surface.filename <- here::here('data/friction_surface_clip.tif') # Clipped Kasungu friction surface raster
   
-point.filename <- here::here('dry_season_malaria_2017_2019.csv') #  Use a header.
+point.filename <- here::here('data/dry_season_malaria_2017_2019.csv') #  Use a header.
 
 # Output Files
-T.filename <- here::here('study.area.T.rds')
-T.GC.filename <- here::here('study.area.T.GC.rds')
-output.filename <- here::here('study.area.accessibility.tif')
+T.filename <- here::here('data/study.area.T.rds')
+T.GC.filename <- here::here('data/study.area.T.GC.rds')
+output.filename <- here::here('data/study.area.accessibility.tif')
 
 # Read in the points table
 points <- read.csv(file = point.filename) 
