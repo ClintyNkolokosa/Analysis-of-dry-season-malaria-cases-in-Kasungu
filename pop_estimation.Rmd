@@ -32,6 +32,7 @@ library(maptools)
 library(gridExtra)
 library(grid)
 library(exactextractr)
+library(DataExplorer)
 `%>%` <- magrittr::`%>%`
 ```
 
@@ -48,25 +49,53 @@ The total dry season malaria cases recorded at health-care facilities in Kasungu
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
 # 2017, 2018 and 2019 dry season malaria cases 
-dry_season_malaria_cases <- read.csv(here("data", "KasunguData.csv"))
+dry_season_malaria_2015_2019 <- read.csv(here::here("data", "dry_season_malaria 2015-2019.csv"))
+
+# Explore malaria data
+dry_season_malaria_2015_2019 %>% dplyr::glimpse() %>% 
+  DataExplorer::introduce() %>% 
+  DataExplorer::plot_missing()
+
+# Export 2017, 2018 and 2019 dry season malaria cases
+write.csv(dry_season_malaria_2015_2019, file = "data/dry_season_malaria_2017_2019.csv")
+
+write.table(dry_season_malaria_2015_2019, file = "dry_season_malaria_2017_2019.txt", 
+            sep = ",", quote = FALSE, row.names = F)
+
+# 2020 dry season malaria cases
+ku_malaria_2020 <- read.csv(here::here("data", "dry_season_malaria_2020.csv"))
+
+ku_malaria_2020 %>% dplyr::glimpse()
+
+# Merge 2015 to 2019 dry season malaria case data with 2020 data
+dry_season_malaria_2017_2020 <- cbind.data.frame(dry_season_malaria_2015_2019, ku_malaria_2020) 
+ 
+dry_season_malaria_2017_2020 <- dry_season_malaria_2017_2020[,c("FID", "Names", "dr_2017", 
+                                                                "dr_2018", "dr_2019", "dr_2020",
+                                                                "LONGITU", "LATITUD")]
+
+# Export 'dry season malaria 2017-2020' as csv
+write.csv(dry_season_malaria_2017_2020, file = "data/dry_season_malaria_2017_2019.csv")
+
+dry_season_malaria_2017_2020 %>% dplyr::glimpse()
 
 # Kasungu district boundary shapefile 
-kasungu_district <- st_read(here("data", "kasungu_district.shp"))
+kasungu_district <- st_read(here::here("data", "kasungu_district.shp"))
   
 # Kasungu health facility catchment boundary shapefile 
-malire <- st_read(here("data", "kasungu_health_facility_catchments.shp")) 
+malire <- st_read(here::here("data", "kasungu_health_facility_catchments.shp")) 
 
 # Kasungu population raster layer
-kasungu_population_2017 <- raster(here("data", "ku_pop_2017_1km_aggregated.tif"))
-kasungu_population_2018 <- raster(here("data", "ku_pop_2018_1km_aggregated.tif"))
-kasungu_population_2019 <- raster(here("data", "ku_pop_2019_1km_aggregated.tif"))
-kasungu_population_2020 <- raster(here("data", "ku_pop_2020_1km_aggregated.tif"))
+kasungu_population_2017 <- raster(here::here("data", "ku_pop_2017_1km_aggregated.tif"))
+kasungu_population_2018 <- raster(here::here("data", "ku_pop_2018_1km_aggregated.tif"))
+kasungu_population_2019 <- raster(here::here("data", "ku_pop_2019_1km_aggregated.tif"))
+kasungu_population_2020 <- raster(here::here("data", "ku_pop_2020_1km_aggregated.tif"))
 
 # Open waterbodies polygons 
-water_2017 <- st_read(here("data", "water_bodies_2017.shp"))
-water_2018 <- st_read(here("data", "kasungu_2018_water.shp"))
-water_2019 <- st_read(here("data", "kasungu_2019_water.shp"))
-water_2020 <- st_read(here("data", "water_bodies_2020.shp"))
+water_2017 <- st_read(here::here("data", "water_bodies_2017.shp"))
+water_2018 <- st_read(here::here("data", "kasungu_2018_water.shp"))
+water_2019 <- st_read(here::here("data", "kasungu_2019_water.shp"))
+water_2020 <- st_read(here::here("data", "water_bodies_2020.shp"))
 
 # Add a field ID to water bodies polygons 
 water_2017$ID <- 1:nrow(water_2017)
@@ -80,14 +109,14 @@ water_2020$ID <- 1:nrow(water_2020)
 
 We observe that Kasungu district has 30 health facilities classified as dispensary, health centre, district hospital and rural hospital and the highest malaria cases were recorded at Kasungu District Hospital. 
 
-```{r, warning = FALSE, message = FALSE, fig.height = 8, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
+```{r, warning = FALSE, message = FALSE, fig.height = 10, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
 
-dry_season_malaria_cases %>% 
+dry_season_malaria_2017_2020 %>% 
   glimpse() %>% 
   summary()
 
-dry_season_malaria_cases %>%  plotly::plot_ly(
-  y = ~Names ,
+dry_season_malaria_2017_2020 %>%  plotly::plot_ly(
+  y = ~Names,
   x = ~dr_2017,
   type = "bar",
   orientation = 'h',
@@ -98,8 +127,11 @@ dry_season_malaria_cases %>%  plotly::plot_ly(
   plotly::add_trace(
     x = ~ dr_2019,
     name = "2019") %>% 
+  plotly::add_trace(
+    x = ~ dr_2020,
+    name = "2020") %>% 
   plotly::layout(
-    barmode = "stack",
+    #barmode = "stack",
     xaxis = list(title = "Total malaria cases"),
     yaxis = list(title = ""),
     hovermode = "compare",
@@ -116,18 +148,45 @@ dry_season_malaria_cases %>%  plotly::plot_ly(
 Heath facility catchment area is the area from which a health facility attracts patients. Data provider is National Statistical Office.
 ```{r, warning = FALSE, message = FALSE, fig.cap='Fig 2. Kasungu Health-care Facilities and Catchment Areas'}
 
-health_facility <- st_as_sf(dry_season_malaria_cases, 
-                            coords = c("LONGITU", "LATITUD"), 
+# Using the is.na() function to remove the missing lon and lat points from dry_season_malaria_2017_2020.csv.
+health_facility <- dry_season_malaria_2017_2020[!is.na(dry_season_malaria_2017_2020$LONGITU),]
+
+# dry_season_malaria_2017_2020 %>% dplyr::filter(!is.na(LONGITU))
+# dry_season_malaria_2017_2020 %>% drop_na()
+# 
+# # There are NA values in dry_season_malaria_2017_2020.csv, replace them by 0 and add a column to keep information
+# dry_season_malaria_2017_2020$is_na = ifelse(is.na(dry_season_malaria_2017_2020$LONGITU), TRUE, FALSE)
+# index = dry_season_malaria_2017_2020$is_na == TRUE
+# dry_season_malaria_2017_2020[index, "LONGITU"] <- 0
+# dry_season_malaria_2017_2020[index, "LATITUD"] <- 0
+# 
+# dry_season_malaria_2017_2020 <- SpatialPointsDataFrame(coords = dry_season_malaria_2017_2020[, 7:8],
+#                                    data = dry_season_malaria_2017_2020[,1:6])
+# 
+health_facility_sf <- st_as_sf(health_facility,
+                            coords = c("LONGITU", "LATITUD"),
                             crs = 4326, agr = "constant")
+# 
+# st_write(dry_season_malaria_2017_2020,
+#          "dry_season_malaria_2017_2019.csv",
+#          layer_options = "GEOMETRY=AS_XY")
+# 
+# sf_health_facility <-  st_read("dry_season_malaria_2017_2019.csv",
+#                        options = c("X_POSSIBLE_NAMES=X",
+#                                   "Y_POSSIBLE_NAMES=Y"))
+# health_facility
+
 
 tm_shape(malire)+
   tm_polygons()+
-  tm_shape(health_facility)+
+  tm_shape(health_facility_sf)+
   tm_dots(size = .3, col = "blue", alpha = 0.5)+
   tm_text("Names", size = .3, just = "top", col = "black", remove.overlap = T)+
   tm_layout(frame = F)+
   tm_scale_bar(breaks = c(0, 10, 20), text.size = .5)+
   tm_compass(position=c("right", "top"))
+
+# mapview::mapview(health_facility_sf, zcol="Names")
 
 ```
 
@@ -500,29 +559,41 @@ estimatedpop <- function(df, vname = "pop_estimate", title, legend.title = NA){
     tm_credits(title, position = c(0,0.75), size = 1)
 }
 
-run1k_2017_map <- estimatedpop(run1k_2017, title = "2017", legend.title = "Estimated population \n within 1km")
+run1k_2017_map <- estimatedpop(run1k_2017, title = "2017", 
+                               legend.title = "Estimated population \n within 1km")
 
-run2k_2017_map <- estimatedpop(run2k_2017, title = "2017", legend.title = "Estimated population \n within 2km")
+run2k_2017_map <- estimatedpop(run2k_2017, title = "2017", 
+                               legend.title = "Estimated population \n within 2km")
 
-run3k_2017_map <- estimatedpop(run3k_2017, title = "2017", legend.title = "Estimated population \n within 3km")
+run3k_2017_map <- estimatedpop(run3k_2017, title = "2017", 
+                               legend.title = "Estimated population \n within 3km")
 
-run1k_2018_map <- estimatedpop(run1k_2018, title = "2018", legend.title = "Estimated population \n within 1km")
+run1k_2018_map <- estimatedpop(run1k_2018, title = "2018", 
+                               legend.title = "Estimated population \n within 1km")
 
-run2k_2018_map <- estimatedpop(run2k_2018, title = "2018", legend.title = "Estimated population \n within 2km")
+run2k_2018_map <- estimatedpop(run2k_2018, title = "2018", 
+                               legend.title = "Estimated population \n within 2km")
 
-run3k_2018_map <- estimatedpop(run3k_2018, title = "2018", legend.title = "Estimated population \n within 3km")
+run3k_2018_map <- estimatedpop(run3k_2018, title = "2018", 
+                               legend.title = "Estimated population \n within 3km")
 
-run1k_2019_map <- estimatedpop(run1k_2019, title = "2019", legend.title = "Estimated population \n within 1km")
+run1k_2019_map <- estimatedpop(run1k_2019, title = "2019", 
+                               legend.title = "Estimated population \n within 1km")
 
-run2k_2019_map <- estimatedpop(run2k_2019, title = "2019", legend.title = "Estimated population \n within 2km")
+run2k_2019_map <- estimatedpop(run2k_2019, title = "2019", 
+                               legend.title = "Estimated population \n within 2km")
 
-run3k_2019_map <- estimatedpop(run3k_2019, title = "2019", legend.title = "Estimated population \n within 3km")
+run3k_2019_map <- estimatedpop(run3k_2019, title = "2019", 
+                               legend.title = "Estimated population \n within 3km")
 
-run1k_2020_map <- estimatedpop(run1k_2020, title = "2020", legend.title = "Estimated population \n within 1km")
+run1k_2020_map <- estimatedpop(run1k_2020, title = "2020", 
+                               legend.title = "Estimated population \n within 1km")
 
-run2k_2020_map <- estimatedpop(run2k_2020, title = "2020", legend.title = "Estimated population \n within 2km")
+run2k_2020_map <- estimatedpop(run2k_2020, title = "2020", 
+                               legend.title = "Estimated population \n within 2km")
 
-run3k_2020_map <- estimatedpop(run3k_2020, title = "2020", legend.title = "Estimated population \n within 3km")
+run3k_2020_map <- estimatedpop(run3k_2020, title = "2020", 
+                               legend.title = "Estimated population \n within 3km")
 
 tmap_arrange(run1k_2017_map, run2k_2017_map, run3k_2017_map, 
              run1k_2018_map, run2k_2018_map, run3k_2018_map,
@@ -569,29 +640,29 @@ finalized_2020_df <- cbind.data.frame(run1k_2020_df, run2k_2020_df, run3k_2020_d
 
 
 # Exclude unnecessary columns and rows
-df_2017 <- finalized_2017_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
-             tidyr::drop_na() %>% 
-             dplyr::filter(DISTRICT == "Kasungu")
+# 2017 -------------------------------------------------------------------------------------------
+finalized_2017_df <- finalized_2017_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>%
+                      dplyr::filter(DISTRICT == "Kasungu")
              
 finalized_2017_df <- cbind("Fid" = rownames(finalized_2017_df), finalized_2017_df)
 
-df_2018 <- finalized_2018_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
-             tidyr::drop_na() %>% 
-             dplyr::filter(DISTRICT == "Kasungu")
+# 2018 -------------------------------------------------------------------------------------------
+finalized_2018_df <- finalized_2018_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+                      dplyr::filter(DISTRICT == "Kasungu")
 
 finalized_2018_df <- cbind("Fid" = rownames(finalized_2018_df), finalized_2018_df)
 
-df_2019 <- finalized_2019_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
-             tidyr::drop_na() %>% 
-             dplyr::filter(DISTRICT == "Kasungu")
+# 2019 ------------------------------------------------------------------------------------------
+finalized_2019_df <- finalized_2019_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+                      dplyr::filter(DISTRICT == "Kasungu")
              
 finalized_2019_df <- cbind("Fid" = rownames(finalized_2019_df), finalized_2019_df)
 
-df_2020 <- finalized_2020_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
-             tidyr::drop_na() %>% 
-             dplyr::filter(DISTRICT == "Kasungu")
+# 2020 -------------------------------------------------------------------------------------------
+finalized_2020_df <- finalized_2020_df[,c("FACILITY_N", "DISTRICT", "pop_1km", "pop_2km", "pop_3km")] %>% 
+                      dplyr::filter(DISTRICT == "Kasungu")
              
-finalized_2020_df <- cbind("Fid" = rownames(finalized_2020_df), finalized_2020_df)
+finalized_2020_df <- cbind("Fid" = rownames(finalized_2020_df), finalized_2020_df) 
 
 ```
 
@@ -648,7 +719,7 @@ merged_2018_19 <- rbind(our_2018, our_2019)
 
 ```{r, eval = FALSE}
 
-write.csv(merged_2018_19, "~/Pre-MSc/Kasungu/practice/")
+write.csv(merged_2017_2020, file = "/data/merged_malaria_pop_2017_2020.csv")
 
 
 ```
