@@ -1,4 +1,4 @@
-# Accessibility Mapping in Google Earth Engine (GEE)
+# Accessibility Mapping in R
 # 
 # Dan Weiss, Malaria Atlas Project, University of Oxford
 # 2017-11-06
@@ -86,11 +86,10 @@ writeRaster(temp.raster, output.filename)
 # Plot the resulting raster
 plot(temp.raster)
 
-# tm_shape(temp.raster)+
-#   tm_raster(palette = "Greens", style = "fisher", n = 5)+
-#   tm_layout(legend.position = c("left","bottom"),
-#             frame = FALSE)
+tm_shape(temp.raster)+
+  tm_raster(palette = "Greens", style = "fisher", n = 5)+
+  tm_layout(legend.position = c("left","bottom"),
+            frame = FALSE)
 
-# Convert the resulting raster to vector
-# kasungu_accessibility_shp <- rasterToPolygons(temp.raster, na.rm = TRUE, dissolve = TRUE)
+
 
