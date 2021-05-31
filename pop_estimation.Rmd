@@ -148,26 +148,10 @@ dry_season_malaria_2017_2020 %>%
 Heath facility catchment area is the area from which a health facility attracts patients. The new health facility catchments polygon was generated from generic accessibility mapping script adapted from https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r The script requires two user supplied datasets: the `2015 friction surface`, which is available here:  http://www.map.ox.ac.uk/accessibility_to_cities/, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in GRASS GIS were run to make the final output map of new health facility catchment boundaries.
 ```{r, warning = FALSE, message = FALSE, fig.cap='Fig 2. Kasungu Health-care Facilities and Catchment Areas'}
 
-# Using the is.na() function to remove health centres with missing longitude and latitude coordinates
+# Using the complete.cases() function to select health centres with complete longitude and latitude coordinates
 # Aggregating Kasalika Health Centre and Kasungu District Hospital, and 
 # Kaluluma Rural Hospital and Nkhamenya Rural Hospital malaria cases
 
-# health_facility_aggregated <- dry_season_malaria_2017_2020[!is.na(dry_season_malaria_2017_2020$LONGITU),] %>% 
-#   dplyr::filter(Names != "Kasalika Health Centre",
-#                 Names != "Bua Health Centre",
-#                 Names != "Kaluluma Rural Hospital") %>% 
-#   dplyr::mutate(dr_2017 = ifelse(Names == "Kasungu District Hospital", 4528 + 16289, dr_2017), 
-#                 dr_2018 = ifelse(Names == "Kasungu District Hospital", 4493 + 15821, dr_2018), 
-#                 dr_2019 = ifelse(Names == "Kasungu District Hospital", 2729 + 10721, dr_2018), 
-#                 dr_2020 = ifelse(Names == "Kasungu District Hospital", 4368 + 24424, dr_2020),
-#                 dr_2017 = ifelse(Names == "Nkhamenya Rural Hospital", 2887 + 752, dr_2017), 
-#                 dr_2018 = ifelse(Names == "Nkhamenya Rural Hospital", 851 + 3689, dr_2018), 
-#                 dr_2019 = ifelse(Names == "Nkhamenya Rural Hospital", 533 + 4004, dr_2019),
-#                 dr_2020 = ifelse(Names == "Nkhamenya Rural Hospital", 3587 + 5929, dr_2020),
-#                 dr_2017 = ifelse(Names == "Mziza Health Centre", 3863 + 3489, dr_2017),
-#                 dr_2018 = ifelse(Names == "Mziza Health Centre", 2815 + 1804, dr_2018),
-#                 dr_2019 = ifelse(Names == "Mziza Health Centre", 2815 + 1804, dr_2019),
-#                 dr_2020 = ifelse(Names == "Mziza Health Centre", 2397 + 6194, dr_2020)) 
 
 zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] %>% 
   dplyr::filter(Names != "Kasalika Health Centre",
@@ -198,16 +182,6 @@ zipatala_aggregated$dr_2019[which(zipatala_aggregated$Names == "Mziza Health Cen
 
 zipatala_aggregated$dr_2020[which(zipatala_aggregated$Names == "Mziza Health Centre")] <- 6194 + 2397
 
-# There are NA values in dry_season_malaria_2017_2020.csv, replace them by 0 and add a column to keep information
-# dry_season_malaria_2017_2020$is_na = ifelse(is.na(dry_season_malaria_2017_2020$LONGITU), TRUE, FALSE)
-# index = dry_season_malaria_2017_2020$is_na == TRUE
-# dry_season_malaria_2017_2020[index, "LONGITU"] <- 0
-# dry_season_malaria_2017_2020[index, "LATITUD"] <- 0
-# 
-# dry_season_malaria_2017_2020 <- SpatialPointsDataFrame(coords = dry_season_malaria_2017_2020[, 7:8],
-#                                    data = dry_season_malaria_2017_2020[,1:6])
-
-# write.csv(zipatala_aggregated, "data/Kasungu_malaria_2017_2020.csv")
 
 health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
@@ -967,49 +941,73 @@ ggplot2::ggplot(reshape2::melt(dry_season_malaria@data[, c("dr_2017", "dr_2018",
 
 ### Calculate the expected number of malaria cases in health facility catchments
 
-Now, we combine all the dataframes with estimated population and malaria cases into one dataframe `kasungu_model_df`, and new columns (`totalMalaria_year`, `totalPop_year`, `malariaProp_year`, and `expectedMalaria_year`) are then added. The aim is to determine the standardised mortality/morbidity ratio (SMR). SMR compares the risk of morbidity/mortality in a population of interest with that of a standard population. In this case, interest in understanding whether the number of dry season malaria cases in each health facility catchment are greater than we would expect given the rate of malaria in the whole of Kasungu district.
+Now, we combine all the dataframes with estimated population and malaria cases into one dataframe `kasungu_model_df`, and new columns (`totalMalaria_year`, `totalPop_year`, `malariaProp_year`, and `expectedMalaria_year`) are then added. The aim is to determine the standardised mortality/morbidity ratio (SMR). SMR compares the risk of morbidity/mortality in a population of interest with that of a standard population. In this case, interest in understanding whether the number of dry season malaria cases in each health facility catchment are greater than we would expect given the rate of malaria in the whole of Kasungu district.Health facility catchments with SMR values less than one have lower than expected dry season malaria cases, whereas those greater than one have higher than expected.
 ```{r, message=FALSE, warning=FALSE}
 
 # 2017 dataframes --------------------------------------------------------------
-hfc_1km_2017_df <- hfc_1km_2017_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(Names, FID, pop_1km_2017,
-                                       dr_2017, dr_2018, dr_2019, dr_2020, geometry)
+hfc_1km_2017_df <- hfc_1km_2017_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(Names, FID, pop_1km_2017,
+                dr_2017, dr_2018, dr_2019, dr_2020, geometry)
  
-hfc_2km_2017_df <- hfc_2km_2017_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_2km_2017)
+hfc_2km_2017_df <- hfc_2km_2017_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_2km_2017)
 
-hfc_3km_2017_df <- hfc_3km_2017_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_3km_2017)
+hfc_3km_2017_df <- hfc_3km_2017_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_3km_2017)
 
 # 2018 dataframes --------------------------------------------------------------
-hfc_1km_2018_df <- hfc_1km_2018_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_1km_2018)
+hfc_1km_2018_df <- hfc_1km_2018_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_1km_2018)
 
-hfc_2km_2018_df <- hfc_2km_2018_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_2km_2018)
+hfc_2km_2018_df <- hfc_2km_2018_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_2km_2018)
 
-hfc_3km_2018_df <- hfc_3km_2018_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_3km_2018)
+hfc_3km_2018_df <- hfc_3km_2018_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_3km_2018)
 
 # 2019 dataframes --------------------------------------------------------------
-hfc_1km_2019_df <- hfc_1km_2019_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_1km_2019)
+hfc_1km_2019_df <- hfc_1km_2019_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_1km_2019)
 
-hfc_2km_2019_df <- hfc_2km_2019_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_2km_2019)
+hfc_2km_2019_df <- hfc_2km_2019_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_2km_2019)
 
-hfc_3km_2019_df <- hfc_3km_2019_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_3km_2019)
+hfc_3km_2019_df <- hfc_3km_2019_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_3km_2019)
 
 # 2020 dataframes --------------------------------------------------------------
-hfc_1km_2020_df <- hfc_1km_2020_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_1km_2020)
+hfc_1km_2020_df <- hfc_1km_2020_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_1km_2020)
 
-hfc_2km_2020_df <- hfc_2km_2020_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_2km_2020)
+hfc_2km_2020_df <- hfc_2km_2020_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_2km_2020)
 
-hfc_3km_2020_df <- hfc_3km_2020_sf %>% unclass %>% 
-  dplyr::as_tibble() %>% dplyr::select(FID, pop_3km_2020)
+hfc_3km_2020_df <- hfc_3km_2020_sf %>% 
+  unclass %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::select(pop_3km_2020)
 
 # Bind the dataframes and calculate expected number of dry season malaria cases and SMR
  
@@ -1017,7 +1015,7 @@ kasungu_model_df <- cbind(hfc_1km_2017_df, hfc_2km_2017_df, hfc_3km_2017_df,
                           hfc_1km_2018_df, hfc_2km_2018_df, hfc_3km_2018_df,
                           hfc_1km_2019_df, hfc_2km_2019_df, hfc_3km_2019_df,
                           hfc_1km_2020_df, hfc_2km_2020_df, hfc_3km_2020_df) %>% 
-  dplyr::select(-FID) %>% 
+  
   dplyr::mutate(expectedMalaria_1km_2017 = round(sum(dr_2017)/sum(pop_1km_2017, na.rm = TRUE)*pop_1km_2017),
                 expectedMalaria_2km_2017 = round(sum(dr_2017)/sum(pop_2km_2017, na.rm = TRUE)*pop_2km_2017),
                 expectedMalaria_3km_2017 = round(sum(dr_2017)/sum(pop_3km_2017, na.rm = TRUE)*pop_3km_2017)) %>% 
@@ -1048,7 +1046,10 @@ kasungu_model_df <- cbind(hfc_1km_2017_df, hfc_2km_2017_df, hfc_3km_2017_df,
   
   dplyr::mutate(SMR_1km_2020 = round(dr_2020/expectedMalaria_1km_2020,2),
                 SMR_2km_2020 = round(dr_2020/expectedMalaria_2km_2020,2),
-                SMR_3km_2020 = round(dr_2020/expectedMalaria_3km_2020,2))
+                SMR_3km_2020 = round(dr_2020/expectedMalaria_3km_2020,2)) %>% 
+  
+  dplyr::mutate(malariaProp_1km_2017 = round(sum(pop_1km_2017, na.rm = TRUE)/sum(dr_2017),1),
+                malariaProp_2km_2017 = round(sum(pop_2km_2017, na.rm = TRUE)/sum(dr_2017),1))
 
 
 
@@ -1084,7 +1085,7 @@ write.csv(kasungu_model_df, file = "data/Kasungu_model_data_2017_2020.csv")
 
 ### Model fitting
 
-We can then model the observed outcomes using `Poisson regression` with an offset of the log of the expected counts `expectedMalaria`. `Poisson regression` framework has been used as it is suitable for modeling count outcomes. 
+Let us find out if living within various distances from water bodies is causing variability in SMR in Kasungu district. We hypothesize that the risk of being a case in catchment *i* is dependent on proximity to water bodies. We will model the observed outcomes using `Poisson regression` with an offset of the log of the expected counts `expectedMalaria`. An offset is 'risk factor' term in the model that has a coefficient fixed at 1. `Poisson regression` framework has been used as it is suitable for modeling count outcomes. 
 
 ```{r}
 
@@ -1097,7 +1098,7 @@ We can then model the observed outcomes using `Poisson regression` with an offse
 # by the number of people in each health facility.
 
 # 2017 -----------------------------------------------------------------------------------
-model_1km_2017 <- glm(dr_2017~1+offset(log(expectedMalaria_1km_2017)),
+model_1km_2017 <- glm(dr_2017~1+malariaProp_1km_2017+offset(log(expectedMalaria_1km_2017)),
                       data = kasungu_model_df, family = 'poisson', na.action = na.omit)
 # alias(model_1km_2017)
 # sjPlot::tab_model(model_1km_2017)
