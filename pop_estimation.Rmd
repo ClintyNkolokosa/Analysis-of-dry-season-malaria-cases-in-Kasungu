@@ -1049,7 +1049,20 @@ kasungu_model_df <- cbind(hfc_1km_2017_df, hfc_2km_2017_df, hfc_3km_2017_df,
                 SMR_3km_2020 = round(dr_2020/expectedMalaria_3km_2020,2)) %>% 
   
   dplyr::mutate(malariaProp_1km_2017 = round(sum(pop_1km_2017, na.rm = TRUE)/sum(dr_2017),1),
-                malariaProp_2km_2017 = round(sum(pop_2km_2017, na.rm = TRUE)/sum(dr_2017),1))
+                malariaProp_2km_2017 = round(sum(pop_2km_2017, na.rm = TRUE)/sum(dr_2017),1),
+                malariaProp_3km_2017 = round(sum(pop_3km_2017, na.rm = TRUE)/sum(dr_2017),1)) %>% 
+  
+  dplyr::mutate(malariaProp_1km_2018 = round(sum(pop_1km_2018, na.rm = TRUE)/sum(dr_2018),1),
+                malariaProp_2km_2018 = round(sum(pop_2km_2018, na.rm = TRUE)/sum(dr_2018),1),
+                malariaProp_3km_2018 = round(sum(pop_3km_2018, na.rm = TRUE)/sum(dr_2018),1)) %>% 
+  
+  dplyr::mutate(malariaProp_1km_2019 = round(sum(pop_1km_2019, na.rm = TRUE)/sum(dr_2019),1),
+                malariaProp_2km_2019 = round(sum(pop_2km_2019, na.rm = TRUE)/sum(dr_2019),1),
+                malariaProp_3km_2019 = round(sum(pop_3km_2019, na.rm = TRUE)/sum(dr_2019),1)) %>% 
+  
+  dplyr::mutate(malariaProp_1km_2020 = round(sum(pop_1km_2020, na.rm = TRUE)/sum(dr_2020),1),
+                malariaProp_2km_2020 = round(sum(pop_2km_2020, na.rm = TRUE)/sum(dr_2020),1),
+                malariaProp_3km_2020 = round(sum(pop_3km_2020, na.rm = TRUE)/sum(dr_2020),1))
 
 
 
