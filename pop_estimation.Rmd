@@ -235,7 +235,7 @@ Using population and health information within each health facility catchment ar
 # head(malire)
 
 # Function to create a choropleth map from sf object
-choroplethmap <- function(df, vname = NA, pal = NA, legend.title = NA){
+create.choropleth.map <- function(df, vname = NA, pal = NA, legend.title = NA){
   # choropleth map
   # df: simple feature polygon layer
   # vname: variable name (as character, in quotes)
@@ -251,17 +251,17 @@ choroplethmap <- function(df, vname = NA, pal = NA, legend.title = NA){
 }
 
 
-population <- choroplethmap(malire, vname = "POPULATION", 
-                            pal = "Reds", legend.title = "Total population")
+population <- create.choropleth.map(malire, vname = "POPULATION", 
+                                    pal = "Reds", legend.title = "Total population")
 
-pop_density <- choroplethmap(malire, vname = "DENSITY", 
-                             pal = "YlOrRd", legend.title = "Population density")
+pop_density <- create.choropleth.map(malire, vname = "DENSITY", 
+                                     pal = "YlOrRd", legend.title = "Population density")
 
-malaria_rate <- choroplethmap(malire, vname = "MALAR_RATE", 
-                              pal = "BuGn", legend.title = "Malaria prevalence %")
+malaria_rate <- create.choropleth.map(malire, vname = "MALAR_RATE", 
+                                      pal = "BuGn", legend.title = "Malaria prevalence %")
 
-malaria_cases <- choroplethmap(malire, vname = "MALARIA_CA", 
-                               pal = "Purples", legend.title = "Malaria cases")
+malaria_cases <- create.choropleth.map(malire, vname = "MALARIA_CA", 
+                                       pal = "Purples", legend.title = "Malaria cases")
 
 tmap_arrange(population, pop_density, malaria_rate, malaria_cases)
 
@@ -284,7 +284,7 @@ kasungu_population_2019
 kasungu_population_2020
 
 # Function to create a raster population map
-populationmap <- function(df, title){
+create.population.map <- function(df, title){
   # population map
   # arguments:
   #   df:  aggregated population raster layer
@@ -301,13 +301,13 @@ populationmap <- function(df, title){
 # Set to static map
 tmap_mode("plot")
 
-pop_2017 <- populationmap(kasungu_population_2017, title = "2017 Population")
+pop_2017 <- create.population.map(kasungu_population_2017, title = "2017 Population")
 
-pop_2018 <- populationmap(kasungu_population_2018, title = "2018 Population")
+pop_2018 <- create.population.map(kasungu_population_2018, title = "2018 Population")
 
-pop_2019 <- populationmap(kasungu_population_2019, title = "2019 Population")
+pop_2019 <- create.population.map(kasungu_population_2019, title = "2019 Population")
 
-pop_2020 <- populationmap(kasungu_population_2020, title = "2020 Population")
+pop_2020 <- create.population.map(kasungu_population_2020, title = "2020 Population")
 
 tmap_arrange(pop_2017, pop_2018, pop_2019, pop_2020, nrow = 2) # Layout the maps
 
@@ -334,7 +334,7 @@ surfaceWater_2020 <- sf::st_as_sf(st_cast(st_union(st_buffer(water_2020, dist = 
 
 ```{r, message=FALSE, warning=FALSE}
 
-waterbody_buffer <- function(waterbody, distance, catchment){
+create.waterbody.buffer <- function(waterbody, distance, catchment){
   
   #Buffer the 'water' vector file by 'distance' meters
   buffer_radiusk <- st_buffer(waterbody, distance)
@@ -365,44 +365,44 @@ waterbody_buffer <- function(waterbody, distance, catchment){
 ```{r, message=FALSE, warning=FALSE}
 
 # For 2017 TropWet surface water polygons
-buffer_1km_2017 <- waterbody_buffer(waterbody = surfaceWater_2017, 
-                                    distance = 1000, catchment = malire_new)
+buffer_1km_2017 <- create.waterbody.buffer(waterbody = surfaceWater_2017, 
+                                           distance = 1000, catchment = malire_new)
 
-buffer_2km_2017 <- waterbody_buffer(waterbody = surfaceWater_2017, 
-                                    distance = 2000, catchment = malire_new)
+buffer_2km_2017 <- create.waterbody.buffer(waterbody = surfaceWater_2017, 
+                                           distance = 2000, catchment = malire_new)
 
-buffer_3km_2017 <- waterbody_buffer(waterbody = surfaceWater_2017, 
-                                    distance = 3000, catchment = malire_new)
+buffer_3km_2017 <- create.waterbody.buffer(waterbody = surfaceWater_2017, 
+                                           distance = 3000, catchment = malire_new)
 
 # For 2018 TropWet surface water polygons
-buffer_1km_2018 <- waterbody_buffer(waterbody = surfaceWater_2018, 
-                                    distance = 1000, catchment = malire)
+buffer_1km_2018 <- create.waterbody.buffer(waterbody = surfaceWater_2018, 
+                                           distance = 1000, catchment = malire)
 
-buffer_2km_2018 <- waterbody_buffer(waterbody = surfaceWater_2018, 
-                                    distance = 2000, catchment = malire)
+buffer_2km_2018 <- create.waterbody.buffer(waterbody = surfaceWater_2018, 
+                                           distance = 2000, catchment = malire)
 
-buffer_3km_2018 <- waterbody_buffer(waterbody = surfaceWater_2018, 
-                                    distance = 3000, catchment = malire)
-
+buffer_3km_2018 <- create.waterbody.buffer(waterbody = surfaceWater_2018, 
+                                           distance = 3000, catchment = malire)
+ 
 # For 2019 TropWet surface water polygons
-buffer_1km_2019 <- waterbody_buffer(waterbody = surfaceWater_2019, 
-                                    distance = 1000, catchment = malire)
+buffer_1km_2019 <- create.waterbody.buffer(waterbody = surfaceWater_2019, 
+                                           distance = 1000, catchment = malire)
 
-buffer_2km_2019 <- waterbody_buffer(waterbody = surfaceWater_2019, 
-                                    distance = 2000, catchment = malire)
+buffer_2km_2019 <- create.waterbody.buffer(waterbody = surfaceWater_2019, 
+                                           distance = 2000, catchment = malire)
 
-buffer_3km_2019 <- waterbody_buffer(waterbody = surfaceWater_2019, 
-                                    distance = 3000, catchment = malire)
+buffer_3km_2019 <- create.waterbody.buffer(waterbody = surfaceWater_2019, 
+                                           distance = 3000, catchment = malire)
 
 # For 2020 TropWet surface water polygons
-buffer_1km_2020 <- waterbody_buffer(waterbody = surfaceWater_2020, 
-                                    distance = 1000, catchment = malire)
+buffer_1km_2020 <- create.waterbody.buffer(waterbody = surfaceWater_2020, 
+                                           distance = 1000, catchment = malire)
 
-buffer_2km_2020 <- waterbody_buffer(waterbody = surfaceWater_2020, 
-                                    distance = 2000, catchment = malire)
+buffer_2km_2020 <- create.waterbody.buffer(waterbody = surfaceWater_2020, 
+                                           distance = 2000, catchment = malire)
 
-buffer_3km_2020 <- waterbody_buffer(waterbody = surfaceWater_2020, 
-                                    distance = 3000, catchment = malire)
+buffer_3km_2020 <- create.waterbody.buffer(waterbody = surfaceWater_2020, 
+                                           distance = 3000, catchment = malire)
 
 ```
 
@@ -412,7 +412,7 @@ buffer_3km_2020 <- waterbody_buffer(waterbody = surfaceWater_2020,
 ```{r, fig.height=9, fig.width=10, fig.cap='Fig 5. Buffers around open waterbodies in Kasungu'}
 
 # Map the buffers
-buffermap <- function(df, boundary, title = NA){
+create.buffer.map <- function(df, boundary, title = NA){
   # function for creating buffer map in ggplot
   # arguments:
   #   df:  buffer polygon layer
@@ -428,24 +428,24 @@ buffermap <- function(df, boundary, title = NA){
  }
 
 # For 2017 
-buffer1km_2017 <- buffermap(buffer_1km_2017, kasungu_district, title = "2017: 1km Buffers")
-buffer2km_2017 <- buffermap(buffer_2km_2017, kasungu_district, title = "2017: 2km Buffers")
-buffer3km_2017 <- buffermap(buffer_3km_2017, kasungu_district, title = "2017: 3km Buffers")
+buffer1km_2017 <- create.buffer.map(buffer_1km_2017, kasungu_district, title = "2017: 1km Buffers")
+buffer2km_2017 <- create.buffer.map(buffer_2km_2017, kasungu_district, title = "2017: 2km Buffers")
+buffer3km_2017 <- create.buffer.map(buffer_3km_2017, kasungu_district, title = "2017: 3km Buffers")
 
 # For 2018
-buffer1km_2018 <- buffermap(buffer_1km_2018, kasungu_district, title = "2018: 1km Buffers")
-buffer2km_2018 <- buffermap(buffer_2km_2018, kasungu_district, title = "2018: 2km Buffers")
-buffer3km_2018 <- buffermap(buffer_3km_2018, kasungu_district, title = "2018: 3km Buffers")
+buffer1km_2018 <- create.buffer.map(buffer_1km_2018, kasungu_district, title = "2018: 1km Buffers")
+buffer2km_2018 <- create.buffer.map(buffer_2km_2018, kasungu_district, title = "2018: 2km Buffers")
+buffer3km_2018 <- create.buffer.map(buffer_3km_2018, kasungu_district, title = "2018: 3km Buffers")
 
 # For 2019
-buffer1km_2019 <- buffermap(buffer_1km_2019, kasungu_district, title = "2019: 1km Buffers")
-buffer2km_2019 <- buffermap(buffer_2km_2019, kasungu_district, title = "2019: 2km Buffers")
-buffer3km_2019 <- buffermap(buffer_3km_2019, kasungu_district, title = "2019: 3km Buffers")
+buffer1km_2019 <- create.buffer.map(buffer_1km_2019, kasungu_district, title = "2019: 1km Buffers")
+buffer2km_2019 <- create.buffer.map(buffer_2km_2019, kasungu_district, title = "2019: 2km Buffers")
+buffer3km_2019 <- create.buffer.map(buffer_3km_2019, kasungu_district, title = "2019: 3km Buffers")
 
 # For 2020
-buffer1km_2020 <- buffermap(buffer_1km_2020, kasungu_district, title = "2020: 1km Buffers")
-buffer2km_2020 <- buffermap(buffer_2km_2020, kasungu_district, title = "2020: 2km Buffers")
-buffer3km_2020 <- buffermap(buffer_3km_2020, kasungu_district, title = "2020: 3km Buffers")
+buffer1km_2020 <- create.buffer.map(buffer_1km_2020, kasungu_district, title = "2020: 1km Buffers")
+buffer2km_2020 <- create.buffer.map(buffer_2km_2020, kasungu_district, title = "2020: 2km Buffers")
+buffer3km_2020 <- create.buffer.map(buffer_3km_2020, kasungu_district, title = "2020: 3km Buffers")
  
 grid.arrange(buffer1km_2017, buffer1km_2018, buffer1km_2019, buffer1km_2020,
              buffer2km_2017, buffer2km_2018, buffer2km_2019, buffer2km_2020, 
@@ -627,7 +627,7 @@ Map the outputs from the `nachulu` function: layers of polygons representing hea
 ```{r, message = FALSE, warning = FALSE, fig.height = 8, fig.width = 11, fig.cap='Fig 6. Estimated population in Kasungu health facility catchments'}
 
 # Function to create maps of estimated population out of sf objects from the nachulu function
-estimatedpop <- function(df, vname = "pop_estimate", title, legend.title = NA){
+create.pop.map <- function(df, vname = "pop_estimate", title, legend.title = NA){
   # estimated population map
   # df: estimated population layer from nachulu function
   # vname: variable name (as character, in qoutes)
@@ -645,40 +645,40 @@ estimatedpop <- function(df, vname = "pop_estimate", title, legend.title = NA){
     tm_credits(title, position = c(0,0.75), size = 1)
 }
 
-run1k_2017_map <- estimatedpop(run1k_2017, title = "2017: 1km buffers", 
+run1k_2017_map <- create.pop.map(run1k_2017, title = "2017: 1km buffers", 
                                legend.title = "Estimated \n population")
 
-run2k_2017_map <- estimatedpop(run2k_2017, title = "2017: 2km buffers", 
+run2k_2017_map <- create.pop.map(run2k_2017, title = "2017: 2km buffers", 
                                legend.title = "Estimated \n population")
 
-run3k_2017_map <- estimatedpop(run3k_2017, title = "2017: 3km buffers", 
+run3k_2017_map <- create.pop.map(run3k_2017, title = "2017: 3km buffers", 
                                legend.title = "Estimated \n population")
 
-run1k_2018_map <- estimatedpop(run1k_2018, title = "2018: 1km buffers", 
+run1k_2018_map <- create.pop.map(run1k_2018, title = "2018: 1km buffers", 
                                legend.title = "Estimated \n population")
 
-run2k_2018_map <- estimatedpop(run2k_2018, title = "2018: 2km buffers", 
+run2k_2018_map <- create.pop.map(run2k_2018, title = "2018: 2km buffers", 
                                legend.title = "Estimated \n population")
 
-run3k_2018_map <- estimatedpop(run3k_2018, title = "2018: 3km buffers", 
+run3k_2018_map <- create.pop.map(run3k_2018, title = "2018: 3km buffers", 
                                legend.title = "Estimated \n population")
 
-run1k_2019_map <- estimatedpop(run1k_2019, title = "2019: 1km buffers", 
+run1k_2019_map <- create.pop.map(run1k_2019, title = "2019: 1km buffers", 
                                legend.title = "Estimated \n population")
 
-run2k_2019_map <- estimatedpop(run2k_2019, title = "2019: 2km buffers", 
+run2k_2019_map <- create.pop.map(run2k_2019, title = "2019: 2km buffers", 
                                legend.title = "Estimated \n population")
 
-run3k_2019_map <- estimatedpop(run3k_2019, title = "2019: 3km buffers", 
+run3k_2019_map <- create.pop.map(run3k_2019, title = "2019: 3km buffers", 
                                legend.title = "Estimated \n population")
 
-run1k_2020_map <- estimatedpop(run1k_2020, title = "2020: 1km buffers", 
+run1k_2020_map <- create.pop.map(run1k_2020, title = "2020: 1km buffers", 
                                legend.title = "Estimated \n population")
 
-run2k_2020_map <- estimatedpop(run2k_2020, title = "2020: 2km buffers", 
+run2k_2020_map <- create.pop.map(run2k_2020, title = "2020: 2km buffers", 
                                legend.title = "Estimated \n population")
 
-run3k_2020_map <- estimatedpop(run3k_2020, title = "2020: 3km buffers", 
+run3k_2020_map <- create.pop.map(run3k_2020, title = "2020: 3km buffers", 
                                legend.title = "Estimated \n population")
 
 tmap_arrange(run1k_2017_map, run2k_2017_map, run3k_2017_map, 
@@ -830,7 +830,7 @@ hfc_3km_2020_sf <- organize(malaria_data = health_facility_aggr_sf, pop_data = r
 
 # Check if merging and tidying worked
 # Create a user-defined function that maps the merged sf objects
-malaria_map <- function(df, year = NA, title, legend.title = NA){
+make.malaria.map <- function(df, year = NA, title, legend.title = NA){
   # dry season malaria cases map
   # df: sf objects from 'organize' function
   # vname: variable name (as character, in qoutes)
@@ -851,17 +851,17 @@ malaria_map <- function(df, year = NA, title, legend.title = NA){
     tm_view(view.legend.position = c("right", "bottom"))
 }
 
-dry_season_malaria_2017 <- malaria_map(hfc_1km_2017_sf, year = "dr_2017", title = "2017", 
-                                       legend.title = "2017 malaria cases")
+dry_season_malaria_2017 <- make.malaria.map(hfc_1km_2017_sf, year = "dr_2017", title = "2017", 
+                                            legend.title = "2017 malaria cases")
 
-dry_season_malaria_2018 <- malaria_map(hfc_1km_2018_sf, year = "dr_2018", title = "2018",
-                                       legend.title = "2018 malaria cases")
+dry_season_malaria_2018 <- make.malaria.map(hfc_1km_2018_sf, year = "dr_2018", title = "2018",
+                                            legend.title = "2018 malaria cases")
 
-dry_season_malaria_2019 <- malaria_map(hfc_1km_2019_sf, year = "dr_2019", title = "2019",
-                                       legend.title = "2019 malaria cases")
+dry_season_malaria_2019 <- make.malaria.map(hfc_1km_2019_sf, year = "dr_2019", title = "2019",
+                                            legend.title = "2019 malaria cases")
 
-dry_season_malaria_2020 <- malaria_map(hfc_1km_2020_sf, year = "dr_2020", title = "2020",
-                                       legend.title = "2020 malaria cases")
+dry_season_malaria_2020 <- make.malaria.map(hfc_1km_2020_sf, year = "dr_2020", title = "2020",
+                                            legend.title = "2020 malaria cases")
 
 tmap::tmap_arrange(dry_season_malaria_2017, dry_season_malaria_2018,
                    dry_season_malaria_2019, dry_season_malaria_2020, ncol = 2)
@@ -1201,6 +1201,13 @@ pop_malaria_2017_2020$fitted_1km2019 <- round(model_1km_2019$fitted.values)
 map <- mapview::mapview(pop_malaria_2017_2020, zcol = "fitted_1km2019")
 
 mapshot(map, "map.html", selfcontained = FALSE)
+
+tm_shape(pop_malaria_2017_2020)+
+  tm_polygons(col = "fitted_1km2019",
+              style="jenks",
+              palette ="Blues", 
+              contrast =.7, 
+              title = "Fitted values")
 
 
 ```
