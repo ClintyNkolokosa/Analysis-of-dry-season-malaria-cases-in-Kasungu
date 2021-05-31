@@ -1011,61 +1011,48 @@ hfc_2km_2020_df <- hfc_2km_2020_sf %>% unclass %>%
 hfc_3km_2020_df <- hfc_3km_2020_sf %>% unclass %>% 
   dplyr::as_tibble() %>% dplyr::select(FID, pop_3km_2020)
 
-# Bind the dataframes and create new columns containing the total number of malaria
-# cases (totalMalaria_year) throughout the whole district for each year, 
-# total population of the whole district (totalPop_year) for each year, and 
-# expected number of malaria cases (expectedMalaria_year) in each catchment,
-# which is calculated by dividing totalMalaria_year with totalPop_year and multiplied
-# by the number of people in each catchment
-# 
+# Bind the dataframes and calculate expected number of dry season malaria cases and SMR
+ 
 kasungu_model_df <- cbind(hfc_1km_2017_df, hfc_2km_2017_df, hfc_3km_2017_df,
                           hfc_1km_2018_df, hfc_2km_2018_df, hfc_3km_2018_df,
                           hfc_1km_2019_df, hfc_2km_2019_df, hfc_3km_2019_df,
                           hfc_1km_2020_df, hfc_2km_2020_df, hfc_3km_2020_df) %>% 
-  dplyr::select(-FID) %>%
-  dplyr::mutate(totalMalaria_2017 = sum(dr_2017),
-                totalMalaria_2018 = sum(dr_2018),
-                totalMalaria_2019 = sum(dr_2019),
-                totalMalaria_2020 = sum(dr_2020)) %>% 
-  dplyr::mutate(totalPop_1km_2017 = round(sum(pop_1km_2017, na.rm = TRUE)),
-                totalPop_2km_2017 = round(sum(pop_2km_2017, na.rm = TRUE)),
-                totalPop_3km_2017 = round(sum(pop_3km_2017, na.rm = TRUE)),
-                totalPop_1km_2018 = round(sum(pop_1km_2018, na.rm = TRUE)),
-                totalPop_2km_2018 = round(sum(pop_2km_2018, na.rm = TRUE)),
-                totalPop_3km_2018 = round(sum(pop_3km_2018, na.rm = TRUE)),
-                totalPop_1km_2019 = round(sum(pop_1km_2019, na.rm = TRUE)),
-                totalPop_2km_2019 = round(sum(pop_2km_2019, na.rm = TRUE)),
-                totalPop_3km_2019 = round(sum(pop_3km_2019, na.rm = TRUE)),
-                totalPop_1km_2020 = round(sum(pop_1km_2020, na.rm = TRUE)),
-                totalPop_2km_2020 = round(sum(pop_2km_2020, na.rm = TRUE)),
-                totalPop_3km_2020 = round(sum(pop_3km_2020, na.rm = TRUE))) %>% 
-  dplyr::mutate(malariaProp_1km_2017 = round(totalMalaria_2017/totalPop_1km_2017, 1),
-                malariaProp_2km_2017 = round(totalMalaria_2017/totalPop_2km_2017, 1),
-                malariaProp_3km_2017 = round(totalMalaria_2017/totalPop_3km_2017, 1),
-                malariaProp_1km_2018 = round(totalMalaria_2018/totalPop_1km_2018, 1),
-                malariaProp_2km_2018 = round(totalMalaria_2018/totalPop_2km_2018, 1),
-                malariaProp_3km_2018 = round(totalMalaria_2018/totalPop_3km_2018, 1),
-                malariaProp_1km_2019 = round(totalMalaria_2019/totalPop_1km_2019, 1),
-                malariaProp_2km_2019 = round(totalMalaria_2019/totalPop_2km_2019, 1),
-                malariaProp_3km_2019 = round(totalMalaria_2019/totalPop_3km_2019, 1),
-                malariaProp_1km_2020 = round(totalMalaria_2020/totalPop_1km_2020, 1),
-                malariaProp_2km_2020 = round(totalMalaria_2020/totalPop_2km_2020, 1),
-                malariaProp_3km_2020 = round(totalMalaria_2020/totalPop_3km_2020, 1)) %>% 
-  dplyr::rowwise() %>%
-  dplyr::mutate(expectedMalaria_1km_2017 = round(malariaProp_1km_2017*pop_1km_2017),
-                expectedMalaria_2km_2017 = round(malariaProp_2km_2017*pop_2km_2017),
-                expectedMalaria_3km_2017 = round(malariaProp_3km_2017*pop_3km_2017),
-                expectedMalaria_1km_2018 = round(malariaProp_1km_2018*pop_1km_2018),
-                expectedMalaria_2km_2018 = round(malariaProp_2km_2018*pop_2km_2018),
-                expectedMalaria_3km_2018 = round(malariaProp_3km_2018*pop_3km_2018),
-                expectedMalaria_1km_2019 = round(malariaProp_1km_2019*pop_1km_2019),
-                expectedMalaria_2km_2019 = round(malariaProp_2km_2019*pop_2km_2019),
-                expectedMalaria_3km_2019 = round(malariaProp_3km_2019*pop_3km_2019),
-                expectedMalaria_1km_2020 = round(malariaProp_1km_2020*pop_1km_2020),
-                expectedMalaria_2km_2020 = round(malariaProp_2km_2020*pop_2km_2020),
-                expectedMalaria_3km_2020 = round(malariaProp_3km_2020*pop_3km_2020))
+  dplyr::select(-FID) %>% 
+  dplyr::mutate(expected_1km_2017 = round(sum(dr_2017)/sum(pop_1km_2017, na.rm = TRUE)*pop_1km_2017),
+                expected_2km_2017 = round(sum(dr_2017)/sum(pop_2km_2017, na.rm = TRUE)*pop_2km_2017),
+                expected_3km_2017 = round(sum(dr_2017)/sum(pop_3km_2017, na.rm = TRUE)*pop_3km_2017)) %>% 
+  
+  dplyr::mutate(expected_1km_2018 = round(sum(dr_2018)/sum(pop_1km_2018, na.rm = TRUE)*pop_1km_2018),
+                expected_2km_2018 = round(sum(dr_2018)/sum(pop_2km_2018, na.rm = TRUE)*pop_2km_2018),
+                expected_3km_2018 = round(sum(dr_2018)/sum(pop_3km_2018, na.rm = TRUE)*pop_3km_2018)) %>% 
+  
+  dplyr::mutate(expected_1km_2019 = round(sum(dr_2019)/sum(pop_1km_2019, na.rm = TRUE)*pop_1km_2019),
+                expected_2km_2019 = round(sum(dr_2019)/sum(pop_2km_2019, na.rm = TRUE)*pop_2km_2019),
+                expected_3km_2019 = round(sum(dr_2019)/sum(pop_3km_2019, na.rm = TRUE)*pop_3km_2019)) %>% 
+  
+  dplyr::mutate(expected_1km_2020 = round(sum(dr_2020)/sum(pop_1km_2020, na.rm = TRUE)*pop_1km_2020),
+                expected_2km_2020 = round(sum(dr_2020)/sum(pop_2km_2020, na.rm = TRUE)*pop_2km_2020),
+                expected_3km_2020 = round(sum(dr_2020)/sum(pop_3km_2020, na.rm = TRUE)*pop_3km_2020)) %>% 
+  
+  dplyr::mutate(SMR_1km_2017 = round(dr_2017/expected_1km_2017,2),
+                SMR_2km_2017 = round(dr_2017/expected_2km_2017,2),
+                SMR_3km_2017 = round(dr_2017/expected_3km_2017,2)) %>% 
+  
+  dplyr::mutate(SMR_1km_2018 = round(dr_2018/expected_1km_2018,2),
+                SMR_2km_2018 = round(dr_2018/expected_2km_2018,2),
+                SMR_3km_2018 = round(dr_2018/expected_3km_2018,2)) %>% 
+  
+  dplyr::mutate(SMR_1km_2019 = round(dr_2019/expected_1km_2019,2),
+                SMR_2km_2019 = round(dr_2019/expected_2km_2019,2),
+                SMR_3km_2019 = round(dr_2019/expected_3km_2019,2)) %>% 
+  
+  dplyr::mutate(SMR_1km_2020 = round(dr_2020/expected_1km_2020,2),
+                SMR_2km_2020 = round(dr_2020/expected_2km_2020,2),
+                SMR_3km_2020 = round(dr_2020/expected_3km_2020,2))
 
-# Take a glimpse at the data
+
+
+# Take a glimpse at the model data
 table <- kasungu_model_df %>%
   dplyr::select(Names, observed_2017 = `dr_2017`, observed_2018 = `dr_2018`, 
                 observed_2019 = `dr_2019`, observed_2020 = `dr_2020`, 
@@ -1096,8 +1083,17 @@ write.csv(kasungu_model_df, file = "data/Kasungu_model_data_2017_2020.csv")
 We can then model the observed outcomes using `Poisson regression` with an offset of the log of the expected counts `expectedMalaria`. `Poisson regression` framework has been used as it is suitable for modeling count outcomes. 
 
 ```{r}
+
+# Defining model parameters
+# dr_2017, dr_2018, dr_2019 and dr_2020 are recorded dry season malaria cases in Kasungu
+# malariaProp_1km, malariaProp_2km and malariaProp_3km are the malaria proportion 
+# (total number of malaria cases divided by total population) within 1km, 2km and 3km buffers respectively
+# expectedMalaria is the number of malaria cases we would expect given the rate of malaria, and is 
+# calculated by dividing total malaria cases with total population and multiplied
+# by the number of people in each health facility.
+
 # 2017 -----------------------------------------------------------------------------------
-model_1km_2017 <- glm(dr_2017~malariaProp_1km_2017, offset = log(expectedMalaria_1km_2017),
+model_1km_2017 <- glm(dr_2017~1+offset(log(expectedMalaria_1km_2017)),
                       data = kasungu_model_df, family = 'poisson', na.action = na.omit)
 # alias(model_1km_2017)
 # sjPlot::tab_model(model_1km_2017)
@@ -1167,8 +1163,10 @@ summary(model_3km_2020)
 
 
 ### Scatter plot
+Check how well the fitted values (i.e. predictions at data points) line up with the observations.
 ```{r}
 # 2017 model ------------------------------------------------------------------
+# plot fitted versus observed values
 ggplot() + geom_point(aes(model_1km_2019$fitted.values, kasungu_model_df$dr_2019))
 
 
@@ -1182,7 +1180,9 @@ pop_malaria_2017_2020 <- raster::shapefile(here::here("data/Kasungu_pop_malaria_
 
 pop_malaria_2017_2020$fitted_1km2019 <- round(model_1km_2019$fitted.values)
 
-mapview::mapview(pop_malaria_2019_2020, zcol = "fitted_1km2019")
+map <- mapview::mapview(pop_malaria_2017_2020, zcol = "fitted_1km2019")
+
+mapshot(map, "map.html", selfcontained = FALSE)
 
 
 ```
