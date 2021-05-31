@@ -1018,37 +1018,37 @@ kasungu_model_df <- cbind(hfc_1km_2017_df, hfc_2km_2017_df, hfc_3km_2017_df,
                           hfc_1km_2019_df, hfc_2km_2019_df, hfc_3km_2019_df,
                           hfc_1km_2020_df, hfc_2km_2020_df, hfc_3km_2020_df) %>% 
   dplyr::select(-FID) %>% 
-  dplyr::mutate(expected_1km_2017 = round(sum(dr_2017)/sum(pop_1km_2017, na.rm = TRUE)*pop_1km_2017),
-                expected_2km_2017 = round(sum(dr_2017)/sum(pop_2km_2017, na.rm = TRUE)*pop_2km_2017),
-                expected_3km_2017 = round(sum(dr_2017)/sum(pop_3km_2017, na.rm = TRUE)*pop_3km_2017)) %>% 
+  dplyr::mutate(expectedMalaria_1km_2017 = round(sum(dr_2017)/sum(pop_1km_2017, na.rm = TRUE)*pop_1km_2017),
+                expectedMalaria_2km_2017 = round(sum(dr_2017)/sum(pop_2km_2017, na.rm = TRUE)*pop_2km_2017),
+                expectedMalaria_3km_2017 = round(sum(dr_2017)/sum(pop_3km_2017, na.rm = TRUE)*pop_3km_2017)) %>% 
   
-  dplyr::mutate(expected_1km_2018 = round(sum(dr_2018)/sum(pop_1km_2018, na.rm = TRUE)*pop_1km_2018),
-                expected_2km_2018 = round(sum(dr_2018)/sum(pop_2km_2018, na.rm = TRUE)*pop_2km_2018),
-                expected_3km_2018 = round(sum(dr_2018)/sum(pop_3km_2018, na.rm = TRUE)*pop_3km_2018)) %>% 
+  dplyr::mutate(expectedMalaria_1km_2018 = round(sum(dr_2018)/sum(pop_1km_2018, na.rm = TRUE)*pop_1km_2018),
+                expectedMalaria_2km_2018 = round(sum(dr_2018)/sum(pop_2km_2018, na.rm = TRUE)*pop_2km_2018),
+                expectedMalaria_3km_2018 = round(sum(dr_2018)/sum(pop_3km_2018, na.rm = TRUE)*pop_3km_2018)) %>% 
   
-  dplyr::mutate(expected_1km_2019 = round(sum(dr_2019)/sum(pop_1km_2019, na.rm = TRUE)*pop_1km_2019),
-                expected_2km_2019 = round(sum(dr_2019)/sum(pop_2km_2019, na.rm = TRUE)*pop_2km_2019),
-                expected_3km_2019 = round(sum(dr_2019)/sum(pop_3km_2019, na.rm = TRUE)*pop_3km_2019)) %>% 
+  dplyr::mutate(expectedMalaria_1km_2019 = round(sum(dr_2019)/sum(pop_1km_2019, na.rm = TRUE)*pop_1km_2019),
+                expectedMalaria_2km_2019 = round(sum(dr_2019)/sum(pop_2km_2019, na.rm = TRUE)*pop_2km_2019),
+                expectedMalaria_3km_2019 = round(sum(dr_2019)/sum(pop_3km_2019, na.rm = TRUE)*pop_3km_2019)) %>% 
   
-  dplyr::mutate(expected_1km_2020 = round(sum(dr_2020)/sum(pop_1km_2020, na.rm = TRUE)*pop_1km_2020),
-                expected_2km_2020 = round(sum(dr_2020)/sum(pop_2km_2020, na.rm = TRUE)*pop_2km_2020),
-                expected_3km_2020 = round(sum(dr_2020)/sum(pop_3km_2020, na.rm = TRUE)*pop_3km_2020)) %>% 
+  dplyr::mutate(expectedMalaria_1km_2020 = round(sum(dr_2020)/sum(pop_1km_2020, na.rm = TRUE)*pop_1km_2020),
+                expectedMalaria_2km_2020 = round(sum(dr_2020)/sum(pop_2km_2020, na.rm = TRUE)*pop_2km_2020),
+                expectedMalaria_3km_2020 = round(sum(dr_2020)/sum(pop_3km_2020, na.rm = TRUE)*pop_3km_2020)) %>% 
   
-  dplyr::mutate(SMR_1km_2017 = round(dr_2017/expected_1km_2017,2),
-                SMR_2km_2017 = round(dr_2017/expected_2km_2017,2),
-                SMR_3km_2017 = round(dr_2017/expected_3km_2017,2)) %>% 
+  dplyr::mutate(SMR_1km_2017 = round(dr_2017/expectedMalaria_1km_2017,2),
+                SMR_2km_2017 = round(dr_2017/expectedMalaria_2km_2017,2),
+                SMR_3km_2017 = round(dr_2017/expectedMalaria_3km_2017,2)) %>% 
   
-  dplyr::mutate(SMR_1km_2018 = round(dr_2018/expected_1km_2018,2),
-                SMR_2km_2018 = round(dr_2018/expected_2km_2018,2),
-                SMR_3km_2018 = round(dr_2018/expected_3km_2018,2)) %>% 
+  dplyr::mutate(SMR_1km_2018 = round(dr_2018/expectedMalaria_1km_2018,2),
+                SMR_2km_2018 = round(dr_2018/expectedMalaria_2km_2018,2),
+                SMR_3km_2018 = round(dr_2018/expectedMalaria_3km_2018,2)) %>% 
   
-  dplyr::mutate(SMR_1km_2019 = round(dr_2019/expected_1km_2019,2),
-                SMR_2km_2019 = round(dr_2019/expected_2km_2019,2),
-                SMR_3km_2019 = round(dr_2019/expected_3km_2019,2)) %>% 
+  dplyr::mutate(SMR_1km_2019 = round(dr_2019/expectedMalaria_1km_2019,2),
+                SMR_2km_2019 = round(dr_2019/expectedMalaria_2km_2019,2),
+                SMR_3km_2019 = round(dr_2019/expectedMalaria_3km_2019,2)) %>% 
   
-  dplyr::mutate(SMR_1km_2020 = round(dr_2020/expected_1km_2020,2),
-                SMR_2km_2020 = round(dr_2020/expected_2km_2020,2),
-                SMR_3km_2020 = round(dr_2020/expected_3km_2020,2))
+  dplyr::mutate(SMR_1km_2020 = round(dr_2020/expectedMalaria_1km_2020,2),
+                SMR_2km_2020 = round(dr_2020/expectedMalaria_2km_2020,2),
+                SMR_3km_2020 = round(dr_2020/expectedMalaria_3km_2020,2))
 
 
 
@@ -1059,7 +1059,11 @@ table <- kasungu_model_df %>%
                 expectedMalaria_1km_2017, expectedMalaria_2km_2017, expectedMalaria_3km_2017, 
                 expectedMalaria_1km_2018, expectedMalaria_2km_2018, expectedMalaria_3km_2018, 
                 expectedMalaria_1km_2019, expectedMalaria_2km_2019, expectedMalaria_3km_2019, 
-                expectedMalaria_1km_2020, expectedMalaria_2km_2020, expectedMalaria_3km_2020) %>% 
+                expectedMalaria_1km_2020, expectedMalaria_2km_2020, expectedMalaria_3km_2020,
+                SMR_1km_2017, SMR_2km_2017, SMR_3km_2017,
+                SMR_1km_2018, SMR_2km_2018, SMR_3km_2018,
+                SMR_1km_2019, SMR_2km_2019, SMR_3km_2019,
+                SMR_1km_2020, SMR_2km_2020, SMR_3km_2020) %>% 
   kable %>%
   kableExtra::kable_styling(full_width = FALSE)
 
