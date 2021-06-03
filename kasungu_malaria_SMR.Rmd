@@ -140,7 +140,7 @@ dry_season_malaria_2017_2020 %>%
 
 ### View location of Kasungu health-care facilities within health facility catchment area
 Heath facility catchment area is the area from which a health facility attracts patients. The new health facility catchments polygon was generated from generic accessibility mapping script adapted from https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r The script requires two user supplied datasets: the `2015 friction surface`, which is available here:  http://www.map.ox.ac.uk/accessibility_to_cities/, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in GRASS GIS were run to make the final output map of new health facility catchment boundaries.
-```{r, warning = FALSE, message = FALSE, fig.cap='Fig 2. Kasungu Health-care Facilities and Catchment Areas'}
+```{r, warning = FALSE, message = FALSE, fig.cap='Fig 2. Kasungu health-care facilities and catchment areas'}
 
 # Using the complete.cases() function to select health centres with complete longitude and latitude coordinates
 # Aggregating Kasalika Health Centre and Kasungu District Hospital, and 
@@ -205,7 +205,7 @@ tm_shape(malire_new)+
 ### View raster population metadata and estimated population per grid-cell
 
 
-```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.4 Estimated total number of people per 1km grid-cell'}
+```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.3 Estimated total number of people per 1km grid-cell'}
 
 # Take a glimpse at the WorldPop raster layers
 kasungu_population_2017
@@ -303,7 +303,7 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
 malaria_by_catchment <- assign.malaria.data(malire_new, health_facility_aggr_sf)
 
 
-# Create a function to extract population from WroldPop raster file and assign ---------------------------
+# Create a function to extract population from WorldPop raster file and assign ---------------------------
 # the values to the new catchments.
 
 extract.pop.values <- function(kasungu_pop_raster, catchments){
@@ -353,7 +353,7 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
     dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
     dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
   
-  # # Convert to sf object
+  # Convert to sf object
   # pop_by_catchments_sf <- sf::st_as_sf(pop_by_catchments)
   
   return(out = pop_by_catchments)
@@ -375,9 +375,10 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 
 ### View population maps
 Estimated total number of people within health facility catchment areas.
-```{r, message=FALSE, fig.height = 7, fig.width = 7, fig.cap = 'Fig. 2: Estimated population in Kasungu health facility catchment areas'}
-# Function to create maps of estimated population by catchment areas ------------------------------------------------
-create.population.map <- function(catchment.area, variable = "pop", title, legend.title = "Estimated \n population"){
+```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 4: Estimated population in Kasungu health facility catchment areas'}
+# Function to create maps of estimated population by catchment areas ---------------------------------------
+create.population.map <- function(catchment.area, variable = "pop", title, 
+                                  legend.title = "Estimated \n population"){
   # estimated population map
   # catchment.area: estimated population layer from nachulu function
   # variable: variable name (as character, in qoutes)
@@ -402,7 +403,7 @@ create.population.map <- function(catchment.area, variable = "pop", title, legen
   tm_layout(legend.outside = TRUE) 
 }
 
-# Invoking the function -----------------------------------------------------------------------------------------
+# Invoking the function --------------------------------------------------------------------------------
 pop_by_catchment_2017 <- create.population.map(malaria_pop_by_catchment_2017, title = "2017")
 
 pop_by_catchment_2018 <- create.population.map(malaria_pop_by_catchment_2018, title = "2018")
@@ -489,7 +490,7 @@ SMR_table_2018 <- SMR_2018 %>%
  
  
 ### View observed and expected dry season malaria cases
-```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig 3: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
+```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig 5: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
 # Function to create maps of observed and expected dry season malaria cases
 create.malaria.map <- function(malaria.data, variable = NA, title = NA, legend.title = NA){
   # observed and expected malaria incidence map
@@ -571,7 +572,7 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 ```
 
 ### View SMR by catchment
-```{r, message=FALSE, fig.height = 7, fig.width = 7, fig.cap = 'Fig. 4: Standard Morbidity Rate by health facility catchment'}
+```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 6: Standard Morbidity Rate by health facility catchment'}
 
 # Function to create maps of Standard Morbidity Rate by catchment --------------------------
 create.smr.map <- function(smr.data, variable = "SMR", title = NA, legend.title = "SMR"){
@@ -612,5 +613,7 @@ tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol 
 
 
 ```
+
+
 
  
