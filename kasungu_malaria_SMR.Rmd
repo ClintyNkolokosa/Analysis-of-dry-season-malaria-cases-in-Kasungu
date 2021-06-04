@@ -394,11 +394,10 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 Estimated total number of people within health facility catchment areas.
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 4: Estimated population in Kasungu health facility catchment areas'}
 # Function to create maps of estimated population by catchment areas ---------------------------------------
-create.population.map <- function(
-  catchment.area, 
-  variable = "pop", 
-  title, 
-  legend.title = "Estimated \n population"){
+create.population.map <- function(catchment.area, 
+                                  variable = "pop", 
+                                  title, 
+                                  legend.title = "Estimated \n population"){
   # estimated population map
   # catchment.area: estimated population layer from nachulu function
   # variable: variable name (as character, in qoutes)
@@ -533,11 +532,10 @@ SMR_table_2020
 ### View observed and expected dry season malaria cases
 ```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig 5: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
 # Function to create maps of observed and expected dry season malaria cases
-create.malaria.map <- function(
-  malaria.data, 
-  variable = NA, 
-  title = NA, 
-  legend.title = NA){
+create.malaria.map <- function(malaria.data, 
+                               variable = NA, 
+                               title = NA, 
+                               legend.title = NA){
   # observed and expected malaria incidence map
   # malaria.data: data frame containing observed and expected malaria cases
   # variable: variable name (as character, in qoutes e.g. "observed")
@@ -563,56 +561,48 @@ create.malaria.map <- function(
 
 # Invoking the function
 # 2017 observed and expected malaria cases -------------------------------------
-observed_malaria_2017_map <- create.malaria.map(
-  malaria_pop_by_catchment_2017, 
-  variable = "dr_2017",
-  title = "2017",
-  legend.title = "Observed malaria")
+observed_malaria_2017_map <- create.malaria.map(malaria_pop_by_catchment_2017, 
+                                                variable = "dr_2017",
+                                                title = "2017",
+                                                legend.title = "Observed malaria")
 
-expected_malaria_2017_map <- create.malaria.map(
-  expected_malaria_2017,
-  variable = "expected_2017",
-  title = "2017",
-  legend.title = "Expected malaria")
+expected_malaria_2017_map <- create.malaria.map(expected_malaria_2017,
+                                                variable = "expected_2017",
+                                                title = "2017",
+                                                legend.title = "Expected malaria")
 
 # 2018 observed and expected malaria cases -------------------------------------
-observed_malaria_2018_map <- create.malaria.map(
-  malaria_pop_by_catchment_2018,
-  variable = "dr_2018",
-  title = "2018",
-  legend.title = "Observed malaria")
+observed_malaria_2018_map <- create.malaria.map(malaria_pop_by_catchment_2018,
+                                                variable = "dr_2018",
+                                                title = "2018",
+                                                legend.title = "Observed malaria")
 
-expected_malaria_2018_map <- create.malaria.map(
-  expected_malaria_2018,
-  variable = "expected_2018",
-  title = "2018",
-  legend.title = "Expected malaria")
+expected_malaria_2018_map <- create.malaria.map(expected_malaria_2018,
+                                                variable = "expected_2018",
+                                                title = "2018",
+                                                legend.title = "Expected malaria")
 
 # 2019 observed and expected malaria cases -------------------------------------
-observed_malaria_2019_map <- create.malaria.map(
-  malaria_pop_by_catchment_2019,
-  variable = "dr_2019",
-  title = "2019",
-  legend.title = "Observed malaria")
+observed_malaria_2019_map <- create.malaria.map(malaria_pop_by_catchment_2019,
+                                                variable = "dr_2019",
+                                                title = "2019",
+                                                legend.title = "Observed malaria")
 
-expected_malaria_2019_map <- create.malaria.map(
-  expected_malaria_2019,
-  variable = "expected_2019",
-  title = "2019",
-   legend.title = "Expected malaria")
+expected_malaria_2019_map <- create.malaria.map(expected_malaria_2019,
+                                                variable = "expected_2019",
+                                                title = "2019",
+                                                legend.title = "Expected malaria")
 
 # 2020 observed and expected malaria cases -------------------------------------
-observed_malaria_2020_map <- create.malaria.map(
-  malaria_pop_by_catchment_2020,
-  variable = "dr_2020",
-  title = "2020",
-  legend.title = "Observed malaria")
+observed_malaria_2020_map <- create.malaria.map(malaria_pop_by_catchment_2020,
+                                                variable = "dr_2020",
+                                                title = "2020",
+                                                legend.title = "Observed malaria")
 
-expected_malaria_2020_map <- create.malaria.map(
-  expected_malaria_2020,
-  variable = "expected_2020",
-  title = "2020",
-  legend.title = "Expected malaria")
+expected_malaria_2020_map <- create.malaria.map(expected_malaria_2020,
+                                                variable = "expected_2020",
+                                                title = "2020",
+                                                legend.title = "Expected malaria")
 # Layout maps
 
 tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
@@ -637,7 +627,10 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 # [1] 5.68
 
 # Function to create maps of Standard Morbidity Rate by catchment --------------------------
-create.smr.map <- function(smr.data, variable = "SMR", title = NA, legend.title = "SMR"){
+create.smr.map <- function(smr.data, 
+                           variable = "SMR", 
+                           title = NA, 
+                           legend.title = "SMR"){
   # SMR by catchment map
   # smr.data: sf polygon object containing SMR by catchment
   # variable: variable name (as character, in qoutes)
@@ -897,12 +890,11 @@ estimate.buffer.population <- function(catchment.population, buffers, catchment.
 
 # Invoking the function and calculating proportion of 
 # catchment population living within buffers
-# 2017 buffer population -----------------------------------------------------------------------------
+# 2017 buffer population -------------------------------------------------------
 buffer_pop_1km_2017 <- estimate.buffer.population(
   kasungu_population_2017, 
   buffer_1km_2017, 
-   malaria_pop_by_catchment_2017
-  ) %>% 
+   malaria_pop_by_catchment_2017) %>% 
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(
@@ -911,8 +903,7 @@ buffer_pop_1km_2017 <- estimate.buffer.population(
 buffer_pop_2km_2017 <- estimate.buffer.population(
   kasungu_population_2017,
   buffer_2km_2017,
-  malaria_pop_by_catchment_2017
-  ) %>% 
+  malaria_pop_by_catchment_2017) %>% 
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(
@@ -921,19 +912,17 @@ buffer_pop_2km_2017 <- estimate.buffer.population(
 buffer_pop_3km_2017 <- estimate.buffer.population(
   kasungu_population_2017,
   buffer_3km_2017,
-  malaria_pop_by_catchment_2017
-  ) %>% 
+  malaria_pop_by_catchment_2017) %>% 
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-# 2018 buffer population -------------------------------------------------------------------------------
+# 2018 buffer population -------------------------------------------------------
 buffer_pop_1km_2018 <- estimate.buffer.population(
   kasungu_population_2018,
   buffer_1km_2018,
-  malaria_pop_by_catchment_2018
-  ) %>% 
+  malaria_pop_by_catchment_2018) %>% 
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(
@@ -942,8 +931,7 @@ buffer_pop_1km_2018 <- estimate.buffer.population(
 buffer_pop_2km_2018 <- estimate.buffer.population(
   kasungu_population_2018,
   buffer_2km_2018,
-  malaria_pop_by_catchment_2018
-  ) %>% 
+  malaria_pop_by_catchment_2018) %>% 
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(
@@ -952,17 +940,42 @@ buffer_pop_2km_2018 <- estimate.buffer.population(
 buffer_pop_3km_2018 <- estimate.buffer.population(
   kasungu_population_2018,
   buffer_3km_2018,
-  malaria_pop_by_catchment_2018
-  ) %>% 
+  malaria_pop_by_catchment_2018) %>% 
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-# 2019 buffer population ------------------------------------------------------------------------------
-buffer_pop_1km_2019 <- est
+# 2019 buffer population -------------------------------------------------------
+buffer_pop_1km_2019 <- estimate.buffer.population(
+  kasungu_population_2019,
+  buffer_1km_2019,
+  malaria_pop_by_catchment_2019) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-  
+buffer_pop_2km_2019 <- estimate.buffer.population(
+  kasungu_population_2019,
+  buffer_2km_2019,
+  malaria_pop_by_catchment_2019) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+
+buffer_pop_3km_2019 <- estimate.buffer.population(
+  kasungu_population_2019,
+  buffer_3km_2019,
+  malaria_pop_by_catchment_2019) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+
+
+
 
 ```
 
