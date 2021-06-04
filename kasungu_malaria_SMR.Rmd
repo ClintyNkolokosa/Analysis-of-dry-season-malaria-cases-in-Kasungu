@@ -857,7 +857,7 @@ Extract the population living within waterbody buffers by catchment
 
 # Function to calculate estimated number of people living within waterbody buffers
 # in each catchment area
-estimate.buffer.population <- function(catchment.population, buffers, catchment.area){
+estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
   
   buffers$buffer_pop <- raster::extract(
     catchment.population, 
@@ -891,7 +891,7 @@ estimate.buffer.population <- function(catchment.population, buffers, catchment.
 # Invoking the function and calculating proportion of 
 # catchment population living within buffers
 # 2017 buffer population -------------------------------------------------------
-buffer_pop_1km_2017 <- estimate.buffer.population(
+buffer_pop_1km_2017 <- estimate.buffer.pop(
   kasungu_population_2017, 
   buffer_1km_2017, 
    malaria_pop_by_catchment_2017) %>% 
@@ -900,7 +900,7 @@ buffer_pop_1km_2017 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) 
 
-buffer_pop_2km_2017 <- estimate.buffer.population(
+buffer_pop_2km_2017 <- estimate.buffer.pop(
   kasungu_population_2017,
   buffer_2km_2017,
   malaria_pop_by_catchment_2017) %>% 
@@ -909,7 +909,7 @@ buffer_pop_2km_2017 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) 
 
-buffer_pop_3km_2017 <- estimate.buffer.population(
+buffer_pop_3km_2017 <- estimate.buffer.pop(
   kasungu_population_2017,
   buffer_3km_2017,
   malaria_pop_by_catchment_2017) %>% 
@@ -919,7 +919,7 @@ buffer_pop_3km_2017 <- estimate.buffer.population(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
 # 2018 buffer population -------------------------------------------------------
-buffer_pop_1km_2018 <- estimate.buffer.population(
+buffer_pop_1km_2018 <- estimate.buffer.pop(
   kasungu_population_2018,
   buffer_1km_2018,
   malaria_pop_by_catchment_2018) %>% 
@@ -928,7 +928,7 @@ buffer_pop_1km_2018 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-buffer_pop_2km_2018 <- estimate.buffer.population(
+buffer_pop_2km_2018 <- estimate.buffer.pop(
   kasungu_population_2018,
   buffer_2km_2018,
   malaria_pop_by_catchment_2018) %>% 
@@ -937,7 +937,7 @@ buffer_pop_2km_2018 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-buffer_pop_3km_2018 <- estimate.buffer.population(
+buffer_pop_3km_2018 <- estimate.buffer.pop(
   kasungu_population_2018,
   buffer_3km_2018,
   malaria_pop_by_catchment_2018) %>% 
@@ -947,7 +947,7 @@ buffer_pop_3km_2018 <- estimate.buffer.population(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
 # 2019 buffer population -------------------------------------------------------
-buffer_pop_1km_2019 <- estimate.buffer.population(
+buffer_pop_1km_2019 <- estimate.buffer.pop(
   kasungu_population_2019,
   buffer_1km_2019,
   malaria_pop_by_catchment_2019) %>% 
@@ -956,7 +956,7 @@ buffer_pop_1km_2019 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-buffer_pop_2km_2019 <- estimate.buffer.population(
+buffer_pop_2km_2019 <- estimate.buffer.pop(
   kasungu_population_2019,
   buffer_2km_2019,
   malaria_pop_by_catchment_2019) %>% 
@@ -965,7 +965,7 @@ buffer_pop_2km_2019 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
-buffer_pop_3km_2019 <- estimate.buffer.population(
+buffer_pop_3km_2019 <- estimate.buffer.pop(
   kasungu_population_2019,
   buffer_3km_2019,
   malaria_pop_by_catchment_2019) %>% 
@@ -974,15 +974,40 @@ buffer_pop_3km_2019 <- estimate.buffer.population(
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
+# 2020 buffer population -------------------------------------------------------
+buffer_pop_1km_2020 <- estimate.buffer.pop(
+  kasungu_population_2020,
+  buffer_1km_2020,
+  malaria_pop_by_catchment_2020) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
+buffer_pop_2km_2020 <- estimate.buffer.pop(
+  kasungu_population_2020,
+  buffer_2km_2020,
+  malaria_pop_by_catchment_2020) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
+buffer_pop_3km_2020 <- estimate.buffer.pop(
+  kasungu_population_2020,
+  buffer_3km_2020,
+  malaria_pop_by_catchment_2020) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
 
 ```
 
 
 Mapping proportion of catchment population living within waterbodies
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning = FALSE, fig.height = 8, fig.width = 11, fig.cap='Fig 8. Proportionof catchment living within in around water bodies'}
 
 # Function to create maps of proportion of people living in proximity ----------
 # to water bodies in each catchment area
@@ -1006,14 +1031,13 @@ create.pop.proportion.map <- function(
             palette = "YlOrBr",
             title = legend.title)+
     tm_borders(lw = 0.3)+
-    tm_layout(legend.position = c(0.1,"bottom"),
+    tm_layout(legend.position = c(0.7,"bottom"),
               legend.text.size = 0.5,
               legend.title.size = 0.7,
               frame = FALSE)+
     tm_credits(title, 
-               position = c(0.1, 0.8), 
-               size = 1)+
-  tm_layout(legend.outside = TRUE) 
+               position = c(0.1, 0.75), 
+               size = 1)
 }
 
 # Invoking function 
@@ -1031,7 +1055,7 @@ pop_proportion_2km_2017_map <- create.pop.proportion.map(
 pop_proportion_3km_2017_map <- create.pop.proportion.map(
   buffer_pop_3km_2017,
   title = "2017",
-  legend.title = "Population within \n1km buffers (%)")
+  legend.title = "Population within \n3km buffers (%)")
 
 # 2018 population proportion ---------------------------------------------------
 pop_proportion_1km_2018_map <- create.pop.proportion.map(
@@ -1042,11 +1066,53 @@ pop_proportion_1km_2018_map <- create.pop.proportion.map(
 pop_proportion_2km_2018_map <- create.pop.proportion.map(
   buffer_pop_2km_2018,
   title = "2018",
+  legend.title = "Population within \n2km buffers (%)")
+
+pop_proportion_3km_2018_map <- create.pop.proportion.map(
+  buffer_pop_3km_2018,
+  title = "2018",
+  legend.title = "Population within \n3km buffers (%)")
+
+# 2019 population proportion ---------------------------------------------------
+pop_proportion_1km_2019_map <- create.pop.proportion.map(
+  buffer_pop_1km_2019,
+  title = "2019",
   legend.title = "Population within \n1km buffers (%)")
+
+pop_proportion_2km_2019_map <- create.pop.proportion.map(
+  buffer_pop_2km_2019,
+  title = "2019",
+  legend.title = "Population within \n2km buffers (%)")
+
+pop_proportion_3km_2019_map <- create.pop.proportion.map(
+  buffer_pop_3km_2019,
+  title = "2019",
+  legend.title = "Population within \n3km buffers (%)")
+
+# 2020 population proportion ---------------------------------------------------
+pop_proportion_1km_2020_map <- create.pop.proportion.map(
+  buffer_pop_1km_2020,
+  title = "2020",
+  legend.title = "Population within \n1km buffers (%)")
+
+pop_proportion_2km_2020_map <- create.pop.proportion.map(
+  buffer_pop_2km_2020,
+  title = "2020",
+  legend.title = "Population within \n2km buffers (%)")
+
+pop_proportion_3km_2020_map <- create.pop.proportion.map(
+  buffer_pop_3km_2020,
+  title = "2020",
+  legend.title = "Population within \n3km buffers (%)")
+
+# Layout maps
 
 tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map, 
                    pop_proportion_3km_2017_map, pop_proportion_1km_2018_map,
-                    pop_proportion_2km_2018_map)
+                   pop_proportion_2km_2018_map, pop_proportion_3km_2018_map,
+                   pop_proportion_1km_2019_map, pop_proportion_2km_2019_map,
+                   pop_proportion_3km_2019_map, pop_proportion_1km_2020_map,
+                   pop_proportion_2km_2020_map, pop_proportion_3km_2020_map, ncol = 3)
 ```
 
 
