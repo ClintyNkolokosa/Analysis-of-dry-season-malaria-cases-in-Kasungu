@@ -81,9 +81,10 @@ write.csv(dry_season_malaria_2017_2020, file = "data/dry_season_malaria_2017_201
 # Kasungu district boundary shapefile 
 kasungu_district <- st_read(here::here("data", "kasungu_district.shp"))
   
-# Kasungu health facility catchments enerated from accessibility mapping
+# Kasungu health facility catchments generated from accessibility mapping
 
-malire_new <- sf::st_read(here::here("data", "Kasungu_new_health_fac_catchment_clip.shp")) 
+malire_new <- sf::st_read(here::here("data", "new_catchments.shp")) %>% 
+              sf::st_transform(32736) # reproject to WGS UTM Zone 36 South
 
 # Kasungu population raster layer
 kasungu_population_2017 <- raster(here::here("data", "ku_pop_2017_1km_aggregated.tif"))
@@ -121,7 +122,6 @@ We observe that Kasungu district has 30 health facilities classified as dispensa
 ```{r, warning = FALSE, message = FALSE, fig.height = 10, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
 
 dry_season_malaria_2017_2020 %>% 
-  glimpse() %>% 
   summary()
 
 dry_season_malaria_2017_2020 %>%  
@@ -185,10 +185,14 @@ zipatala_aggregated$dr_2019[which(zipatala_aggregated$Names == "Mziza Health Cen
 
 zipatala_aggregated$dr_2020[which(zipatala_aggregated$Names == "Mziza Health Centre")] <- 6194 + 2397
 
+# write.csv(zipatala_aggregated, "data/health_facilities_aggregated.csv")
+
 
 health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
                                         crs = 4326, agr = "constant")
+
+# st_write(health_facility_aggr_sf, "data/health_facilities_aggregated.shp")
 
 
 tm_shape(malire_new)+
@@ -211,8 +215,8 @@ tm_shape(malire_new)+
                text.size = .5)
 
 ```
-### View raster population metadata and estimated population per grid-cell
 
+### View raster population metadata and estimated population per grid-cell
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.3 Estimated total number of people per 1km grid-cell'}
 
@@ -294,8 +298,7 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
 
   # Add the extracted ID, health facility names and dry season malaria cases to 
   # the health facility catchments (hfc)
-  hfc_malaria_shp <- merge(catchment_shp, hospitals_in_catchment, 
-                               by.x = "DN", by.y = "FID")
+  hfc_malaria_shp <- merge(catchment_shp, hospitals_in_catchment, by.x = "DN", by.y = "FID")
 
   # Convert the shapefile containing malaria data to sf-object
   hfc_malaria_sf <- sf::st_as_sf(hfc_malaria_shp)
@@ -323,8 +326,14 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   # returns:
   #   catchments_malaria_pop_sf: sf polygon object with a data frame containing malaria and population data
   
+  # convert from sf to sp
+  catchments_sp <- as(catchments, "Spatial")
+  
+  # Match extent i.e projection
+  catchments_sp <- spTransform(catchments_sp, proj4string(kasungu_pop_raster))
+  
   # Crop and mask the population raster to exclude Kasungu National Park
-  pop_raster_clip <- raster::mask(raster::crop(kasungu_pop_raster, extent(catchments)), catchments)
+  pop_raster_clip <- raster::mask(raster::crop(kasungu_pop_raster, extent(catchments_sp)), catchments_sp)
   
   # Extracting zonal statistics from a population raster layer. 
   # The population raster is a continuous gridded surface layer that has an 
@@ -377,7 +386,6 @@ malaria_pop_by_catchment_2018 <- extract.pop.values(kasungu_population_2018, mal
 malaria_pop_by_catchment_2019 <- extract.pop.values(kasungu_population_2019, malaria_by_catchment)
 
 malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, malaria_by_catchment)
-
 
 
 ```
@@ -457,31 +465,23 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 %>%
 
 # Calculate Standard Morbidity Ratio (SMR) ---------------------------------------------------------
 SMR_2017 <- expected_malaria_2017 %>% 
-  dplyr::mutate(SMR = round(observed_2017/expected_2017,2)) %>% 
-  dplyr::select(Names, pop_2017, observed_2017, expected_2017, SMR) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
+  dplyr::mutate(SMR = round(observed_2017/expected_2017, 2)) %>% 
+  dplyr::select(Names, pop_2017, observed_2017, expected_2017, SMR) 
 
 # SMR_2017$SMR[which(SMR_2017$Names == "Newa Mpasazi Health Centre")] <- 0
 
 SMR_2018 <- expected_malaria_2018 %>% 
   dplyr::mutate(SMR = round(observed_2018/expected_2018, 2)) %>% 
-  dplyr::select(Names, pop_2018, observed_2018, expected_2018, SMR) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
+  dplyr::select(Names, pop_2018, observed_2018, expected_2018, SMR) 
 
 SMR_2019 <- expected_malaria_2019 %>% 
   dplyr::mutate(SMR = round(observed_2019/expected_2019, 2)) %>% 
-  dplyr::select(Names, pop_2019, observed_2019, expected_2019, SMR) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
+  dplyr::select(Names, pop_2019, observed_2019, expected_2019, SMR) 
 
 
 SMR_2020 <- expected_malaria_2020 %>% 
   dplyr::mutate(SMR = round(observed_2020/expected_2020, 2)) %>% 
-  dplyr::select(Names, pop_2020, observed_2020, expected_2020, SMR) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
-  dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
+  dplyr::select(Names, pop_2020, observed_2020, expected_2020, SMR)
 
 
 # Create SMR tables
@@ -607,6 +607,15 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 ### View SMR by catchment
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 6: Standard Morbidity Rate by health facility catchment'}
 
+#   max(SMR_2017$SMR)
+# [1] 6.93
+# > max(SMR_2018$SMR)
+# [1] 7.93
+# > max(SMR_2019$SMR)
+# [1] 7.71
+# > max(SMR_2020$SMR)
+# [1] 5.68
+
 # Function to create maps of Standard Morbidity Rate by catchment --------------------------
 create.smr.map <- function(smr.data, variable = "SMR", title = NA, legend.title = "SMR"){
   # SMR by catchment map
@@ -619,7 +628,7 @@ create.smr.map <- function(smr.data, variable = "SMR", title = NA, legend.title 
  
   tm_shape(smr.data)+
     tm_fill(col = variable, 
-            breaks = c(0, 0.5, 1, 1.5, 5, 10, 50, 100, 155, 200),
+            breaks = c(0, 0.5, 1, 1.5, 2, 2.5, 5, 8),
             palette = "-magma",
             title = legend.title)+
     tm_borders(lw = 0.3)+
@@ -693,20 +702,26 @@ create.waterbody.buffer <- function(waterbody, distance, catchment){
   # Dissolve the buffers
   buffer_union <- sf::st_as_sf(st_cast(st_union(buffer_radius),"MULTIPOLYGON"))
   
+  
   # Assign attributes of the 'catchment' to each of the water bodies. 
    buffer_intersect <- sf::st_intersection(buffer_union, catchment)
   
    buffer_intersect_sf <- sf::st_as_sf(buffer_intersect)
+   
+  # Convert the MULTIPOLYGON object into several POLYGON objects
+   buffer_intersect_polygons <- st_cast(st_buffer(buffer_intersect_sf,0.0), "MULTIPOLYGON") %>% 
+    st_cast("POLYGON")
+  
   
   # Polygons being seen to be in multiple catchments
-  sf::st_intersects(buffer_intersect_sf, catchment)
+  sf::st_intersects(buffer_intersect_polygons, catchment)
   
   # Make the assumption that the attribute is constant throughout the geometry
-  sf::st_agr(buffer_intersect_sf) = "constant"
+  sf::st_agr(buffer_intersect_polygons) = "constant"
   
   sf::st_agr(catchment) = "constant"
   
-  return(out = buffer_intersect_sf)
+  return(out = buffer_intersect_polygons)
 }
 
 
@@ -770,7 +785,7 @@ View the created waterbodies buffers
 ```{r, fig.height=9, fig.width=10, fig.cap='Fig 7. Buffers around open waterbodies in Kasungu'}
 
 # Map the buffers
-create.buffer.map <- function(buffers, boundary, title = NA){
+create.buffer.map <- function(buffers, boundary = malire_new, title = NA){
   # function for creating buffer map in ggplot
   # arguments:
   #   buffer:  waterbodies buffer polygon layer
@@ -788,56 +803,32 @@ create.buffer.map <- function(buffers, boundary, title = NA){
 
 # Invoking the function
 # For 2017 -------------------------------------------------------------------------------
-buffer_1km_2017_map <- create.buffer.map(buffer_1km_2017, 
-                                         malire_new, 
-                                         title = "2017: 1km Buffers")
+buffer_1km_2017_map <- create.buffer.map(buffer_1km_2017, title = "2017: 1km Buffers")
 
-buffer_2km_2017_map <- create.buffer.map(buffer_2km_2017, 
-                                         malire_new, 
-                                         title = "2017: 2km Buffers")
+buffer_2km_2017_map <- create.buffer.map(buffer_2km_2017, title = "2017: 2km Buffers")
 
-buffer_3km_2017_map <- create.buffer.map(buffer_3km_2017, 
-                                         malire_new, 
-                                         title = "2017: 3km Buffers")
+buffer_3km_2017_map <- create.buffer.map(buffer_3km_2017, title = "2017: 3km Buffers")
 
 # For 2018 --------------------------------------------------------------------------------
-buffer_1km_2018_map <- create.buffer.map(buffer_1km_2018, 
-                                         malire_new, 
-                                         title = "2018: 1km Buffers")
+buffer_1km_2018_map <- create.buffer.map(buffer_1km_2018, title = "2018: 1km Buffers")
 
-buffer_2km_2018_map <- create.buffer.map(buffer_2km_2018, 
-                                         malire_new, 
-                                         title = "2018: 2km Buffers")
+buffer_2km_2018_map <- create.buffer.map(buffer_2km_2018, title = "2018: 2km Buffers")
 
-buffer_3km_2018_map <- create.buffer.map(buffer_3km_2018, 
-                                         malire_new, 
-                                         title = "2018: 3km Buffers")
+buffer_3km_2018_map <- create.buffer.map(buffer_3km_2018, title = "2018: 3km Buffers")
 
 # For 2019 ---------------------------------------------------------------------------------
-buffer_1km_2019_map <- create.buffer.map(buffer_1km_2019, 
-                                         malire_new, 
-                                         title = "2019: 1km Buffers")
+buffer_1km_2019_map <- create.buffer.map(buffer_1km_2019, title = "2019: 1km Buffers")
 
-buffer_2km_2019_map <- create.buffer.map(buffer_2km_2019, 
-                                         malire_new, 
-                                         title = "2019: 2km Buffers")
+buffer_2km_2019_map <- create.buffer.map(buffer_2km_2019, title = "2019: 2km Buffers")
 
-buffer_3km_2019_map <- create.buffer.map(buffer_3km_2019, 
-                                         malire_new, 
-                                         title = "2019: 3km Buffers")
+buffer_3km_2019_map <- create.buffer.map(buffer_3km_2019, title = "2019: 3km Buffers")
 
 # For 2020 --------------------------------------------------------------------------------
-buffer_1km_2020_map <- create.buffer.map(buffer_1km_2020, 
-                                         malire_new, 
-                                         title = "2020: 1km Buffers")
+buffer_1km_2020_map <- create.buffer.map(buffer_1km_2020, title = "2020: 1km Buffers")
 
-buffer_2km_2020_map <- create.buffer.map(buffer_2km_2020, 
-                                         malire_new, 
-                                         title = "2020: 2km Buffers")
+buffer_2km_2020_map <- create.buffer.map(buffer_2km_2020, title = "2020: 2km Buffers")
 
-buffer_3km_2020_map <- create.buffer.map(buffer_3km_2020, 
-                                         malire_new, 
-                                         title = "2020: 3km Buffers")
+buffer_3km_2020_map <- create.buffer.map(buffer_3km_2020, title = "2020: 3km Buffers")
  
 grid.arrange(buffer_1km_2017_map, buffer_1km_2018_map, buffer_1km_2019_map, buffer_1km_2020_map,
              buffer_2km_2017_map, buffer_2km_2018_map, buffer_2km_2019_map, buffer_2km_2020_map, 
@@ -845,5 +836,140 @@ grid.arrange(buffer_1km_2017_map, buffer_1km_2018_map, buffer_1km_2019_map, buff
 
 
 ```
+
+Extract the population living within waterbody buffers by catchment
+
+```{r, message=FALSE, warning=FALSE}
+
+# Function to calculate estimated number of people living within waterbody buffers
+# in each catchment area
+estimate.buffer.population <- function(catchment.population, buffers, catchment.area){
+  
+  buffers$buffer_pop <- raster::extract(catchment.population, buffers, fun = sum, na.rm = TRUE)
+                                               
+                                              
+  # Find which catchment each polygon belongs to using its centroid - a point dataset 
+  # representing the geographic center-points of the polygons 
+  buffer_by_catchment <- st_intersection(st_centroid(buffers), catchment.area)
+  
+  # Notice that the buffer_catchment is comprised of separate POLYGONS (buffer_by_catchment$x). 
+  # The first step is to “dissolve” away these POLYGONS into one MULTIPOLYGON. 
+  # There is no sf equivalent to the ArcMap “dissolve” operation. 
+  # Instead we use a combination of group_by and summarize from the dplyr package. 
+  # Stats::aggregate from sf package, and dplyr::summarize both do essentially the same.
+   buffer_pop_aggregated <- buffer_by_catchment %>% dplyr::group_by(DN) %>%
+    summarize(buffer_pop_aggregated = round(sum(buffer_pop, na.rm = TRUE)))
+   
+  buffer_pop <- merge(catchment.area, st_drop_geometry(buffer_pop_aggregated), by = 'DN', all.x = TRUE)
+  
+  return(out = buffer_pop)
+  
+}
+
+# Invoking the function and calculating proportion of 
+# catchment population living within buffers
+# 2017 buffer population -----------------------------------------------------------------------------
+buffer_pop_1km_2017 <- estimate.buffer.population(kasungu_population_2017, 
+                                                  buffer_1km_2017, 
+                                                  malaria_pop_by_catchment_2017) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) 
+
+buffer_pop_2km_2017 <- estimate.buffer.population(kasungu_population_2017,
+                                                  buffer_2km_2017,
+                                                  malaria_pop_by_catchment_2017) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) 
+
+buffer_pop_3km_2017 <- estimate.buffer.population(kasungu_population_2017,
+                                                  buffer_3km_2017,
+                                                  malaria_pop_by_catchment_2017) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+
+# 2018 buffer population -------------------------------------------------------------------------------
+buffer_pop_1km_2018 <- estimate.buffer.population(kasungu_population_2018,
+                                                  buffer_1km_2018,
+                                                  malaria_pop_by_catchment_2018) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+
+buffer_pop_2km_2018 <- estimate.buffer.population(kasungu_population_2018,
+                                                  buffer_2km_2018,
+                                                  malaria_pop_by_catchment_2018) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+
+buffer_pop_3km_2018 <- estimate.buffer.population(kasungu_population_2018,
+                                                  buffer_3km_2018,
+                                                  malaria_pop_by_catchment_2018) %>% 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) %>% 
+  dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+  
+
+```
+
+
+Mapping proportion of catchment population living within waterbodies
+
+```{r, message=FALSE}
+
+# Function to create maps of proportion of people living in proximity ------------------------------------
+# to water bodies in each catchment area
+create.pop.proportion.map <- function(pop.data, variable = "prop_buffer_catchment_pop", 
+                                      title = NA, legend.title = NA){
+  # SMR by catchment map
+  # pop.data: sf polygon object containing proportion of catchment population 
+  #           living within waterbodies
+  # variable: variable name (as character, in qoutes)
+  # title: map title in quotes
+  # legend.title: legend title in qoutes
+  # returns:
+  #   a tmap-element (plots a map)
+ 
+  tm_shape(pop.data)+
+    tm_fill(col = variable, 
+            breaks = c(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100),
+            palette = "YlOrBr",
+            title = legend.title)+
+    tm_borders(lw = 0.3)+
+    tm_layout(legend.position = c(0.1,"bottom"),
+              legend.text.size = 0.5,
+              legend.title.size = 0.7,
+              frame = FALSE)+
+    tm_credits(title, 
+               position = c(0.1, 0.8), 
+               size = 1)+
+  tm_layout(legend.outside = TRUE) 
+}
+
+# Invoking function 
+# 2017 population proportion ----------------------------------------------------------------------------------
+pop_proportion_1km_2017_map <- create.pop.proportion.map(buffer_pop_1km_2017, 
+                                                         title = "2017",
+                                                         legend.title = "Population within \n1km buffers (%)")
+
+pop_proportion_2km_2017_map <- create.pop.proportion.map(buffer_pop_2km_2017, 
+                                                         title = "2017",
+                                                         legend.title = "Population within \n2km buffers (%)")
+
+pop_proportion_3km_2017_map <- create.pop.proportion.map(buffer_pop_3km_2017,
+                                                         title = "2017",
+                                                         legend.title = "Population within \n1km buffers (%)")
+
+# 2018 population proportion ----------------------------------------------------------------------------------
+pop_proportion_1km_2018_map <- create.pop.proportion.map(buffer_pop_1km_2018,
+                                                         title = "2018",
+                                                         legend.title = "Population within \n1km buffers (%)")
+
+tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map, pop_proportion_3km_2017_map)
+```
+
 
  
