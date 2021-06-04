@@ -1007,7 +1007,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 Mapping proportion of catchment population living within waterbodies
 
-```{r, message=FALSE, warning = FALSE, fig.height = 8, fig.width = 11, fig.cap='Fig 8. Proportionof catchment living within in around water bodies'}
+```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig 8. Proportionof catchment living within in around water bodies'}
 
 # Function to create maps of proportion of people living in proximity ----------
 # to water bodies in each catchment area
@@ -1031,12 +1031,12 @@ create.pop.proportion.map <- function(
             palette = "YlOrBr",
             title = legend.title)+
     tm_borders(lw = 0.3)+
-    tm_layout(legend.position = c(0.7,"bottom"),
+    tm_layout(legend.position = c(0.8,"bottom"),
               legend.text.size = 0.5,
               legend.title.size = 0.7,
               frame = FALSE)+
     tm_credits(title, 
-               position = c(0.1, 0.75), 
+               position = c(0.25, 0.75), 
                size = 1)
 }
 
