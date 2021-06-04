@@ -465,22 +465,19 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 %>%
 
 # Calculate Standard Morbidity Ratio (SMR) ---------------------------------------------------------
 SMR_2017 <- expected_malaria_2017 %>% 
-  dplyr::mutate(SMR = round(observed_2017/expected_2017, 2)) %>% 
+  dplyr::mutate(SMR = round(observed_2017/expected_2017, 1)) %>% 
   dplyr::select(Names, pop_2017, observed_2017, expected_2017, SMR) 
 
-# SMR_2017$SMR[which(SMR_2017$Names == "Newa Mpasazi Health Centre")] <- 0
-
 SMR_2018 <- expected_malaria_2018 %>% 
-  dplyr::mutate(SMR = round(observed_2018/expected_2018, 2)) %>% 
+  dplyr::mutate(SMR = round(observed_2018/expected_2018, 1)) %>% 
   dplyr::select(Names, pop_2018, observed_2018, expected_2018, SMR) 
 
 SMR_2019 <- expected_malaria_2019 %>% 
-  dplyr::mutate(SMR = round(observed_2019/expected_2019, 2)) %>% 
+  dplyr::mutate(SMR = round(observed_2019/expected_2019, 1)) %>% 
   dplyr::select(Names, pop_2019, observed_2019, expected_2019, SMR) 
 
-
 SMR_2020 <- expected_malaria_2020 %>% 
-  dplyr::mutate(SMR = round(observed_2020/expected_2020, 2)) %>% 
+  dplyr::mutate(SMR = round(observed_2020/expected_2020, 1)) %>% 
   dplyr::select(Names, pop_2020, observed_2020, expected_2020, SMR)
 
 
