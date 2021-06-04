@@ -911,6 +911,10 @@ buffer_pop_3km_2018 <- estimate.buffer.population(kasungu_population_2018,
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) %>% 
   dplyr::mutate(prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+
+# 2019 buffer population ------------------------------------------------------------------------------
+buffer_pop_1km_2019 <- est
+
   
 
 ```
@@ -968,7 +972,12 @@ pop_proportion_1km_2018_map <- create.pop.proportion.map(buffer_pop_1km_2018,
                                                          title = "2018",
                                                          legend.title = "Population within \n1km buffers (%)")
 
-tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map, pop_proportion_3km_2017_map)
+pop_proportion_2km_2018_map <- create.pop.proportion.map(buffer_pop_2km_2018,
+                                                         title = "2018",
+                                                         legend.title = "Population within \n1km buffers (%)")
+
+tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map, pop_proportion_3km_2017_map,
+                   pop_proportion_1km_2018_map, pop_proportion_2km_2018_map)
 ```
 
 
