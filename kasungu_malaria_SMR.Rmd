@@ -1134,7 +1134,7 @@ tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map,
 
 ### Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.width=10, fig.cap='Fig 9. Relation between standardised morbidity ratio and living near waterbodies'}
 
 # Create function to tidy and bind the SMR and proportion of -------------------
 # buffer-catchment population data frames
@@ -1186,9 +1186,9 @@ scatter_1km_2017 <- ggplot2::ggplot(
               col = "#C42126",
               se = FALSE,
               size = 1)+
-  labs(x = "Percentage of catchment population living in 1km buffers",
+  labs(x = "Percentage of catchment population \nliving in 1km buffers",
        y = "Standardised morbidity ratio",
-       title = "Relation between SMR and living near waterbodies")
+       title = "2017")
 
 scatter_2km_2017 <- ggplot2::ggplot(
   smr_pop_2017, 
@@ -1200,9 +1200,9 @@ scatter_2km_2017 <- ggplot2::ggplot(
               col = "#C42126",
               se = FALSE,
               size = 1)+
-  labs(x = "Percentage of catchment population living in 2km buffers",
+  labs(x = "Percentage of catchment population \nliving in 2km buffers",
        y = "Standardised morbidity ratio",
-       title = "Relation between SMR and living near waterbodies")
+       title = "2017")
 
 scatter_3km_2017 <- ggplot2::ggplot(
   smr_pop_2017, 
@@ -1214,11 +1214,76 @@ scatter_3km_2017 <- ggplot2::ggplot(
               col = "#C42126",
               se = FALSE,
               size = 1)+
-  labs(x = "Percentage of catchment population living in 3km buffers",
+  labs(x = "Percentage of catchment population \nliving in 3km buffers",
+       y = "SMR",
+       title = "2017")
+
+# 2018 scatter plots -----------------------------------------------------------
+scatter_1km_2018 <- ggplot2::ggplot(
+  smr_pop_2018, 
+  aes(x = prop_pop_1km, 
+      y = SMR))+
+  geom_point()+
+  theme_classic()+
+  stat_smooth(method = "lm",
+              col = "#C42126",
+              se = FALSE,
+              size = 1)+
+  labs(x = "Percentage of catchment population \nliving in 1km buffers",
        y = "Standardised morbidity ratio",
-       title = "Relation between SMR and living near waterbodies")
+       title = "2018")
+
+scatter_2km_2018 <- ggplot2::ggplot(
+  smr_pop_2017, 
+  aes(x = prop_pop_2km, 
+      y = SMR))+
+  geom_point()+
+  theme_classic()+
+  stat_smooth(method = "lm",
+              col = "#C42126",
+              se = FALSE,
+              size = 1)+
+  labs(x = "Percentage of catchment population \nliving in 2km buffers",
+       y = "Standardised morbidity ratio",
+       title = "2018")
+
+scatter_3km_2018 <- ggplot2::ggplot(
+  smr_pop_2018, 
+  aes(x = prop_pop_3km, 
+      y = SMR))+
+  geom_point()+
+  theme_classic()+
+  stat_smooth(method = "lm",
+              col = "#C42126",
+              se = FALSE,
+              size = 1)+
+  labs(x = "Percentage of catchment population \nliving in 3km buffers",
+       y = "Standardised morbidity ratio",
+       title = "2018")
+
+# 2019 scatter plot ------------------------------------------------------------
+scatter_1km_2019 <- ggplot2::ggplot(
+  smr_pop_2019, 
+  aes(x = prop_pop_1km, 
+      y = SMR))+
+  geom_point()+
+  theme_classic()+
+  stat_smooth(method = "lm",
+              col = "#C42126",
+              se = FALSE,
+              size = 1)+
+  labs(x = "Percentage of catchment population \nliving in 1km buffers",
+       y = "Standardised morbidity ratio",
+       title = "2019")
 
 
+
+
+# Create a list of plots -------------------------------------------------------
+plot_lists <- list(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017)
+
+# Arranging the plots
+grid.arrange(grobs = plot_lists, ncol = 3)
 
 scatter_1km_2017
 
