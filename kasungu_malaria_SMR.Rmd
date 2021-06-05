@@ -641,7 +641,7 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 ### View SMR by catchment
 
 A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred.
-```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 6: Standard Morbidity Rate by health facility catchment'}
+```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 6: Standardised morbidity ratio of malaria by health facility catchment'}
 
 #   max(SMR_2017$SMR)
 # [1] 6.93
@@ -696,7 +696,7 @@ tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol 
 ```
 
 ### Calculate the proportion of the catchment population living within 1km, 2km, 3km of water bodies
-First, using `st_buffer`, we compute 1km, 2km and 3km buffers around dry season water bodies obtained from LandSat satellite imagery using TropWet tool in Google Earth Engine. Then geometry of the buffer features are then combined resulting in resolved internal boundaries to enable extracting population values from WorldPop raster. Finally, we calculate the proportion of people in each catchment area living within water bodies.
+First, using `st_buffer`, we compute 1km, 2km and 3km buffers around dry season water bodies obtained from LandSat satellite imagery using `TropWet` tool in Google Earth Engine. Then geometry of the buffer features are then combined resulting in resolved internal boundaries to enable extracting population values from WorldPop raster. Finally, we calculate the proportion of people in each catchment area living within water bodies.
 ```{r, message=FALSE, warning=FALSE}
 # Combine and transform TropWet derived waterbody polygons -------------------------------
 surface_waterbodies_2017 <- sf::st_as_sf(
@@ -736,7 +736,6 @@ create.waterbody.buffer <- function(waterbody, distance, catchment){
   # Dissolve the buffers
   buffer_union <- sf::st_as_sf(st_cast(st_union(buffer_radius),"MULTIPOLYGON"))
   
-  
   # Assign attributes of the 'catchment' to each of the water bodies. 
    buffer_intersect <- sf::st_intersection(buffer_union, catchment)
   
@@ -747,14 +746,13 @@ create.waterbody.buffer <- function(waterbody, distance, catchment){
      sf::st_buffer(buffer_intersect_sf,0.0), "MULTIPOLYGON") %>% 
      sf::st_cast("POLYGON")
   
-  
   # Polygons being seen to be in multiple catchments
-  sf::st_intersects(buffer_intersect_polygons, catchment)
+   sf::st_intersects(buffer_intersect_polygons, catchment)
   
   # Make the assumption that the attribute is constant throughout the geometry
-  sf::st_agr(buffer_intersect_polygons) = "constant"
-  
-  sf::st_agr(catchment) = "constant"
+   sf::st_agr(buffer_intersect_polygons) = "constant"
+   
+   sf::st_agr(catchment) = "constant"
   
   return(out = buffer_intersect_polygons)
 }
@@ -815,7 +813,7 @@ buffer_3km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020,
 
 ```
 
-View the created waterbodies buffers 
+View the created waterbody buffers 
 
 ```{r, fig.height=9, fig.width=10, fig.cap='Fig 7. Buffers around open waterbodies in Kasungu'}
 
@@ -824,7 +822,7 @@ create.buffer.map <- function(buffers, boundary = malire_new, title = NA){
   # function for creating buffer map in ggplot
   # arguments:
   #   buffer:  waterbodies buffer polygon layer
-  #   boundary: Kasungu district boundary layer
+  #   boundary: health facility catchment polygons
   #   title: main title
   # returns:
   #   a map-element (plots a map)
@@ -872,7 +870,7 @@ grid.arrange(buffer_1km_2017_map, buffer_1km_2018_map, buffer_1km_2019_map, buff
 
 ```
 
-Extract the population living within waterbody buffers by catchment
+Extract the population living within waterbody buffers by catchment area
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -880,11 +878,11 @@ Extract the population living within waterbody buffers by catchment
 # in each catchment area
 estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
   
-  buffers$buffer_pop <- raster::extract(
-    catchment.population, 
-    buffers, 
-    fun = sum, 
-    na.rm = TRUE)
+  # Extract population estimates from WorldPop raster
+  buffers$buffer_pop <- raster::extract(catchment.population,
+                                        buffers, 
+                                        fun = sum, 
+                                        na.rm = TRUE)
                                                
                                               
   # Find which catchment each polygon belongs to using its centroid - a point dataset 
@@ -1032,11 +1030,10 @@ Mapping proportion of catchment population living within waterbodies
 
 # Function to create maps of proportion of people living in proximity ----------
 # to water bodies in each catchment area
-create.pop.proportion.map <- function(
-  pop.data, 
-  variable = "prop_buffer_catchment_pop", 
-  title = NA, 
-  legend.title = NA){
+create.pop.proportion.map <- function(pop.data, 
+                                      variable = "prop_buffer_catchment_pop", 
+                                      title = NA, 
+                                      legend.title = NA){
   # SMR by catchment map
   # pop.data: sf polygon object containing proportion of catchment population 
   #           living within waterbodies
