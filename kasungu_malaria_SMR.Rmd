@@ -1,11 +1,16 @@
 ---
-title: "Analysis of Standard Morbidity Ratio on Recorded Dry Season Malaria Incidences in Kasungu"
+title: "Analysis of Role of Dams on Recorded Dry Season Malaria Incidences in Kasungu"
 output: html_document
 latex_engine: MiKTeX
 author: Clinton Nkolokosa
 date: " Last edited `r format(Sys.time(),'%d %B %Y')`"
 ---
-This geospatial statistical model uses routinely collected malaria case data, population data and remotely sensed data, such as open and vegetated water bodies, to estimate population living around open water bodies, and ultimately quantify the association between proximity to larval habitat and malaria risk in health facility catchment areas in Kasungu. Buffers around waterbodies are created and then combined with population data in raster format to estimate the total population that is within the buffer. Subsequently, the observed malaria cases are modeled using `Poisson regression` to find out if living within various distances from water bodies is causing variability in malaria risk in Kasungu district. We hypothesize that the risk of being a case in a catchment is dependent on proximity to water bodies. The data used spans from 2015 to 2020 and was derived from digitized DHIS2 malaria records, accessibility mapping, aggregated population geospatial layer and TropWet tool in Google Earth Engine. 
+This geospatial statistical model uses routinely collected malaria case data, population data and remotely sensed data, such as open and vegetated water bodies, to estimate population living around open water bodies, expected malaria cases, and `standardised morbidity ratio` (SMR) of malaria. And ultimately, quantify the association between proximity to larval habitat and malaria risk in health facility catchment areas in Kasungu. The SMR compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
+
+We do this by comparing what we *observe* (O) with what we'd *expect* (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
+$$SMR_i = \frac{O_i}{E_i}$$
+
+Buffers around waterbodies are created and then combined with population data in raster format to estimate the total population that is within the buffer. Subsequently, the observed malaria cases are modeled using `Poisson regression` to find out if living within various distances from water bodies is causing variability in malaria risk in Kasungu district. We hypothesize that the risk of being a case in a catchment is dependent on proximity to water bodies. The data used spans from 2017 to 2020 and was derived from digitized DHIS2 malaria records, accessibility mapping, aggregated population geospatial layer and TropWet tool in Google Earth Engine. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.align = 'center', echo = TRUE)
@@ -47,7 +52,11 @@ here::here()
 
 ### Load datasets
 
-The total dry season malaria cases recorded at health-care facilities in Kasungu from 2017 to 2019 are contained in the `KasunguData.csv` sourced from https://dhis2.health.gov.mw/. The `kasungu_facility_catchments_2004.shp` shapefile also contains the population and health information within each health-facility catchment area in Kasungu district. The aggregated population raster layers for Malawi e.g.,`ku_pop_2017_1km_aggregated.tif` were downloaded from the Open Spatial and Demographic and Data Research website: https://www.worldpop.org/geodata/country?iso3=MWI. These layers estimate total number of people per grid-cell. The units are number of people per pixel with country totals adjusted to match the corresponding official United Nations population estimates. The datasets were downloaded in Geotiff at a resolution of 1km and are projected in Geographic Coordinate System, WGS84. The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated waterbodies polygons, detected using the Tropical Wetland Unmixing Tool (TropWet). TropWet is a Google Earth Engine hosted toolbox that uses the Landsat archive to map tropical wetlands and can be accessed through: https://www.aber.ac.uk/en/dges/research/earth-observation-laboratory/research/tropwet/
+The total dry season malaria cases recorded at health-care facilities in Kasungu from 2017 to 2019 are contained in the `KasunguData.csv` sourced from https://dhis2.health.gov.mw/. The `kasungu_facility_catchments_2004.shp` shapefile also contains the population and health information within each health-facility catchment area in Kasungu district. 
+
+The aggregated population raster layers for Malawi e.g.,`ku_pop_2017_1km_aggregated.tif` were downloaded from the Open Spatial and Demographic and Data Research website: https://www.worldpop.org/geodata/country?iso3=MWI. These layers estimate total number of people per grid-cell. The units are number of people per pixel with country totals adjusted to match the corresponding official United Nations population estimates. The datasets were downloaded in Geotiff at a resolution of 1km and are projected in Geographic Coordinate System, WGS84. 
+
+The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated waterbodies polygons, detected using the Tropical Wetland Unmixing Tool (TropWet). TropWet is a Google Earth Engine hosted toolbox that uses the Landsat archive to map tropical wetlands and can be accessed through: https://www.aber.ac.uk/en/dges/research/earth-observation-laboratory/research/tropwet/
 
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
@@ -117,7 +126,7 @@ dryseason_waterbodies_2020$ID <- 1:nrow(dryseason_waterbodies_2020)
 
 ### View the dry season malaria case data
 
-We observe that Kasungu district has 30 health facilities classified as dispensary, health centre, district hospital and rural hospital and the highest malaria cases were recorded at Kasungu District Hospital. 
+We observe that Kasungu district has 30 health facilities classified as dispensary, health centre, district hospital and rural hospital, and the highest malaria cases were recorded at Kasungu District Hospital. 
 
 ```{r, warning = FALSE, message = FALSE, fig.height = 10, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
 
@@ -147,13 +156,15 @@ dry_season_malaria_2017_2020 %>%
 ```
 
 
-### View location of Kasungu health-care facilities within health facility catchment area
+### Kasungu health-care facilities and their health facility catchment areas
 Heath facility catchment area is the area from which a health facility attracts patients. The new health facility catchments polygon was generated from generic accessibility mapping script adapted from https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r The script requires two user supplied datasets: the `2015 friction surface`, which is available here:  http://www.map.ox.ac.uk/accessibility_to_cities/, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in GRASS GIS were run to make the final output map of new health facility catchment boundaries.
-```{r, warning = FALSE, message = FALSE, fig.cap='Fig 2. Kasungu health-care facilities and catchment areas'}
+```{r, warning = FALSE, message = FALSE}
 
-# Using the complete.cases() function to select health centres with complete longitude and latitude coordinates
-# Aggregating Kasalika Health Centre and Kasungu District Hospital, and 
-# Kaluluma Rural Hospital and Nkhamenya Rural Hospital malaria cases
+# Using the complete.cases() function to select health centres with complete 
+# longitude and latitude coordinates.
+# The health facilities close to each other e.g., Kasalika Health Centre and 
+# Kasungu District Hospital, and Kaluluma Rural Hospital and Nkhamenya Rural Hospital
+# were aggregated in order to generate catchment areas that are geographically correct
 
 
 zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] %>% 
@@ -194,7 +205,14 @@ health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
 
 # st_write(health_facility_aggr_sf, "data/health_facilities_aggregated.shp")
 
+```
 
+
+View location of the health facilities in the new catchment areas
+
+```{r, message=FALSE, fig.cap='Fig 2. Kasungu health-care facilities and catchment areas'}
+
+# Plot map
 tm_shape(malire_new)+
   tm_polygons()+
   tm_shape(health_facility_aggr_sf)+
@@ -216,7 +234,8 @@ tm_shape(malire_new)+
 
 ```
 
-### View raster population metadata and estimated population per grid-cell
+
+### Kasungu district estimated population per grid-cell
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.3 Estimated total number of people per 1km grid-cell'}
 
@@ -314,6 +333,11 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
 # Invoking the function ----------------------------------------------------------------------------------
 malaria_by_catchment <- assign.malaria.data(malire_new, health_facility_aggr_sf)
 
+```
+
+Assign population data to the health catchment areas
+
+```{r, message=FALSE}
 
 # Create a function to extract population from WorldPop raster file and assign ---------------------------
 # the values to the new catchments.
@@ -390,6 +414,7 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 
 ```
 
+
 ### View population maps
 Estimated total number of people within health facility catchment areas.
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 4: Estimated population in Kasungu health facility catchment areas'}
@@ -439,6 +464,8 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 ### Calculate the expected number of cases for each catchment area 
 
+The `expected` number of dry season malaria cases in catchment *i* are calculated as the observed risk (r) of malaria i.e. the total number of malaria cases in the catchment area divided by the total population of Kasungu district, multiplied by the number of people in that catchment area: $$E_i = \frac{\sum_i O_i}{\sum_i N_i}\times N_i$$
+
 Expected number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, that is, no difference in infection rates between the catchment areas.
  
 ```{r, message=FALSE}
@@ -473,7 +500,17 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 %>%
     expected_2020 = round(sum(observed_2020)/sum(pop_2020, na.rm = TRUE)*pop_2020))
 
 
-# Calculate Standard Morbidity Ratio (SMR) ---------------------------------------------------------
+```
+
+### Calculate the Standard Morbidity Ratio of malaria incidences for each catchment area 
+
+The standardised morbidity ratio (SMR) compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
+
+We do this by comparing what we *observe* (O) with what we'd *expect* (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
+$$SMR_i = \frac{O_i}{E_i}$$
+
+```{r}
+# Calculate Standard Morbidity Ratio (SMR) -------------------------------------
 SMR_2017 <- expected_malaria_2017 %>% 
   dplyr::mutate(SMR = round(observed_2017/expected_2017, 1)) %>% 
   dplyr::select(Names, pop_2017, observed_2017, expected_2017, SMR) 
@@ -491,7 +528,7 @@ SMR_2020 <- expected_malaria_2020 %>%
   dplyr::select(Names, pop_2020, observed_2020, expected_2020, SMR)
 
 
-# Create SMR tables
+# Create SMR tables ------------------------------------------------------------
 SMR_table_2017 <- SMR_2017 %>% 
   dplyr::as_tibble() %>% 
   dplyr::select(-geometry) %>% 
@@ -524,10 +561,8 @@ SMR_table_2019
 
 SMR_table_2020
 
-
-
 ```
- 
+
  
 ### View observed and expected dry season malaria cases
 ```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig 5: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
@@ -677,26 +712,22 @@ First, using `st_buffer`, we compute 1km, 2km and 3km buffers around dry season 
 surface_waterbodies_2017 <- sf::st_as_sf(
   st_cast(
     st_union(
-      st_buffer(dryseason_waterbodies_2017, dist = 30)), "POLYGON")
-  )
+      st_buffer(dryseason_waterbodies_2017, dist = 30)), "POLYGON"))
 
 surface_waterbodies_2018 <- sf::st_as_sf(
   st_cast(
     st_union(
-      st_buffer(dryseason_waterbodies_2018, dist = 30)), "POLYGON")
-  )
+      st_buffer(dryseason_waterbodies_2018, dist = 30)), "POLYGON"))
 
 surface_waterbodies_2019 <- sf::st_as_sf(
   st_cast(
     st_union(
-      st_buffer(dryseason_waterbodies_2019, dist = 30)), "POLYGON")
-  )
+      st_buffer(dryseason_waterbodies_2019, dist = 30)), "POLYGON"))
 
 surface_waterbodies_2020 <- sf::st_as_sf(
   st_cast(
     st_union(
-      st_buffer(dryseason_waterbodies_2020, dist = 30)), "POLYGON")
-  )
+      st_buffer(dryseason_waterbodies_2020, dist = 30)), "POLYGON"))
 
 # Create function to compute 1km, 2km and 3km buffers around the water bodies ---------------------
 
