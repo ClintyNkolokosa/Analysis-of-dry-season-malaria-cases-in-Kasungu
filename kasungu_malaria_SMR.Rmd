@@ -1174,7 +1174,6 @@ smr_pop_2019 <- tidy.data(SMR_2019, buffer_pop_1km_2019, buffer_pop_2km_2019, bu
 
 smr_pop_2020 <- tidy.data(SMR_2020, buffer_pop_1km_2020, buffer_pop_2km_2020, buffer_pop_3km_2020)
 
-# Invoking the function 
 # 2017 scatter plots -----------------------------------------------------------
 scatter_1km_2017 <- ggplot2::ggplot(
   smr_pop_2017, 
@@ -1182,10 +1181,8 @@ scatter_1km_2017 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 1km buffers",
        y = "SMR",
        title = "2017")
@@ -1196,10 +1193,8 @@ scatter_2km_2017 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 2km buffers",
        y = "SMR")
 
@@ -1209,10 +1204,8 @@ scatter_3km_2017 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 3km buffers",
        y = "SMR")
 
@@ -1223,10 +1216,8 @@ scatter_1km_2018 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 1km buffers",
        y = "SMR",
        title = "2018")
@@ -1237,10 +1228,8 @@ scatter_2km_2018 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 2km buffers",
        y = "SMR")
 
@@ -1250,10 +1239,8 @@ scatter_3km_2018 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 3km buffers",
        y = "SMR")
 
@@ -1264,10 +1251,8 @@ scatter_1km_2019 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 1km buffers",
        y = "SMR",
        title = "2019")
@@ -1279,10 +1264,8 @@ scatter_2km_2019 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 2km buffers",
        y = "SMR")
 
@@ -1292,10 +1275,8 @@ scatter_3km_2019 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 3km buffers",
        y = "SMR")
 
@@ -1306,10 +1287,8 @@ scatter_1km_2020 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 1km buffers",
        y = "SMR",
        title = "2020")
@@ -1320,10 +1299,8 @@ scatter_2km_2020 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 2km buffers",
        y = "SMR")
 
@@ -1333,19 +1310,18 @@ scatter_3km_2020 <- ggplot2::ggplot(
       y = SMR))+
   geom_point()+
   theme_classic()+
-  stat_smooth(method = "lm",
-              col = "#C42126",
-              se = FALSE,
-              size = 1)+
+  stat_smooth(method = 'lm',
+              col = "#C42126")+
   labs(x = "Percentage of catchment population \nliving in 3km buffers",
        y = "SMR")
+
 # Create a list of plots -------------------------------------------------------
 plot_lists <- list(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
                    scatter_1km_2018, scatter_2km_2018, scatter_3km_2019,
                    scatter_1km_2019, scatter_2km_2019, scatter_3km_2019, 
                    scatter_1km_2020, scatter_2km_2020, scatter_3km_2020)
 
-# Arranging the plots
+# Arrange the plots ----------------------------------------------------------
 grid.arrange(grobs = plot_lists, ncol = 3)
 
 ```
