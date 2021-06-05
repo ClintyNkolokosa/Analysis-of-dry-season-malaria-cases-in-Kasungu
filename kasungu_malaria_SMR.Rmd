@@ -640,6 +640,8 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 ```
 
 ### View SMR by catchment
+
+A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred.
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 6: Standard Morbidity Rate by health facility catchment'}
 
 #   max(SMR_2017$SMR)
@@ -1027,7 +1029,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 Mapping proportion of catchment population living within waterbodies
 
-```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig 8. Proportionof catchment living within in around water bodies'}
+```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig 8. Proportion of catchment population living around water bodies'}
 
 # Function to create maps of proportion of people living in proximity ----------
 # to water bodies in each catchment area
