@@ -503,43 +503,43 @@ $$SMR_i = \frac{O_i}{E_i}$$
 # Calculate Standard Morbidity Ratio (SMR) -------------------------------------
 SMR_2017 <- expected_malaria_2017 %>% 
   dplyr::mutate(SMR = round(observed_2017/expected_2017, 1)) %>% 
-  dplyr::select(Names, pop_2017, observed_2017, expected_2017, SMR) 
+  dplyr::select(rowID,Names, pop_2017, observed_2017, expected_2017, SMR) 
 
 SMR_2018 <- expected_malaria_2018 %>% 
   dplyr::mutate(SMR = round(observed_2018/expected_2018, 1)) %>% 
-  dplyr::select(Names, pop_2018, observed_2018, expected_2018, SMR) 
+  dplyr::select(rowID, Names, pop_2018, observed_2018, expected_2018, SMR) 
 
 SMR_2019 <- expected_malaria_2019 %>% 
   dplyr::mutate(SMR = round(observed_2019/expected_2019, 1)) %>% 
-  dplyr::select(Names, pop_2019, observed_2019, expected_2019, SMR) 
+  dplyr::select(rowID, Names, pop_2019, observed_2019, expected_2019, SMR) 
 
 SMR_2020 <- expected_malaria_2020 %>% 
   dplyr::mutate(SMR = round(observed_2020/expected_2020, 1)) %>% 
-  dplyr::select(Names, pop_2020, observed_2020, expected_2020, SMR)
+  dplyr::select(rowID, Names, pop_2020, observed_2020, expected_2020, SMR)
 
 
 # Create SMR tables ------------------------------------------------------------
 SMR_table_2017 <- SMR_2017 %>% 
   dplyr::as_tibble() %>% 
-  dplyr::select(-geometry) %>% 
+  dplyr::select(-rowID, -geometry) %>% 
   kable %>%
   kableExtra::kable_styling(full_width = FALSE)
 
 SMR_table_2018 <- SMR_2018 %>% 
   dplyr::as_tibble() %>% 
-  dplyr::select(-geometry) %>% 
+  dplyr::select(-rowID, -geometry) %>% 
   kable %>% 
   kableExtra::kable_styling(full_width = FALSE)
 
 SMR_table_2019 <- SMR_2019 %>% 
   dplyr::as_tibble() %>% 
-  dplyr::select(-geometry) %>% 
+  dplyr::select(-rowID, -geometry) %>% 
   kable %>% 
   kableExtra::kable_styling(full_width = FALSE)
 
 SMR_table_2020 <- SMR_2020 %>% 
   dplyr::as_tibble() %>% 
-  dplyr::select(-geometry) %>% 
+  dplyr::select(-rowID, -geometry) %>% 
   kable %>% 
   kableExtra::kable_styling(full_width = FALSE)
 
@@ -1036,7 +1036,7 @@ create.pop.proportion.map <- function(pop.data,
                                       legend.title = NA){
   # SMR by catchment map
   # pop.data: sf polygon object containing proportion of catchment population 
-  #           living within waterbodies
+  #           living within water bodies
   # variable: variable name (as character, in qoutes)
   # title: map title in quotes
   # legend.title: legend title in qoutes
@@ -1131,6 +1131,70 @@ tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map,
                    pop_proportion_3km_2019_map, pop_proportion_1km_2020_map,
                    pop_proportion_2km_2020_map, pop_proportion_3km_2020_map, ncol = 3)
 ```
+
+### Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
+
+```{r, message=FALSE, warning=FALSE}
+
+# Create function to tidy and bind the SMR and proportion of 
+# buffer-catchment population data frames
+tidy.data <- function(smr.df, 
+                      proportion.pop.1km, 
+                      proprotion.pop.2km,
+                      proportion.pop.3km){
+
+# Convert the sf object to dataframes-------------------------------------------
+smr_df <- as.data.frame(smr.df) %>% 
+  dplyr::select(rowID, Names, SMR)
+
+proportion_pop_1km_df <- as.data.frame(proportion.pop.1km) %>% 
+  dplyr::select(rowID, prop_pop_1km = `prop_buffer_catchment_pop`)
+
+proportion_pop_2km_df <- as.data.frame(proprotion.pop.2km)%>% 
+  dplyr::select(rowID, prop_pop_2km = `prop_buffer_catchment_pop`)
+
+proportion_pop_3km_df <- as.data.frame(proportion.pop.3km)%>% 
+  dplyr::select(rowID, prop_pop_3km = `prop_buffer_catchment_pop`)
+
+# Merge SMR and population data frames -----------------------------------------
+combined_1 <- merge(smr_df, proportion_pop_1km_df, by = "rowID", all = TRUE)
+
+combined_2 <- merge(proportion_pop_2km_df, proportion_pop_3km_df)
+
+combined_fully <- merge(combined_1, combined_2, by = "rowID", all = TRUE)
+
+}
+
+# Invoking the function --------------------------------------------------------
+smr_pop_2017 <- tidy.data(SMR_2017, buffer_pop_1km_2017, buffer_pop_2km_2017, buffer_pop_3km_2017)
+
+smr_pop_2018 <- tidy.data(SMR_2018, buffer_pop_1km_2018, buffer_pop_2km_2018, buffer_pop_3km_2018)
+
+smr_pop_2019 <- tidy.data(SMR_2019, buffer_pop_1km_2019, buffer_pop_2km_2019, buffer_pop_3km_2019)
+
+
+# Plot scatter plot
+ggplot(smr_pop_1km__2017, 
+       aes(x = prop_buffer_catchment_pop, 
+           y = SMR)) + 
+  geom_point()+
+  theme_classic()+
+  stat_smooth(method = "lm",
+        col = "#C42126",
+        se = FALSE,
+        size = 1)+
+  labs(x = "Percentage of catchment population living in 1km buffers",
+       y = " SMR",
+       title = "Relation between standardised morbidity ratio and living near waterbodies")
+  
+
+
+
+
+
+
+```
+
 
 
  
