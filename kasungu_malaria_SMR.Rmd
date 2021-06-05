@@ -10,7 +10,7 @@ This geospatial statistical model uses routinely collected malaria case data, po
 We do this by comparing what we *observe* (O) with what we'd *expect* (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
 $$SMR_i = \frac{O_i}{E_i}$$
 
-Buffers around waterbodies are created and then combined with population data in raster format to estimate the total population that is within the buffer. Subsequently, the observed malaria cases are modeled using `Poisson regression` to find out if living within various distances from water bodies is causing variability in malaria risk in Kasungu district. We hypothesize that the risk of being a case in a catchment is dependent on proximity to water bodies. The data used spans from 2017 to 2020 and was derived from digitized DHIS2 malaria records, accessibility mapping, aggregated population geospatial layer and TropWet tool in Google Earth Engine. 
+Buffers around waterbodies are created and then combined with population data in raster format to estimate the proprtion of catcment population living within 1km, 2km and 3km of water bodies. Subsequently, the observed malaria cases are modeled using `Poisson regression` to find out if living within various distances from water bodies is causing variability in malaria risk in Kasungu district. We hypothesize that the risk of being a case in a catchment is dependent on proximity to water bodies. The data used spans from 2017 to 2020 and was derived from digitized DHIS2 malaria records, accessibility mapping, aggregated population geospatial layer and TropWet tool in Google Earth Engine. 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.align = 'center', echo = TRUE)
@@ -156,7 +156,7 @@ dry_season_malaria_2017_2020 %>%
 ```
 
 
-### Kasungu health-care facilities and their health facility catchment areas
+### Kasungu health-care facilities and their catchment areas
 Heath facility catchment area is the area from which a health facility attracts patients. The new health facility catchments polygon was generated from generic accessibility mapping script adapted from https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r The script requires two user supplied datasets: the `2015 friction surface`, which is available here:  http://www.map.ox.ac.uk/accessibility_to_cities/, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in GRASS GIS were run to make the final output map of new health facility catchment boundaries.
 ```{r, warning = FALSE, message = FALSE}
 
@@ -283,12 +283,12 @@ tmap_arrange(estimated_pop_2017, estimated_pop_2018, estimated_pop_2019, estimat
 
 ### Assign dry season malaria cases and population density to new health facility catchments
 
-The WorldPop `aggregated population` e.g. `kasungu_population_2017.tif`, and DHIS2 malaria data `dry_season_malaria_2017_2020`  datasets on population and malaria are assigned to the new health facility catchments. 
+The WorldPop `aggregated population` e.g. `kasungu_population_2017.tif`, and DHIS2 malaria `dry_season_malaria_2017_2020`  datasets are assigned to the new health facility catchments. 
 
 ```{r, message=FALSE, warning=FALSE}
 # Create a function that assigns malaria data from health facilities to their catchments areas --------------------
 assign.malaria.data <- function(catchment_boundary, malaria_data){
-  # function to assign malaria cases from health facilities to their corresponding catchment
+  # function to assign malaria cases from health facilities to their catchment area
   # arguments:
   #   catchment_boundary: sf polygon object of new catchment boundaries
   #   malaria_data: sf point object with a data frame containing the dry season malaria cases
@@ -1127,8 +1127,7 @@ pop_proportion_3km_2020_map <- create.pop.proportion.map(
   title = "2020",
   legend.title = "Population within \n3km buffers (%)")
 
-# Layout maps
-
+# Layout maps ------------------------------------------------------------------
 tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map, 
                    pop_proportion_3km_2017_map, pop_proportion_1km_2018_map,
                    pop_proportion_2km_2018_map, pop_proportion_3km_2018_map,
