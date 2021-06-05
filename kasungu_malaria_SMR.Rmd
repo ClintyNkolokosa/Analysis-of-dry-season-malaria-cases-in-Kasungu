@@ -384,20 +384,11 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   # Merge catchment areas and population data 
   pop_by_catchments <- merge(catchments, pop_by_catchment_df, by.x = "rowID", by.y = "rowID")
   
-  
-  # Reorder columns by position
-  # Get column names colnames()
-  # [1] "rowID" "DN" "FID" "Names" "dr_2017" "dr_2018" "dr_2019" "dr_2020" "pop" "geometry"
-  # pop_by_catchments <- pop_by_catchments[, c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)]
-  
   # Cleaning 'Inf' values
   pop_by_catchments %>% 
     dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
     dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
-  
-  # Convert to sf object
-  # pop_by_catchments_sf <- sf::st_as_sf(pop_by_catchments)
-  
+
   return(out = pop_by_catchments)
   
 }
@@ -415,7 +406,7 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 ```
 
 
-### View population maps
+### View Kasungu population by catchment maps
 Estimated total number of people within health facility catchment areas.
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 4: Estimated population in Kasungu health facility catchment areas'}
 # Function to create maps of estimated population by catchment areas ---------------------------------------
@@ -466,7 +457,7 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 The `expected` number of dry season malaria cases in catchment *i* are calculated as the observed risk (r) of malaria i.e. the total number of malaria cases in the catchment area divided by the total population of Kasungu district, multiplied by the number of people in that catchment area: $$E_i = \frac{\sum_i O_i}{\sum_i N_i}\times N_i$$
 
-Expected number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, that is, no difference in infection rates between the catchment areas.
+Expected number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, i.e., no difference in infection rates between the catchment areas.
  
 ```{r, message=FALSE}
 
@@ -502,11 +493,11 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 %>%
 
 ```
 
-### Calculate the Standard Morbidity Ratio of malaria incidences for each catchment area 
+### Calculate the Standardised Morbidity Ratio of malaria incidences for each catchment area 
 
-The standardised morbidity ratio (SMR) compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
+The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
 
-We do this by comparing what we *observe* (O) with what we'd *expect* (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
+We do this by comparing what we `observe` (O) with what we'd `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
 $$SMR_i = \frac{O_i}{E_i}$$
 
 ```{r}
@@ -584,14 +575,13 @@ create.malaria.map <- function(malaria.data,
             palette = "YlOrRd",
             title = legend.title)+
     tm_borders(lw = 0.3)+
-    tm_layout(legend.position = c(0.1,"bottom"),
+    tm_layout(legend.position = c(0.75,"bottom"),
               legend.text.size = 0.5,
               legend.title.size = 0.7,
               frame = FALSE)+
     tm_credits(title, 
                position = c(0.1, 0.8), 
-               size = 1)+
-  tm_layout(legend.outside = TRUE) 
+               size = 1)
 }
 
 # Invoking the function
