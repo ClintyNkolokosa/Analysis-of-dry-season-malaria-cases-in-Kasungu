@@ -891,7 +891,7 @@ estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
   
   # Notice that the buffer_catchment is comprised of separate POLYGONS (buffer_by_catchment$x). 
   # The first step is to “dissolve” away these POLYGONS into one MULTIPOLYGON. 
-  # There is no sf equivalent to the ArcMap “dissolve” operation. 
+  # There is no sf equivalent to the QGIS or ArcMap “dissolve” operation. 
   # Instead we use a combination of group_by and summarize from the dplyr package. 
   # Stats::aggregate from sf package, and dplyr::summarize both do essentially the same.
    buffer_pop_aggregated <- buffer_by_catchment %>% 
@@ -1034,7 +1034,7 @@ create.pop.proportion.map <- function(pop.data,
                                       variable = "prop_buffer_catchment_pop", 
                                       title = NA, 
                                       legend.title = NA){
-  # SMR by catchment map
+ 
   # pop.data: sf polygon object containing proportion of catchment population 
   #           living within water bodies
   # variable: variable name (as character, in qoutes)
@@ -1134,7 +1134,7 @@ tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map,
 
 ### Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
 
-```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 9. Relation between standardised morbidity ratio and living near waterbodies'}
+```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 9. Relationship between standardised morbidity ratio and living near waterbodies'}
 
 # Function to tidy and bind the SMR and proportion of --------------------------
 # buffer-catchment population data frames
