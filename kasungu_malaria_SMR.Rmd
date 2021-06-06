@@ -500,7 +500,7 @@ We do this by comparing what we `observe` (O) with what we would `expect` (E) if
 $$SMR_i = \frac{O_i}{E_i}$$
 
 ```{r}
-# Calculate Standard Morbidity Ratio (SMR) -------------------------------------
+# Calculate Standardised Morbidity Ratio (SMR) -------------------------------------
 SMR_2017 <- expected_malaria_2017 %>% 
   dplyr::mutate(SMR = round(observed_2017/expected_2017, 1)) %>% 
   dplyr::select(rowID,Names, pop_2017, observed_2017, expected_2017, SMR) 
@@ -652,7 +652,7 @@ A ratio greater than 1.0 indicates that more malaria cases have occurred than wo
 # > max(SMR_2020$SMR)
 # [1] 5.68
 
-# Function to create maps of Standard Morbidity Rate by catchment ---------------------
+# Function to create maps of SMR by catchment ----------------------------------
 create.smr.map <- function(smr.data, 
                            variable = "SMR", 
                            title = NA, 
