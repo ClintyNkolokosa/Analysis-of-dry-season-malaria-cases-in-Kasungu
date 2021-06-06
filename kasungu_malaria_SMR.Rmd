@@ -496,7 +496,7 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 %>%
 
 The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
 
-We do this by comparing what we `observe` (O) with what we'd `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
+We do this by comparing what we `observe` (O) with what we would `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
 $$SMR_i = \frac{O_i}{E_i}$$
 
 ```{r}
@@ -730,7 +730,7 @@ create.waterbody.buffer <- function(waterbody, distance, catchment){
   # returns:
   #   buffered waterbodies 
   
-  # Buffer the 'water' vector file by 'distance' meters
+  # Create buffers around water bodies
   buffer_radius <- sf::st_buffer(waterbody, distance)
   
   # Dissolve the buffers
