@@ -286,7 +286,7 @@ tmap_arrange(estimated_pop_2017, estimated_pop_2018, estimated_pop_2019, estimat
 The WorldPop `aggregated population` e.g. `kasungu_population_2017.tif`, and DHIS2 malaria `dry_season_malaria_2017_2020`  datasets are assigned to the new health facility catchments. 
 
 ```{r, message=FALSE, warning=FALSE}
-# Create a function that assigns malaria data from health facilities to their catchments areas --------------------
+# Create a function that assigns malaria data from health facilities to their catchments areas ----------------
 assign.malaria.data <- function(catchment_boundary, malaria_data){
   # function to assign malaria cases from health facilities to their catchment area
   # arguments:
@@ -454,9 +454,9 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 ### Calculate the expected number of cases for each catchment area 
 
-The `expected` number of dry season malaria cases in catchment *i* are calculated as the observed risk (r) of malaria i.e. the total number of malaria cases in the catchment area divided by the total population of Kasungu district, multiplied by the number of people in that catchment area: $$E_i = \frac{\sum_i O_i}{\sum_i N_i}\times N_i$$
+The `expected` number of dry season malaria cases in catchment *i* are calculated as the observed risk (r) of malaria i.e. the total number of malaria cases in Kasungu district divided by the total population of the district, multiplied by the number of people in the catchment area: $$E_i = \frac{\sum_i O_i}{\sum_i N_i}\times N_i$$
 
-Expected number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, i.e., no difference in infection rates between the catchment areas.
+The `expected` number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, i.e., no difference in infection rates between the catchment areas.
  
 ```{r, message=FALSE}
 
