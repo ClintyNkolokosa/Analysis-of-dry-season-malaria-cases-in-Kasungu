@@ -815,7 +815,7 @@ buffer_3km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020,
 
 View the created waterbody buffers 
 
-```{r, fig.height=9, fig.width=10, fig.cap='Fig 7. Buffers around open waterbodies in Kasungu'}
+```{r, fig.height=9, fig.width=10, fig.cap='Fig 7. Buffers around dry season waterbodies in Kasungu'}
 
 # Map the buffers
 create.buffer.map <- function(buffers, boundary = malire_new, title = NA){
