@@ -1188,8 +1188,8 @@ create.scatter.plot <- function(smr.pop.df,
                                     add.params = list(color = "red",
                                                       fill = "lightgray"),
                                     palette = "jco",     # journal color palette. see ?ggpar
-                                    xlab = x.label, 
-                                    ylab = "SMR",
+                                    xlab = x.label,      # x-axis label
+                                    ylab = "SMR",        # y-axis label
                                     title = plot.title)+    
                   ggpubr::stat_cor(label.y = 5)+         # Add correlation coefficient
                   ggpubr::font("title", size = 10, face = "bold")+
@@ -1250,7 +1250,7 @@ scatter_2km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_po
                                         x.label = "Percentage of catchment population \nliving in 2km buffer",
                                         plot.title = "2020")
 
-scatter_3km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_pop_2km",
+scatter_3km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_pop_3km",
                                         x.label = "Percentage of catchment population \nliving in 3km buffer",
                                         plot.title = "2020")
 
