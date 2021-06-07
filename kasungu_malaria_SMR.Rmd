@@ -1262,6 +1262,13 @@ plot_lists <- list(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
                    scatter_1km_2020, scatter_2km_2020, scatter_3km_2020)
 
 # Arrange the plots ----------------------------------------------------------
+ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
+                  scatter_1km_2018, scatter_2km_2018, scatter_3km_2019,
+                  scatter_1km_2019, scatter_2km_2019, scatter_3km_2019, 
+                  scatter_1km_2020, scatter_2km_2020, scatter_3km_2020, 
+                  labels = c("2017", "2018", "2019", "2020"),
+                  ncol = 3, nrow = 3)
+
 grid.arrange(grobs = plot_lists, ncol = 3)
 
 ```
