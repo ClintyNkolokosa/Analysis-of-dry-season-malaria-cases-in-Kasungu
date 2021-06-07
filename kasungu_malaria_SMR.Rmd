@@ -1254,21 +1254,12 @@ scatter_3km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_po
                                         x.label = "Percentage of catchment population \nliving in 3km buffer",
                                         plot.title = "2020")
 
-
-# Create a list of plots -------------------------------------------------------
-# plot_lists <- list(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
-#                    scatter_1km_2018, scatter_2km_2018, scatter_3km_2019,
-#                    scatter_1km_2019, scatter_2km_2019, scatter_3km_2019, 
-#                    scatter_1km_2020, scatter_2km_2020, scatter_3km_2020)
-
-# Arrange the plots ----------------------------------------------------------
+# Arrange the plots ------------------------------------------------------------
 ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
                   scatter_1km_2018, scatter_2km_2018, scatter_3km_2019,
                   scatter_1km_2019, scatter_2km_2019, scatter_3km_2019, 
                   scatter_1km_2020, scatter_2km_2020, scatter_3km_2020,
-                  ncol = 3, nrow = 3)
-
-#grid.arrange(grobs = plot_lists, ncol = 3)
+                  ncol = 3, nrow = 4)
 
 ```
 
