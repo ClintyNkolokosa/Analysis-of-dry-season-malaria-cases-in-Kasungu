@@ -1220,11 +1220,26 @@ scatter_1km_2018 <- create.scatter.plot(smr_pop_2018, independent.var = "prop_po
                                         x.label = "Percentage of catchment population \nliving in 1km buffer",
                                         plot.title = "2018")
 
-scatter_2km_2018 <- create.scatter.plot(smr_pop_2018, independent.var = "prop_pop_1km",
+scatter_2km_2018 <- create.scatter.plot(smr_pop_2018, independent.var = "prop_pop_2km",
                                         x.label = "Percentage of catchment population \nliving in 2km buffer",
                                         plot.title = "2018")
 
-scatter
+scatter_3km_2018 <- create.scatter.plot(smr_pop_2018, independent.var = "prop_pop_3km",
+                                        x.label = "Percentage of catchment population \nliving in 3km buffer",
+                                        plot.title = "2018")
+
+# 2019 scatter plots -----------------------------------------------------------
+scatter_1km_2019 <- create.scatter.plot(smr_pop_2019, indepedent.var = "prop_pop_1km",
+                                        x.label = "Percentage of catchment population \nliving in 1km buffer",
+                                        plot.title = "2019")
+
+scatter_2km_2019 <- create.scatter.plot(smr_pop_2019, independent.var = "prop_pop_2km",
+                                        x.label = "Percentage of catchment population \nliving in 2km buffer",
+                                        plot.title = "2019")
+
+scatter_3km_201p <- create.scatter.plot(smr_pop_2019, independent.var = "prop_pop_3km",
+                                        x.label = "Percentage of catchment population \nliving in 3km buffer",
+                                        plot.title = "2019")
 
 
 
