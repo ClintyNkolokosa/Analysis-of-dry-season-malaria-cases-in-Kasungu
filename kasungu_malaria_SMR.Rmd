@@ -1246,8 +1246,13 @@ scatter_1km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_po
                                         x.label = "Percentage of catchment population \nliving in 1km buffer",
                                         plot.title = "2020")
 
+scatter_2km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_pop_2km",
+                                        x.label = "Percentage of catchment population \nliving in 2km buffer",
+                                        plot.title = "2020")
 
-
+scatter_3km_2020 <- create.scatter.plot(smr_pop_2020, independent.var = "prop_pop_2km",
+                                        x.label = "Percentage of catchment population \nliving in 3km buffer",
+                                        plot.title = "2020")
 
 
 # Create a list of plots -------------------------------------------------------
