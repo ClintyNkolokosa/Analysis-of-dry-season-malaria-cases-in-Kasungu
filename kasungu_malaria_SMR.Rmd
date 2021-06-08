@@ -1308,7 +1308,7 @@ ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
 
 ### Model fitting
 Prepare data for model fitting
-```{r}
+```{r, eval=FALSE}
 # Helper function to tidy GLM data ---------------------------------------------
 tidy.model.data <- function(){
   
