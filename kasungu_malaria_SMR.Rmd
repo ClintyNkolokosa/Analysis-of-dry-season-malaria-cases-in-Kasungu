@@ -164,20 +164,29 @@ Heath facility catchment area is the area from which a health facility attracts 
 # Using the complete.cases() function to select health centres with complete 
 # longitude and latitude coordinates.
 
-zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] %>% 
-  dplyr::filter(Names != "Kasalika Health Centre",
-                Names != "Bua Health Centre",
-                Names != "Kaluluma Rural Hospital") 
+ zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] #%>% 
+#   dplyr::filter(Names != "Kasalika Health Centre",
+#                 Names != "Bua Health Centre",
+#                 Names != "Kaluluma Rural Hospital") 
 
 # The health facilities close to each other e.g., Kasalika Health Centre and 
 # Kasungu District Hospital, and Kaluluma Rural Hospital and Nkhamenya Rural Hospital
 # were aggregated in order to generate catchment areas that are geographically correct
 
-zipatala_aggregated$dr_2017[which(zipatala_aggregated$Names == "Kasungu District Hospital")] <- 4528 + 16289
+zipatala_aggregated$dr_2017[which(
+  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2017[which(
+    zipatala_aggregated$Names == "Kasungu District Hospital")] + zipatala_aggregated$dr_2017[which(
+      zipatala_aggregated$Names == "Kasalika Health Centre")]
 
-zipatala_aggregated$dr_2018[which(zipatala_aggregated$Names == "Kasungu District Hospital")] <- 4493 +15821
+zipatala_aggregated$dr_2018[which(
+  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2018[which(
+    zipatala_aggregated$Names == "Kasungu District Hospital")] + zipatala_aggregated$dr_2018[which(
+      zipatala_aggregated$Names == "Kasalika Health Centre")]
 
-zipatala_aggregated$dr_2019[which(zipatala_aggregated$Names == "Kasungu District Hospital")] <- 2729 + 10721
+zipatala_aggregated$dr_2019[which(
+  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2019[which(
+    zipatala_aggregated$Names == "Kasungu District Hospital")] +zipatala_aggregated$dr_2019[which(
+      zipatala_aggregated$Names == "Kasalika Health Centre")]
 
 zipatala_aggregated$dr_2020[which(zipatala_aggregated$Names == "Kasungu District Hospital")] <- 4368 + 24424
   
@@ -1132,6 +1141,7 @@ tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map,
 ```
 
 ### Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
+A correlation coeeficient of more than zero (cor.coeff r > 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people suurounding water bodies.
 
 ```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 9. Relationship between standardised morbidity ratio and living near waterbodies'}
 
@@ -1262,6 +1272,24 @@ ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
                   ncol = 3, nrow = 4)
 
 ```
+
+
+### Model fitting
+Prepare data for model fitting
+```{r}
+# Helper function to tidy GLM data ---------------------------------------------
+tidy.model.data <- function(){
+  
+  # Merge observed and expected malaria cases data with buffer population dataframe
+  
+  
+}
+
+model_1km_2017 <- glm(dr_2017~1+malariaProp_1km_2017+offset(log(expectedMalaria_1km_2017)),
+                      data = kasungu_model_df, family = 'poisson', na.action = na.omit)
+
+```
+
 
 
 
