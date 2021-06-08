@@ -233,7 +233,7 @@ zipatala_aggregated$dr_2020[which(
       zipatala_aggregated$Names == "Bua Health Centre")]
 
 # Drop out the other health facilities
-zipatala_aggregated %>%
+zipatala_aggregated <- zipatala_aggregated %>%
   dplyr::filter(Names != "Kasalika Health Centre",
                 Names != "Bua Health Centre",
                 Names != "Kaluluma Rural Hospital")
@@ -596,21 +596,21 @@ SMR_table_2020
  
 ### View observed and expected dry season malaria cases
 ```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig 5: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
-# Helper unction to create maps of observed and expected dry season malaria cases
+# Helper function to create maps of observed and expected dry season malaria cases
 create.malaria.map <- function(malaria.data, 
                                variable = NA, 
                                title = NA, 
                                legend.title = NA){
   # observed and expected malaria incidence map
   # malaria.data: data frame containing observed and expected malaria cases
-  # variable: variable name (as character, in qoutes e.g. "observed")
+  # variable: variable name (as character, in quotes e.g. "observed")
   # title: map title in quotes
-  # legend.title: legend title in qoutes
+  # legend.title: legend title in quotes
   # returns:
   #   a tmap-element (plots a map)
   tm_shape(malaria.data)+
     tm_fill(col = variable, 
-            breaks = c(0, 500, 1000, 2500, 5000, 10000, 15000, 25000, 35000),
+            breaks = c(0, 500, 1000, 2500, 5000, 10000, 15000, 20000, 25000),
             palette = "YlOrRd",
             title = legend.title)+
     tm_borders(lw = 0.3)+
