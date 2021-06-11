@@ -146,9 +146,8 @@ dry_season_malaria_2017_2020 %>%
                     name = "2019") %>% 
   plotly::add_trace(x = ~ dr_2020,
                     name = "2020") %>% 
-  plotly::layout(#barmode = "stack",
-                 xaxis = list(title = "Total malaria cases"),
-                 yaxis = list(title = ""),
+  plotly::layout(xaxis = list(title = "Total malaria cases"),
+                 yaxis = list(title = " "),
                  hovermode = "compare",
                  margin = list(b = 10,
                                t = 10,
@@ -165,10 +164,10 @@ Heath facility catchment area is the area from which a health facility attracts 
 # longitude and latitude coordinates.
 zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] 
 
-# The health facilities close to each other: 
+# Aggregate health facilities close to each other: 
 #  a) Kasalika Health Centre and Kasungu District Hospital, 
-# b) Bua and Mziza Health Centres, and 
-# c) Kaluluma and Nkhamenya Rural Hospitals are aggregated in order to 
+#  b) Bua and Mziza Health Centres, and 
+#  c) Kaluluma and Nkhamenya Rural Hospitals in order to 
 # generate catchment areas that are geographically correct
 
 zipatala_aggregated$dr_2017[which(
@@ -491,6 +490,27 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 
 ```
+
+Population density by catchment
+```{r, message=FALSE}
+
+# Helper function to calculate population density by catchment
+pop.density <- function(population.df){
+
+# Convert to spatial object
+sp <- as(malaria_pop_by_catchment_2017, "Spatial")
+
+# Calculate area of catchment polygon in square kilometres
+sp$area_sqkm <- round(rgeos::gArea(sp, byid = TRUE) / (1000 * 1000))
+
+# Calculate population density
+sp$pop_density <- round(sp$pop / sp$area_sqkm)
+}
+
+```
+
+
+
 
 ### Calculate the expected number of cases for each catchment area 
 
