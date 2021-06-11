@@ -1379,9 +1379,22 @@ model_data_2017 <- merge(expected_malaria_2017, smr_pop_2017, by = "rowID", all 
   dplyr::select(-Names.y) %>% 
   dplyr::rename(Names = Names.x)
 
+model_data_2018 <-  merge(expected_malaria_2018, smr_pop_2018, by = "rowID", all = TRUE) %>% 
+  dplyr::select(-Names.y) %>% 
+  dplyr::rename(Names = Names.x)
+
+model_data_2019 <-  merge(expected_malaria_2019, smr_pop_2019, by = "rowID", all = TRUE) %>% 
+  dplyr::select(-Names.y) %>% 
+  dplyr::rename(Names = Names.x)
+
+model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all = TRUE) %>% 
+  dplyr::select(-Names.y) %>% 
+  dplyr::rename(Names = Names.x)
+
 # Fit generalised linear model -------------------------------------------------
 # Defining model parameters:
-# response variable: observed_year is recorded dry season malaria cases in that year
+# response variable: observed_2017, observed_2018, observed_2019, observed_2020 are
+#                    recorded dry season malaria cases in that year
 # risk factor: prop_pop_1km,  prop_pop_2km,  prop_pop_3km are the percentage of people living
 #             within 1km, 2km and 3km buffers of water bodies, respectively.
 # offset: expected_year is the number of malaria cases we would expect if the malaria rate
