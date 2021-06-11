@@ -493,9 +493,8 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 Population density by catchment
 ```{r, message=FALSE}
-
-# Helper function to calculate population density by catchment
-population.density <- function(pop.data){
+# Helper function to calculate population density by catchment -----------------
+calculate.population.density <- function(pop.data){
   
   # Convert to spatial object
   pop.sp <- as(pop.data, "Spatial")
@@ -511,6 +510,15 @@ population.density <- function(pop.data){
   
   return(pop.sf)
 }
+
+# Invoking function ------------------------------------------------------------
+pop_density_2017 <- calculate.population.density(malaria_pop_by_catchment_2017)
+
+pop_density_2018 <- calculate.population.density(malaria_pop_by_catchment_2018)
+
+pop_density_2019 <- calculate.population.density(malaria_pop_by_catchment_2019)
+
+pop_density_2020 <- calculate.population.density(malaria_pop_by_catchment_2020)
 
 ```
 
