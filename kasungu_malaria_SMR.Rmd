@@ -1471,6 +1471,12 @@ model_2km_2020 <- glm(observed_2020~1+prop_pop_2km+offset(log(expected_2020)),
 summary(model_2km_2020)
 sjPlot::tab_model(model_2km_2020)
 
+model_3km_2020 <- glm(observed_2020~1+prop_pop_3km+offset(log(expected_2020)),
+                      data = model_data_2020, family = 'poisson')
+
+summary(model_3km_2020)
+sjPlot::tab_model(model_3km_2020)
+
 ```
 
 
