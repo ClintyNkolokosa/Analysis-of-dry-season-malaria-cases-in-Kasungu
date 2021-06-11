@@ -495,16 +495,21 @@ Population density by catchment
 ```{r, message=FALSE}
 
 # Helper function to calculate population density by catchment
-pop.density <- function(population.df){
+population.density <- function(pop.data){
+  
+  # Convert to spatial object
+  pop.sp <- as(pop.data, "Spatial")
 
-# Convert to spatial object
-sp <- as(malaria_pop_by_catchment_2017, "Spatial")
+  # Calculate area of catchment polygon in square kilometres
+  pop.sp$area_sqkm <- round(rgeos::gArea(pop.sp, byid = TRUE) / (1000 * 1000))
 
-# Calculate area of catchment polygon in square kilometres
-sp$area_sqkm <- round(rgeos::gArea(sp, byid = TRUE) / (1000 * 1000))
-
-# Calculate population density
-sp$pop_density <- round(sp$pop / sp$area_sqkm)
+  # Calculate population density
+  pop.sp$pop_density <- round(pop.sp$pop / pop.sp$area_sqkm)
+  
+  # Convert back to sf object
+  pop.sf <- sf::st_as_sf(pop.sp)
+  
+  return(pop.sf)
 }
 
 ```
