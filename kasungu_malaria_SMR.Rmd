@@ -1479,6 +1479,39 @@ sjPlot::tab_model(model_3km_2020)
 
 ```
 
+### Check how well the fitted values line up with the observations
+
+```{r, message=FALSE, fig.height=15, fig.width=10}
+# Helper function to create scatter plots to see how well 
+# fitted values line up with observed malaria cases
+plot.fitted.values <- function(fitted.values.df, model.df, title = NA){
+  
+  # Remove missing values from model data since 
+  # model fitting deletes missing observations
+  model.df.complete <- model.df %>% 
+    tidyr::drop_na() %>% 
+    dplyr::rename_at(vars(starts_with("observed")), ~ str_c("observed"))
+  
+
+  # Plot fitted versus observed values
+  scatter.plot <- ggplot2::ggplot()+ 
+    geom_point(aes(fitted.values.df$fitted.values, 
+                   model.df.complete$observed))+
+    theme_classic()+
+    labs(y = "Observed values", 
+         x = "Fitted values",
+         title = title)
+  
+  return(scatter.plot)
+
+}
+
+s <- plot.fitted.values(model_1km_2017, model_data_2017, title = "2017: 1km model")
+s
+
+```
+
+
 
 
 
