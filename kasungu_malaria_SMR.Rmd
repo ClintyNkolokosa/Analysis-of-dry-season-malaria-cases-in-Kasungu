@@ -1400,6 +1400,7 @@ model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all
 # offset: expected_year is the number of malaria cases we would expect if the malaria rate
 #          was equal in all the catchment areas
 
+# 2017 -------------------------------------------------------------------------
 model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
@@ -1412,7 +1413,63 @@ model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
 summary(model_2km_2017)
 sjPlot::tab_model(model_2km_2017)
 
+model_3km_2017 <- glm(observed_2017~1+prop_pop_3km+offset(log(expected_2017)),
+                      data = model_data_2017, family = 'poisson')
 
+summary(model_3km_2017)
+sjPlot::tab_model(model_3km_2017)
+
+# 2018 -------------------------------------------------------------------------
+model_1km_2018 <- glm(observed_2018~1+prop_pop_1km+offset(log(expected_2018)),
+                      data = model_data_2018, family = 'poisson')
+
+summary(model_1km_2018)
+sjPlot::tab_model(model_1km_2018)
+
+model_2km_2018 <- glm(observed_2018~1+prop_pop_2km+offset(log(expected_2018)),
+                      data = model_data_2018, family = 'poisson')
+
+summary(model_2km_2018)
+sjPlot::tab_model(model_2km_2018)
+
+model_3km_2018 <- glm(observed_2018~1+prop_pop_3km+offset(log(expected_2018)),
+                      data = model_data_2018, family = 'poisson')
+
+summary(model_3km_2018)
+sjPlot::tab_model(model_3km_2018)
+
+# 2019 -------------------------------------------------------------------------
+model_1km_2019 <- glm(observed_2019~1+prop_pop_1km+offset(log(expected_2019)),
+                      data = model_data_2019, family = 'poisson')
+
+summary(model_1km_2019)
+sjPlot::tab_model(model_1km_2019)
+
+
+model_2km_2019 <- glm(observed_2019~1+prop_pop_2km+offset(log(expected_2019)),
+                      data = model_data_2019, family = 'poisson')
+
+summary(model_2km_2019)
+sjPlot::tab_model(model_2km_2019)
+
+model_3km_2019 <- glm(observed_2019~1+prop_pop_3km+offset(log(expected_2019)),
+                      data = model_data_2019, family = 'poisson')
+
+summary(model_3km_2019)
+sjPlot::tab_model(model_3km_2019)
+
+# 2020 -------------------------------------------------------------------------
+model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
+                      data = model_data_2020, family = 'poisson')
+
+summary(model_1km_2020)
+sjPlot::tab_model(model_1km_2020)
+
+model_2km_2020 <- glm(observed_2020~1+prop_pop_2km+offset(log(expected_2020)),
+                      data = model_data_2020, family = 'poisson')
+
+summary(model_2km_2020)
+sjPlot::tab_model(model_2km_2020)
 
 ```
 
