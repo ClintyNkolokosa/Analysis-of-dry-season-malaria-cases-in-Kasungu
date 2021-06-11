@@ -525,10 +525,13 @@ create.pop.density.map <- function(pop.density.data,
                                    variable = "pop_density", 
                                    title = NA, 
                                    legend.title = "Population \ndensity/sqkm"){
+  # Color palette
+  mycolours <-RColorBrewer::brewer.pal(7, "YlOrRd")
+  
   tm_shape(pop.density.data)+
     tm_fill(col = variable, 
             breaks = c(0, 50, 100, 150, 200, 250, 300, 350),
-            palette = "-viridis",
+            palette = mycolours,
             title = legend.title)+
     tm_borders()+
     tm_layout(legend.position = c(0.75, "bottom"),
