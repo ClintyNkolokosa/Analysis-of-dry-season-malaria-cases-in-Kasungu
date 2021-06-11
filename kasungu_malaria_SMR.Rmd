@@ -447,7 +447,7 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 
 ### View Kasungu population by catchment maps
 Estimated total number of people within health facility catchment areas.
-```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 4: Estimated population in Kasungu health facility catchment areas'}
+```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 4: Estimated population by health facility catchment areas'}
 # Helper function to create maps of estimated population by catchment areas --------------------------------
 create.population.map <- function(catchment.area, 
                                   variable = "pop", 
@@ -492,7 +492,7 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 ```
 
 Population density by catchment
-```{r, message=FALSE}
+```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 5: Estimated population density by health facility catchment areas'}
 # Helper function to calculate population density by catchment -----------------
 calculate.population.density <- function(pop.data){
   
@@ -528,10 +528,9 @@ create.pop.density.map <- function(pop.density.data,
   tm_shape(pop.density.data)+
     tm_fill(col = variable, 
             breaks = c(0, 50, 100, 150, 200, 250, 300, 350),
-            palette = "YlOrBr",
+            palette = "-viridis",
             title = legend.title)+
-    tm_borders(col = "grey",
-               lwd = 0.4)+
+    tm_borders()+
     tm_layout(legend.position = c(0.75, "bottom"),
               legend.text.size = 0.6,
               legend.title.size = 0.8,
@@ -542,7 +541,17 @@ create.pop.density.map <- function(pop.density.data,
 }
 
 # Invoking function ------------------------------------------------------------
+pop_density_2017_map <- create.pop.density.map(pop_density_2017, title = "2017")
 
+pop_density_2018_map <- create.pop.density.map(pop_density_2018, title = "2018")
+
+pop_density_2019_map <- create.pop.density.map(pop_density_2019, title = "2019")
+
+pop_density_2020_map <- create.pop.density.map(pop_density_2020, title = "2020")
+
+# Layout maps
+tmap::tmap_arrange(pop_density_2017_map, pop_density_2018_map,
+                   pop_density_2019_map, pop_density_2020_map, ncol = 2)
 
 ```
 
