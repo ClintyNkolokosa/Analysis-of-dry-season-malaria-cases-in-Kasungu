@@ -22,6 +22,7 @@ Loading the R packages that will be used to read in, view, transform and model t
 
 ```{r, warning = FALSE, message = FALSE}
 library(spatialEco)
+library(spdep)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
@@ -1298,7 +1299,7 @@ create.scatter.plot <- function(smr.pop.df,
                                     xlab = x.label,      # x-axis label
                                     ylab = "SMR",        # y-axis label
                                     title = plot.title)+    
-                  ggpubr::stat_cor(label.y = 5)+         # Add correlation coefficient
+                  ggpubr::stat_cor(label.y = 4)+         # Add correlation coefficient
                   ggpubr::font("title", size = 10, face = "bold")+
                   ggpubr::font("xlab", size = 10)+
                   ggpubr::font("ylab", size = 10)
@@ -1541,8 +1542,25 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ### Test for residual spatial autocorrelation 
 Here we’ll use adjacency as criterion
-```{r}
+```{r, fig.keep='all'}
 # Find adjacent polygons,
+# Contiguity neighbors - all that share a boundary point
+catchment_neighbours <- spdep::poly2nb(model_data_2017)  # Queen contiguity
+
+summary(catchment_neighbours)
+
+# Get coordinates from catchment polygons
+catchment_points <- as(model_data_2017, "Spatial")
+
+coords <-coordinates(catchment_points)
+
+# Convert to spatial object
+catchment_polygons <- as(model_data_2017, "Spatial")
+
+# View the neighbors
+{plot(catchment_polygons, asp = 1)+
+plot(catchment_neighbours, coords, col = "blue", add = T)}
+
 
 ```
 
