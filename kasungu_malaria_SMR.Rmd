@@ -1584,6 +1584,12 @@ CAR_model_1km_2017 <- spaMM::fitme(observed_2017~prop_pop_1km+
 coefs <- as.data.frame(summary(CAR_model_1km_2017)$beta_table)
 
 
+# Moran's I contiguity test
+MI_2017 <- spdep::moran(model_data_2017$observed_2017, nb2listw(catchment_neighbours),
+                        length(model_data_2017$observed_2017),Szero(nb2listw(catchment_neighbours)))
+
+
+
 ```
 
 
