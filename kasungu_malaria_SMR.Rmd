@@ -1240,7 +1240,7 @@ tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map,
 ### Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
 A correlation coeeficient of more than zero (cor.coeff r > 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people suurounding water bodies.
 
-```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 9. Relationship between standardised morbidity ratio and living near waterbodies'}
+```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 10. Relationship between standardised morbidity ratio and living near waterbodies'}
 
 # Helper function to tidy and bind the SMR and proportion of -------------------
 # buffer-catchment population data frames
@@ -1481,7 +1481,8 @@ sjPlot::tab_model(model_3km_2020)
 
 ### Check how well the fitted values line up with the observations
 
-```{r, message=FALSE, fig.height=15, fig.width=11}
+The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` i.e., proportion of catchment population living near water bodies can help us understand malaria risk in the catchment areas.
+```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 10. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
 plot.fitted.values <- function(fitted.values.df, model.df, title){
@@ -1534,10 +1535,16 @@ fitted_3km_2020 <- plot.fitted.values(model_3km_2020, model_data_2020, "2020: 3k
 
 # Layout scatter plots ---------------------------------------------------------
 cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km_2018,
-                   fitted_1km_2019, fitted_2km_2019, fitted_1km_2020, ncol = 3, nrow = 4)
+                   fitted_1km_2019, fitted_2km_2019, fitted_1km_2020, ncol = 3, nrow = 3)
 
 ```
 
+### Test for residual spatial autocorrelation 
+Here we’ll use adjacency as criterion
+```{r}
+# Find adjacent polygons,
+
+```
 
 
 
