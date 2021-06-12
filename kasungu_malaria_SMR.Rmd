@@ -136,6 +136,7 @@ We observe that Kasungu district has 30 health facilities classified as dispensa
 dry_season_malaria_2017_2020 %>% 
   summary()
 
+# Plotly bar chart -------------------------------------------------------------
 dry_season_malaria_2017_2020 %>%  
   plotly::plot_ly(y = ~Names,
                   x = ~dr_2017,
@@ -154,6 +155,18 @@ dry_season_malaria_2017_2020 %>%
                  margin = list(b = 10,
                                t = 10,
                                pad = 2))
+
+# Pivot longer -----------------------------------------------------------------
+dry_season_malaria_pivot <- dry_season_malaria_2017_2020 %>% 
+  dplyr::rename(`2017` = dr_2017,
+                `2018` = dr_2018,
+                `2019` = dr_2019,
+                `2020` = dr_2020) %>% 
+  tidyr::pivot_longer(c(`2017`, `2018`, `2019`, `2020`),
+                      names_to = 'year',
+                      values_to = 'malaria_cases')
+
+
 
 ```
 
