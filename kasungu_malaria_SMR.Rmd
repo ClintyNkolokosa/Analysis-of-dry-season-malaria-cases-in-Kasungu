@@ -162,7 +162,7 @@ dry_season_malaria_pivot <- dry_season_malaria_2017_2020 %>%
                 `2018` = dr_2018,
                 `2019` = dr_2019,
                 `2020` = dr_2020) %>% 
-  tidyr::pivot_longer(c(`2017`, `2018`, `2019`, `2020`),
+  tidyr::pivot_longer(cols = `2017`:`2020`,
                       names_to = 'year',
                       values_to = 'malaria_cases')
 
