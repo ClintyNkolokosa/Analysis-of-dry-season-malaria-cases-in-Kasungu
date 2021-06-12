@@ -40,6 +40,7 @@ library(tmap)
 library(spdep)
 library(maptools)
 library(gridExtra)
+library(ggsci)
 library(grid)
 library(exactextractr)
 library(DataExplorer)
@@ -165,6 +166,18 @@ dry_season_malaria_pivot <- dry_season_malaria_2017_2020 %>%
   tidyr::pivot_longer(cols = `2017`:`2020`,
                       names_to = 'year',
                       values_to = 'malaria_cases')
+
+ggplot2::ggplot(dry_season_malaria_pivot, 
+                aes(x = malaria_cases, 
+                    y = Names,
+                    fill = year))+
+  ggplot2::geom_bar(stat ='identity',
+                    position = "dodge")+
+  ggplot2::labs(x = "Dry season malaria cases",
+                y = " ")+
+  ggplot2::theme_classic()+
+  ggsci::scale_fill_jama()
+  
 
 
 
