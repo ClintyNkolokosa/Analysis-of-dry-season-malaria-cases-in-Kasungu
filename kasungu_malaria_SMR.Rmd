@@ -23,6 +23,7 @@ Loading the R packages that will be used to read in, view, transform and model t
 ```{r, warning = FALSE, message = FALSE}
 library(spatialEco)
 library(spdep)
+library(spaMM)
 library(dplyr)
 library(tidyverse)
 library(ggplot2)
@@ -1483,7 +1484,7 @@ sjPlot::tab_model(model_3km_2020)
 ### Check how well the fitted values line up with the observations
 
 The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` i.e., proportion of catchment population living near water bodies can help us understand malaria risk in the catchment areas.
-```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 10. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
+```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
 plot.fitted.values <- function(fitted.values.df, model.df, title){
@@ -1542,7 +1543,7 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ### Test for residual spatial autocorrelation 
 Here we’ll use adjacency as criterion
-```{r, fig.keep='all'}
+```{r, fig.keep='all', fig.cap='Fig 13. Neighbourhood matrix'}
 # Find adjacent polygons,
 # Contiguity neighbors - all that share a boundary point
 catchment_neighbours <- spdep::poly2nb(model_data_2017)  # Queen contiguity
@@ -1552,14 +1553,19 @@ summary(catchment_neighbours)
 # Get coordinates from catchment polygons
 catchment_points <- as(model_data_2017, "Spatial")
 
-coords <-coordinates(catchment_points)
+coords <- coordinates(catchment_points)
 
-# Convert to spatial object
+# Get catchment boundaries and convert to spatial object
 catchment_polygons <- as(model_data_2017, "Spatial")
 
 # View the neighbors
 {plot(catchment_polygons, asp = 1)+
-plot(catchment_neighbours, coords, col = "blue", add = T)}
+plot(catchment_neighbours, coords, col = "blue", add = TRUE)}
+
+# Run a Conditional Autoregessive (CAR) model, which allows us to incorporate 
+# the spatial autocorrelation between neighbours within our GLM
+
+
 
 
 ```
