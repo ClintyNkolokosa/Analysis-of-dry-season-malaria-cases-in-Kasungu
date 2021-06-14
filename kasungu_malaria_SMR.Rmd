@@ -136,7 +136,13 @@ dry_season_malaria_2017_2020 %>%
   summary()
 
 # Plotly bar chart -------------------------------------------------------------
-dry_season_malaria_2017_2020 %>%  
+bar_chart <- dry_season_malaria_2017_2020 %>%  
+  dplyr::filter(Names != "K2 Taso Clinic",          # Have missing malaria cases
+                Names != "Kalikeni Private Clinic",
+                Names != "Kakwale Health Centre",
+                Names != "St Andrews Community Hospital",
+                Names != "St. Faith Health Centre",
+                Names != "Chambwe Health Centre") %>% 
   plotly::plot_ly(y = ~Names,
                   x = ~dr_2017,
                   type = "bar",
@@ -154,9 +160,16 @@ dry_season_malaria_2017_2020 %>%
                  margin = list(b = 10,
                                t = 10,
                                pad = 2))
+bar_chart
 
 # Pivot longer -----------------------------------------------------------------
-dry_season_malaria_pivot <- dry_season_malaria_2017_2020 %>% 
+dry_season_malaria_longer <- dry_season_malaria_2017_2020 %>% 
+  dplyr::filter(Names != "K2 Taso Clinic",                       
+                Names != "Kalikeni Private Clinic",
+                Names != "Kakwale Health Centre",
+                Names != "St Andrews Community Hospital",
+                Names != "St. Faith Health Centre",
+                Names != "Chambwe Health Centre") %>% 
   dplyr::rename(`2017` = dr_2017,
                 `2018` = dr_2018,
                 `2019` = dr_2019,
@@ -165,7 +178,7 @@ dry_season_malaria_pivot <- dry_season_malaria_2017_2020 %>%
                       names_to = 'year',
                       values_to = 'malaria_cases')
 
-ggplot2::ggplot(dry_season_malaria_pivot, 
+ggplot2::ggplot(dry_season_malaria_longer, 
                 aes(x = malaria_cases, 
                     y = Names,
                     fill = year))+
