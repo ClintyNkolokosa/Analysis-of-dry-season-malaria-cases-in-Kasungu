@@ -163,31 +163,31 @@ bar_chart <- dry_season_malaria_2017_2020 %>%
 bar_chart
 
 # Pivot longer -----------------------------------------------------------------
-dry_season_malaria_longer <- dry_season_malaria_2017_2020 %>% 
-  dplyr::filter(Names != "K2 Taso Clinic",                       
-                Names != "Kalikeni Private Clinic",
-                Names != "Kakwale Health Centre",
-                Names != "St Andrews Community Hospital",
-                Names != "St. Faith Health Centre",
-                Names != "Chambwe Health Centre") %>% 
-  dplyr::rename(`2017` = dr_2017,
-                `2018` = dr_2018,
-                `2019` = dr_2019,
-                `2020` = dr_2020) %>% 
-  tidyr::pivot_longer(cols = `2017`:`2020`,
-                      names_to = 'year',
-                      values_to = 'malaria_cases')
-
-ggplot2::ggplot(dry_season_malaria_longer, 
-                aes(x = malaria_cases, 
-                    y = Names,
-                    fill = year))+
-  ggplot2::geom_bar(stat ='identity',
-                    position = "dodge")+
-  ggplot2::labs(x = "Dry season malaria cases",
-                y = " ")+
-  ggplot2::theme_classic()+
-  ggsci::scale_fill_jama()
+# dry_season_malaria_longer <- dry_season_malaria_2017_2020 %>% 
+#   dplyr::filter(Names != "K2 Taso Clinic",                       
+#                 Names != "Kalikeni Private Clinic",
+#                 Names != "Kakwale Health Centre",
+#                 Names != "St Andrews Community Hospital",
+#                 Names != "St. Faith Health Centre",
+#                 Names != "Chambwe Health Centre") %>% 
+#   dplyr::rename(`2017` = dr_2017,
+#                 `2018` = dr_2018,
+#                 `2019` = dr_2019,
+#                 `2020` = dr_2020) %>% 
+#   tidyr::pivot_longer(cols = `2017`:`2020`,
+#                       names_to = 'year',
+#                       values_to = 'malaria_cases')
+# 
+# ggplot2::ggplot(dry_season_malaria_longer, 
+#                 aes(x = malaria_cases, 
+#                     y = Names,
+#                     fill = year))+
+#   ggplot2::geom_bar(stat ='identity',
+#                     position = "dodge")+
+#   ggplot2::labs(x = "Dry season malaria cases",
+#                 y = " ")+
+#   ggplot2::theme_classic()+
+#   ggsci::scale_fill_jama()
 
 ```
 
@@ -334,7 +334,7 @@ create.population.map <- function(population.raster, title){
   # returns:
   #   a tmap-element (plots a map)
   tm_shape(population.raster)+
-    tm_raster(palette = "YlOrBr", 
+    tm_raster(palette = "-viridis", 
               title = title,
               breaks = c(0,100,200,400,600,800,1000,2000,4000,6000,8000))+
     tm_layout(legend.position = c("right", "bottom"),
