@@ -24,9 +24,7 @@ Loading the R packages that will be used to read in, view, transform and model t
 library(spatialEco)
 library(spdep)
 library(spaMM)
-library(dplyr)
 library(tidyverse)
-library(ggplot2)
 library(ggpubr)
 library(plotly)
 library(lubridate)
@@ -177,9 +175,6 @@ ggplot2::ggplot(dry_season_malaria_pivot,
                 y = " ")+
   ggplot2::theme_classic()+
   ggsci::scale_fill_jama()
-  
-
-
 
 ```
 
@@ -1509,7 +1504,7 @@ sjPlot::tab_model(model_3km_2020)
 
 ### Check how well the fitted values line up with the observations
 
-The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` i.e., proportion of catchment population living near water bodies can help us understand malaria risk in the catchment areas.
+The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` (i.e., proportion of catchment population living near water bodies) can help us understand malaria risk in the catchment areas.
 ```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
@@ -1567,8 +1562,8 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ```
 
-### Test for residual spatial autocorrelation 
-Here we’ll use adjacency as criterion
+### Test for residual spatial autocorrelation using adjacency as criterion
+
 ```{r, fig.keep='all', fig.cap='Fig 13. Neighbourhood matrix'}
 # Find adjacent polygons,
 # Contiguity neighbors - all that share a boundary point
@@ -1588,7 +1583,7 @@ catchment_polygons <- as(model_data_2017, "Spatial")
 {plot(catchment_polygons, asp = 1)+
 plot(catchment_neighbours, coords, col = "blue", add = TRUE)}
 
-# Run a Conditional Autoregessive (CAR) model, which allows us to incorporate 
+# Run a Conditional Autoregressive (CAR) model, which allows us to incorporate 
 # the spatial autocorrelation between neighbours within our GLM
 
 # First, generate a weights matrix from a neighbours list with spatial weights
@@ -1598,7 +1593,8 @@ adj_matrix <- spdep::nb2mat(catchment_neighbours, style = "B") # see ?nb2mat
 rownames(adj_matrix) <- colnames(adj_matrix) <- model_data_2017$rowID
 # row.names(adj_matrix) <- NULL # alternatively
 
-# Now we can fit the model. The spatial effect is called using the adjacency function which # requires the grouping factor (i.e. the rowID of each catchment area)
+# Now we can fit the model. The spatial effect is called using the adjacency function which 
+# requires the grouping factor (i.e. the rowID of each catchment area)
 
 CAR_model_1km_2017 <- spaMM::fitme(observed_2017~prop_pop_1km+
                                    offset(log(expected_2017)),
