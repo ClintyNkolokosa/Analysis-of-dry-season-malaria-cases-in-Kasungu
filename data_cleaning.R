@@ -43,11 +43,10 @@ kasungu_monthly_malaria_wide <- kasungu_monthly_malaria%>%
   dplyr::rename_all(foo) %>% 
   dplyr::filter(!stringr::str_detect(periodname, "15"), # Remove years 2015 and 2016
                 !stringr::str_detect(periodname, "16"),
-                !stringr::str_detect(periodname, "Jan"), # Remove rainy months
+                !stringr::str_detect(periodname, "Jan"), # Remove rainy months except may
                 !stringr::str_detect(periodname, "Feb"),
                 !stringr::str_detect(periodname, "Mar"),
                 !stringr::str_detect(periodname, "Apr"),
-                !stringr::str_detect(periodname, "May"),
                 !stringr::str_detect(periodname, "Nov"),
                 !stringr::str_detect(periodname, "Dec")) %>% 
   tidyr::pivot_longer(cols = wimbe.hc:anchor.farm.health.centre,
