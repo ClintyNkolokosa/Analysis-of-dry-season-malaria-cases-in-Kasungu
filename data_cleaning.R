@@ -33,21 +33,26 @@ ku_dry_season_malaria_cases_2020 <- read.csv(here::here("data", "ku_2020_malaria
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
 kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
-  dplyr::select(-c(periodid, periodcode, perioddescription, 
-                   nmcp.confirmed.malaria.cases.rdt_central.east.zone)) %>% 
-  dplyr::filter(periodname != "15-Jan",
-                periodname != "15-Feb",
-                periodname != "15-Mar",
-                periodname != "15-Apr",
-                periodname != "15-May",
-                periodname != "15-Nov",
-                periodname != "15-Dec")
+  dplyr::select(-c(periodcode, perioddescription, 
+                   nmcp.confirmed.malaria.cases.rdt_central.east.zone)) 
 
 # Helper function to rename columns by removing "nmcp.confirmed.malaria.cases.rdt_"
 foo <- function(x) gsub("^[^_]*_", "", x)
 
-kasungu_monthly_malaria%>% 
-  dplyr::rename_all(foo)
+kasungu_monthly_malaria_wide <- kasungu_monthly_malaria%>% 
+  dplyr::rename_all(foo) %>% 
+  dplyr::filter(!stringr::str_detect(periodname, "15"), # Remove years 2015 and 2016
+                !stringr::str_detect(periodname, "16"),
+                !stringr::str_detect(periodname, "Jan"), # Remove rainy months
+                !stringr::str_detect(periodname, "Feb"),
+                !stringr::str_detect(periodname, "Mar"),
+                !stringr::str_detect(periodname, "Apr"),
+                !stringr::str_detect(periodname, "May"),
+                !stringr::str_detect(periodname, "Nov"),
+                !stringr::str_detect(periodname, "Dec")) 
+
+    
+  
 
 
 # Export -----------------------------------------------------------------------
