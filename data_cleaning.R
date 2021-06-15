@@ -49,7 +49,33 @@ kasungu_monthly_malaria_wide <- kasungu_monthly_malaria%>%
                 !stringr::str_detect(periodname, "Apr"),
                 !stringr::str_detect(periodname, "May"),
                 !stringr::str_detect(periodname, "Nov"),
-                !stringr::str_detect(periodname, "Dec")) 
+                !stringr::str_detect(periodname, "Dec")) %>% 
+  tidyr::pivot_longer(cols = wimbe.hc:anchor.farm.health.centre,
+                      names_to = "Names",
+                      values_to = "malaria_cases")
+
+kasungu_monthly_malaria_long <- kasungu_monthly_malaria_wide %>% 
+  pivot_wider(names_from = periodname, values_from = malaria_cases) %>% 
+  dplyr::rowwise() %>% 
+  dplyr::mutate(dry_2017 = sum(`17-Jun`, `17-Jul`, `17-Aug`, `17-Sep`, `17-Oct`, na.rm = TRUE))
+
+
+
+# %>% 
+#   tidyr::pivot_wider(names_from = periodname, 
+#                      values_from = c(wimbe.hc, st.andrews.ch, simlemba.hc,
+#                                      santhe.hc, ofesi.hc, nkhamenya.hosp,
+#                                      newa..mpasazi.hc, mziza.health.centre,
+#                                      mtunthama.hc, mpepa..chisinga.hc,
+#                                      mnyanja.health.centre, mkhota.r.growth.hc,
+#                                      mdunga.hc, lodjwa.hc, livwezi.health.centre,
+#                                      linyangwa.hc, khola.hc, kawamba.hc,
+#                                      kasungu.distr.hosp, kasalika.disp, kapelula.hc,
+#                                      kamboni.hc, kaluluma.rh, gogode.hc, dwangwa.hc,
+#                                      chulu.hc, chinyama.dispensary, chamwabvi.disp,
+#                                      chamama.health.facility, bua.hc.kasungu, 
+#                                      anchor.farm.health.centre)) %>% 
+  tidyr::pivot_longer()
 
     
   
