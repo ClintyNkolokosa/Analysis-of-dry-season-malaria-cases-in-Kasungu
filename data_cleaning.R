@@ -34,7 +34,14 @@ ku_dry_season_malaria_cases_2020 <- read.csv(here::here("data", "ku_2020_malaria
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
 kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
   dplyr::select(-c(periodid, periodcode, perioddescription, 
-                   nmcp.confirmed.malaria.cases.rdt_central.east.zone)) 
+                   nmcp.confirmed.malaria.cases.rdt_central.east.zone)) %>% 
+  dplyr::filter(periodname != "15-Jan",
+                periodname != "15-Feb",
+                periodname != "15-Mar",
+                periodname != "15-Apr",
+                periodname != "15-May",
+                periodname != "15-Nov",
+                periodname != "15-Dec")
 
 # Helper function to rename columns by removing "nmcp.confirmed.malaria.cases.rdt_"
 foo <- function(x) gsub("^[^_]*_", "", x)
