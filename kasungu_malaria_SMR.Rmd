@@ -137,7 +137,7 @@ dry_season_malaria_2017_2020 %>%
 
 # Plotly bar chart -------------------------------------------------------------
 bar_chart <- dry_season_malaria_2017_2020 %>%  
-  dplyr::filter(Names != "K2 Taso Clinic",          # Have missing malaria cases
+  dplyr::filter(Names != "K2 Taso Clinic",          # Have missing malaria records
                 Names != "Kalikeni Private Clinic",
                 Names != "Kakwale Health Centre",
                 Names != "St Andrews Community Hospital",
@@ -560,7 +560,7 @@ pop_density_2020 <- calculate.population.density(malaria_pop_by_catchment_2020)
 create.pop.density.map <- function(pop.density.data,
                                    variable = "pop_density", 
                                    title = NA, 
-                                   legend.title = "Population \ndensity/sqkm"){
+                                   legend.title = "Population \ndensity/km^2"){
   tm_shape(pop.density.data)+
     tm_fill(col = variable, 
             breaks = c(0, 50, 100, 150, 200, 250, 300, 350),
@@ -637,7 +637,7 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 %>%
 
 The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
 
-We do this by comparing what we `observe` (O) with what we would `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows:
+We do this by comparing what we `observe` (O) with what we would `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR of catchment *i* can be calculated as follows:
 $$SMR_i = \frac{O_i}{E_i}$$
 
 ```{r}
@@ -1274,7 +1274,7 @@ tmap::tmap_arrange(pop_proportion_1km_2017_map, pop_proportion_2km_2017_map,
 ```
 
 ### Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
-A correlation coeeficient of more than zero (cor.coeff r > 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people suurounding water bodies.
+A correlation coeeficient of more than zero (cor.coeff r > 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies.
 
 ```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 10. Relationship between standardised morbidity ratio and living near waterbodies'}
 
@@ -1285,7 +1285,7 @@ tidy.data <- function(smr.df,
                       proprotion.pop.2km,
                       proportion.pop.3km){
 
-# Convert the sf object to dataframes-------------------------------------------
+# Convert the sf objects to data frames-------------------------------------------
 smr_df <- as.data.frame(smr.df) %>% 
   dplyr::select(rowID, Names, SMR)
 
@@ -1441,19 +1441,19 @@ model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_1km_2017)
-sjPlot::tab_model(model_1km_2017)
+sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
 
 model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_2km_2017)
-sjPlot::tab_model(model_2km_2017)
+sjPlot::tab_model(model_2km_2017, digits = 3, digits.re = 3)
 
 model_3km_2017 <- glm(observed_2017~1+prop_pop_3km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_3km_2017)
-sjPlot::tab_model(model_3km_2017)
+sjPlot::tab_model(model_3km_2017, digits = 3, digits.re = 3)
 
 # 2018 -------------------------------------------------------------------------
 model_1km_2018 <- glm(observed_2018~1+prop_pop_1km+offset(log(expected_2018)),
@@ -1466,20 +1466,20 @@ model_2km_2018 <- glm(observed_2018~1+prop_pop_2km+offset(log(expected_2018)),
                       data = model_data_2018, family = 'poisson')
 
 summary(model_2km_2018)
-sjPlot::tab_model(model_2km_2018)
+sjPlot::tab_model(model_2km_2018, digits = 3, digits.re = 3)
 
 model_3km_2018 <- glm(observed_2018~1+prop_pop_3km+offset(log(expected_2018)),
                       data = model_data_2018, family = 'poisson')
 
 summary(model_3km_2018)
-sjPlot::tab_model(model_3km_2018)
+sjPlot::tab_model(model_3km_2018, digits = 3, digits.re = 3)
 
 # 2019 -------------------------------------------------------------------------
 model_1km_2019 <- glm(observed_2019~1+prop_pop_1km+offset(log(expected_2019)),
                       data = model_data_2019, family = 'poisson')
 
 summary(model_1km_2019)
-sjPlot::tab_model(model_1km_2019)
+sjPlot::tab_model(model_1km_2019, digits = 3, digits.re = 3)
 
 
 model_2km_2019 <- glm(observed_2019~1+prop_pop_2km+offset(log(expected_2019)),
@@ -1492,26 +1492,26 @@ model_3km_2019 <- glm(observed_2019~1+prop_pop_3km+offset(log(expected_2019)),
                       data = model_data_2019, family = 'poisson')
 
 summary(model_3km_2019)
-sjPlot::tab_model(model_3km_2019)
+sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3)
 
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
 
 summary(model_1km_2020)
-sjPlot::tab_model(model_1km_2020)
+sjPlot::tab_model(model_1km_2020, digits = 3, digits.re = 3)
 
 model_2km_2020 <- glm(observed_2020~1+prop_pop_2km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
 
 summary(model_2km_2020)
-sjPlot::tab_model(model_2km_2020)
+sjPlot::tab_model(model_2km_2020, digits = 3, digits.re = 3)
 
 model_3km_2020 <- glm(observed_2020~1+prop_pop_3km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
 
 summary(model_3km_2020)
-sjPlot::tab_model(model_3km_2020)
+sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3)
 
 ```
 
