@@ -15,18 +15,27 @@ here::here() # make sure you are in the "~/R/upscaled_2021_updated_May/upscaled_
 # Typically Malawi can be divided into the following seasons:
 #  - a hot and rainy season from November to April 
 #  - and a relatively cool and dry season from May to October
-# Source: https://www.metmalawi.com/climate/climate.php
+# Source: https://www.metmalawi.com/climate/climate.php.
+# From an epidemiological perspective, there's a lag-effect in 
+# rainy season malaria transmission that extends to May, which is
+# why for this analysis, the dry season starts from June to October
 
 ku_dry_season_malaria_cases_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.csv")) %>% 
                                      dplyr::select(Names = `organisationunitname`,
-                                                   May.2020, June.2020, July.2020,
-                                                   August.2020, September.2020, October.2020) %>% 
+                                                   June.2020, July.2020, August.2020, 
+                                                   September.2020, October.2020) %>% 
                                      dplyr::filter(Names != "Fpam Clinic Kasungu", 
                                                    Names != "Kamuzu Academy Clinic") %>% 
                                      dplyr::rowwise() %>% 
-                                     dplyr::mutate(dr_2020 = sum(May.2020, June.2020, July.2020,
+                                     dplyr::mutate(dr_2020 = sum(June.2020, July.2020,
                                                                  August.2020, September.2020, 
                                                                  October.2020, na.rm = TRUE))
+
+# 2015 - 2019 NMCP confirmed malaria cases by health facility
+kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
+  dplyr::select(-c(periodid, periodcode, perioddescription, 
+                   nmcp.confirmed.malaria.cases.rdt_central.east.zone)) %>% 
+  
 
 # Export -------------------------------------------------------------------------------------------
 write.csv(ku_dry_season_malaria_cases_2020, file = "data/dry_season_malaria_2020.csv")
@@ -49,7 +58,7 @@ accessibility_raster <- raster::raster(here::here("data", "2015_friction_surface
 
 accessibility_raster
 
-ku_district <- shapefile(here::here("data", "kasungu_district"))
+ku_district <- shapefile(here::here("data", "kasungu_excluding_national_park"))
 
 proj4string(accessibility_raster)
 
@@ -76,14 +85,14 @@ clip_raster <- mask(crop(accessibility_raster, extent(ku_district)), ku_district
 # ku_raster <- mask(raster_clip, ku_district)
 
 # Check that clipping worked
-plot(ku_raster)
+plot(clip_raster)
 plot(health_facility_sf, add=TRUE, lwd=1)
 
 # Write the resulting raster ------------------------------------------------------------------
-writeRaster(ku_raster, "data/friction_surface_clip.tif")
+writeRaster(clip_raster, "data/friction_surface_clip.tif", overwrite=TRUE)
 
 # Plot clipped map ----------------------------------------------------------------------------
-tm_shape(ku_raster)+
+tm_shape(clip_raster)+
   tm_raster(palette = "Greys", style = "fisher", n = 5)+
   tm_layout(legend.position = c("right","bottom"),
             frame = FALSE)
@@ -96,8 +105,8 @@ mhfr_fac <- readxl::read_xlsx(here::here("data/MHFR_Facilities.xlsx")) %>%
                           STATUS == "Functional",
                           NAME != "St. Andrews Health Centre") # appears in Nkhotakota when mapped
 
-# Using the is.na() function to remove the missing lon and lat points.
-#  Missing values in coordinates not allowed in sf transformation
+# Using the is.na() function to remove the missing lon and lat coordinates
+# Missing values in coordinates not allowed in sf transformation
 mhfr_fac <- mhfr_fac[!is.na(mhfr_fac$LATITUDE),]
 
 mhfr_fac_sf <- sf::st_as_sf(mhfr_fac, coords = c("LONGITUDE", "LATITUDE"),
@@ -118,7 +127,8 @@ mapview::mapview(masdap_health_fac_sf, zcol = "owner", legend.opacity = .5)
 primary_health_fac <- read.csv(here::here("data/health_facilities_moh_primary_health_facilities.csv")) %>%  # https://gis-malawi.com/
                       dplyr::select(fid, geom, facility_name, district, facility_type, status) %>% 
                       dplyr::filter(district == "Kasungu",
-                                    status == "Functional")
+                                    status == "Functional",
+                                    facility_type != "Outreach")
 
 library(reshape2) # Split geom column into lat and long columns
 geom <- colsplit(string = gsub(pattern = "\\(|\\)", replacement = "",
@@ -135,6 +145,34 @@ primary_health_fac_sf <- cbind.data.frame(primary_health_fac, geom)
 # Convert to sf object
 primary_health_fac_sf <- sf::st_as_sf(primary_health_fac_sf, coords = c("Longitude", "Latitude"),
                                       crs = 4326, agr = "constant") 
+
 mapview::mapview(primary_health_fac_sf, zcol = "facility_type", legend.opacity = .5)
 
+# Crop Kasungu National Park from the new health facility catchments ----------------------------------------
+# Read in new health facility catchment boundaries shapefile generated from accessibility mapping
+new_health_fac_catchment <- shapefile(here::here("data", "new_health_facility_catchments"))
+crs(new_health_fac_catchment)
 
+mapview::mapview(new_health_fac_catchment)
+
+# Read in old catchments excluding Kasungu National Park boundary 
+old_health_fac_catchments <- shapefile(here::here("data", "old_catchments_excl_knp"))
+crs(old_health_fac_catchments)
+
+mapview::mapview(old_health_fac_catchments)
+
+# Match projection
+new_health_fac_catchment <- spTransform(new_health_fac_catchment, crs(kasungu_np))
+crs(new_health_catchment)
+
+# Save reprojected shapefile
+# raster::shapefile(new_health_catchment, filename='data/reprojected_new_catchments.shp')
+
+# Clip and mask
+new_health_fac_catchment_clip <-  raster::crop(new_health_fac_catchment, old_health_fac_catchments)
+
+# Check if clipping worked
+mapview::mapview(new_health_fac_catchment_clip)
+
+# Save clipped new health facility catchment boundaries i.e. Kasungu NP excluded
+raster::shapefile(new_health_catchment_clip, filename = "data/new_health_fac_catchment_clip.shp", overwrite = TRUE)
