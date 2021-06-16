@@ -20,16 +20,18 @@ here::here() # make sure you are in the "~/R/upscaled_2021_updated_May/upscaled_
 # rainy season malaria transmission that extends to May, which is
 # why for this analysis, the dry season starts from June to October
 
-ku_dry_season_malaria_cases_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.csv")) %>% 
-                                     dplyr::select(Names = `organisationunitname`,
-                                                   June.2020, July.2020, August.2020, 
-                                                   September.2020, October.2020) %>% 
-                                     dplyr::filter(Names != "Fpam Clinic Kasungu", 
-                                                   Names != "Kamuzu Academy Clinic") %>% 
-                                     dplyr::rowwise() %>% 
-                                     dplyr::mutate(dr_2020 = sum(June.2020, July.2020,
-                                                                 August.2020, September.2020, 
-                                                                 October.2020, na.rm = TRUE))
+dry_season_malaria_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.csv")) %>% 
+  dplyr::select(Names = `organisationunitname`,
+                June.2020, July.2020, August.2020, 
+                September.2020, October.2020) %>% 
+  dplyr::filter(Names != "Fpam Clinic Kasungu", 
+                Names != "Kamuzu Academy Clinic") %>% 
+  dplyr::rowwise() %>% 
+  dplyr::mutate(dr_2020 = sum(June.2020, July.2020,
+                              August.2020, September.2020, 
+                              October.2020, na.rm = TRUE))
+
+dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv"))
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
 kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
@@ -39,7 +41,7 @@ kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ M
 # Helper function to rename columns by removing "nmcp.confirmed.malaria.cases.rdt_"
 foo <- function(x) gsub("^[^_]*_", "", x)
 
-kasungu_monthly_malaria_wide <- kasungu_monthly_malaria%>% 
+kasungu_monthly_malaria_filter <- kasungu_monthly_malaria%>% 
   dplyr::rename_all(foo) %>% 
   dplyr::filter(!stringr::str_detect(periodname, "15"), # Remove years 2015 and 2016
                 !stringr::str_detect(periodname, "16"),
@@ -48,12 +50,105 @@ kasungu_monthly_malaria_wide <- kasungu_monthly_malaria%>%
                 !stringr::str_detect(periodname, "Mar"),
                 !stringr::str_detect(periodname, "Apr"),
                 !stringr::str_detect(periodname, "Nov"),
-                !stringr::str_detect(periodname, "Dec")) %>% 
+                !stringr::str_detect(periodname, "Dec"))
+
+# Helper function to subtract May malaria cases from the dry season malaria dataframe
+subtract.2017.may.cases <- function(dry.season.malaria.df, may.malaria.df, year =NA,
+                                    health.centre1 = NA, health.centre2 = NA, month = NA){
+  
+  dry.season.malaria <- dry.season.malaria.df$year[which(
+    dry.season.malaria.df$Names == health.centre1)] <- dry.season.malaria.df$year[which(
+             dry.season.malaria.df$Names == health.centre1)] - may.malaria.df$health.centre2[which(
+                 may.malaria.df$periodname == month)]
+  
+  # dry.season.malaria <- getElement(dry.season.malaria.df, "dr_2017")[
+  #   getElement(dry.season.malaria.df, "Names" == health.centre1)] <- getElement(dry.season.malaria.df, "dr_2017")[
+  #     getElement(dry.season.malaria.df, "Names" == health.centre1)] - getElement(may.malaria.df, health.centre2)[
+  #        getElement(may.malaria.df, "periodname" == month)]
+  # 
+  # dry.season.malaria <- dry.season.malaria.df['dr_2017'][which(
+  #   dry.season.malaria.df['Names'] == health.centre1)] <- dry.season.malaria.df['dr_2017'][which(
+  #     dry.season.malaria.df['Names'] == health.centre1)] - may.malaria.df[health.centre2][which(
+  #       may.malaria.df['periodname'] == month)]
+  
+  return(dry.season.malaria)
+}
+
+# Invoking function 
+dry_season_malaria <- subtract.2017.may.cases(dry_season_malaria_2017_2020, 
+                                                        kasungu_monthly_malaria_filter,
+                                                        health.centre1 = "Anchor Farm",
+                                                        health.centre2 = "anchor.farm.health.centre",
+                                                         year = "dr_2017", month = "17-May")
+# Subtract May malaria cases
+dry_season_malaria_2017_2020$dr_2017[which(
+  dry_season_malaria_2017_2020$Names == "Anchor Farm")] <- dry_season_malaria_2017_2020$dr_2017[which(
+    dry_season_malaria_2017_2020$Names == "Anchor Farm")] - kasungu_monthly_malaria_filter$anchor.farm.health.centre[which(
+      kasungu_monthly_malaria_filter$periodname == "17-May")]
+
+dry_season_malaria_2017_2020$dr_2018[which(
+  dry_season_malaria_2017_2020$Names == "Anchor Farm")] <- dry_season_malaria_2017_2020$dr_2018[which(
+    dry_season_malaria_2017_2020$Names == "Anchor Farm")] - kasungu_monthly_malaria_filter$anchor.farm.health.centre[which(
+      kasungu_monthly_malaria_filter$periodname == "18-May")]
+
+dry_season_malaria_2017_2020$dr_2019[which(
+  dry_season_malaria_2017_2020$Names == "Anchor Farm")] <- dry_season_malaria_2017_2020$dr_2019[which(
+    dry_season_malaria_2017_2020$Names == "Anchor Farm")] - kasungu_monthly_malaria_filter$anchor.farm.health.centre[which(
+      kasungu_monthly_malaria_filter$periodname == "19-May")]
+
+dry_season_malaria_2017_2020$dr_2017[which(
+  dry_season_malaria_2017_2020$Names == "Bua Health Centre")] <- dry_season_malaria_2017_2020$dr_2017[which(
+    dry_season_malaria_2017_2020$Names == "Bua Health Centre")] - kasungu_monthly_malaria_filter$bua.hc.kasungu[which(
+      kasungu_monthly_malaria_filter$periodname == "17-May")]
+
+dry_season_malaria_2017_2020$dr_2018[which(
+  dry_season_malaria_2017_2020$Names == "Bua Health Centre")] <- dry_season_malaria_2017_2020$dr_2018[which(
+    dry_season_malaria_2017_2020$Names == "Bua Health Centre")] - kasungu_monthly_malaria_filter$bua.hc.kasungu[which(
+      kasungu_monthly_malaria_filter$periodname == "18-May")]
+
+dry_season_malaria_2017_2020$dr_2019[which(
+  dry_season_malaria_2017_2020$Names == "Bua Health Centre")] <- dry_season_malaria_2017_2020$dr_2019[which(
+    dry_season_malaria_2017_2020$Names == "Bua Health Centre")] - kasungu_monthly_malaria_filter$bua.hc.kasungu[which(
+      kasungu_monthly_malaria_filter$periodname == "19-May")]
+
+dry_season_malaria_2017_2020$dr_2017[which(
+  dry_season_malaria_2017_2020$Names == "Chamama Health Facility")] <- dry_season_malaria_2017_2020$dr_2017[which(
+    dry_season_malaria_2017_2020$Names == "Chamama Health Facility")] - kasungu_monthly_malaria_filter$chamama.health.facility[which(
+      kasungu_monthly_malaria_filter$periodname == "17-May")]
+
+dry_season_malaria_2017_2020$dr_2018[which(
+  dry_season_malaria_2017_2020$Names == "Chamama Health Facility")] <- dry_season_malaria_2017_2020$dr_2018[which(
+    dry_season_malaria_2017_2020$Names == "Chamama Health Facility")] - kasungu_monthly_malaria_filter$chamama.health.facility[which(
+      kasungu_monthly_malaria_filter$periodname == "18-May")]
+
+dry_season_malaria_2017_2020$dr_2019[which(
+  dry_season_malaria_2017_2020$Names == "Chamama Health Facility")] <- dry_season_malaria_2017_2020$dr_2019[which(
+    dry_season_malaria_2017_2020$Names == "Chamama Health Facility")] - kasungu_monthly_malaria_filter$chamama.health.facility[which(
+      kasungu_monthly_malaria_filter$periodname == "19-May")]
+
+
+dry_season_malaria_2017_2020$dr_2017[which(
+  dry_season_malaria_2017_2020$Names == "Chamwabvi Health Centre")] <- dry_season_malaria_2017_2020$dr_2017[which(
+    dry_season_malaria_2017_2020$Names == "Chamwabvi Health Centre")] - kasungu_monthly_malaria_filter$chamwabvi.disp[which(
+      kasungu_monthly_malaria_filter$periodname == "17-May")]
+
+dry_season_malaria_2017_2020$dr_2018[which(
+  dry_season_malaria_2017_2020$Names == "Chamwabvi Health Centre")] <- dry_season_malaria_2017_2020$dr_2018[which(
+    dry_season_malaria_2017_2020$Names == "Chamwabvi Health Centre")] - kasungu_monthly_malaria_filter$chamwabvi.disp[which(
+      kasungu_monthly_malaria_filter$periodname == "18-May")]
+dry_season_malaria_2017_2020$dr_2017[which(
+  dry_season_malaria_2017_2020$Names == "Chamwabvi Health Centre")] <- dry_season_malaria_2017_2020$dr_2017[which(
+    dry_season_malaria_2017_2020$Names == "Chamwabvi Health Centre")] - kasungu_monthly_malaria_filter$chamwabvi.disp[which(
+      kasungu_monthly_malaria_filter$periodname == "17-May")]
+
+
+
+kasungu_monthly_malaria_long <- kasungu_monthly_malaria_filter %>%
   tidyr::pivot_longer(cols = wimbe.hc:anchor.farm.health.centre,
                       names_to = "Names",
                       values_to = "malaria_cases")
 
-kasungu_monthly_malaria_long <- kasungu_monthly_malaria_wide %>% 
+kasungu_monthly_malaria_wide <- kasungu_monthly_malaria_long %>% 
   pivot_wider(names_from = periodname, values_from = malaria_cases) %>% 
   dplyr::rowwise() %>% 
   dplyr::mutate(dry_2017 = sum(`17-Jun`, `17-Jul`, `17-Aug`, `17-Sep`, `17-Oct`, na.rm = TRUE))
@@ -81,18 +176,18 @@ kasungu_monthly_malaria_long <- kasungu_monthly_malaria_wide %>%
 
 
 # Export -----------------------------------------------------------------------
-write.csv(ku_dry_season_malaria_cases_2020, file = "data/dry_season_malaria_2020.csv")
+write.csv(dry_season_malaria_2020, file = "data/dry_season_malaria_2020.csv")
 
 # Eplore data ------------------------------------------------------------------
-ku_dry_season_malaria_cases_2020 %>% dplyr::glimpse() %>%  
+dry_season_malaria_2020 %>% dplyr::glimpse() %>%  
   DataExplorer::introduce() %>% 
   DataExplorer::plot_intro()
 
-ku_dry_season_malaria_cases_2020 %>% DataExplorer::plot_missing()
+dry_season_malaria_2020 %>% DataExplorer::plot_missing()
 
-ku_dry_season_malaria_cases_2020 %>% DataExplorer::plot_bar() 
+dry_season_malaria_2020 %>% DataExplorer::plot_bar() 
 
-ku_dry_season_malaria_cases_2020 %>% 
+dry_season_malaria_2020 %>% 
   DataExplorer::plot_correlation(maxcat = 5)
 
 
