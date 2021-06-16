@@ -31,7 +31,23 @@ dry_season_malaria_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.cs
                               August.2020, September.2020, 
                               October.2020, na.rm = TRUE))
 
-dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv"))
+dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv")) %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::rename(Names = organisationunitname,
+                January = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.January.2019,
+                February = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.February.2019,
+                March = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.March.2019,
+                April = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.April.2019,
+                May = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.May.2019,
+                June = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.June.2019,
+                July = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.July.2019,
+                August = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.August.2019,
+                September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2019,
+                October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2019,
+                November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2019,
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2019)
+    
+              
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
 kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
