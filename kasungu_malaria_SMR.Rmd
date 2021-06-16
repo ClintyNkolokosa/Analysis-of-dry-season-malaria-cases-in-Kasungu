@@ -1491,7 +1491,7 @@ sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3)
 ```
 
 Yearly Variation in malaria cases as a risk factor
-```{r, message=FALSE}
+```{r, message=FALSE, eval=FALSE}
 # Gather year ------------------------------------------------------------------
 model_data_2017_longer <- as.data.frame(model_data_2017) %>%
    dplyr::select(rowID, Names, observed_2017, dr_2018, dr_2019, dr_2020, 
