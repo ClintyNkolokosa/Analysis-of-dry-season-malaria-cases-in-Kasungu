@@ -759,14 +759,14 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred.
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 7: Standardised morbidity ratio of malaria by health facility catchment'}
 
-#   max(SMR_2017$SMR)
-# [1] 6.93
+# max(SMR_2017$SMR)
+# [1] 7.9
 # > max(SMR_2018$SMR)
-# [1] 7.93
+# [1] 7
 # > max(SMR_2019$SMR)
-# [1] 7.71
+# [1] 7.7
 # > max(SMR_2020$SMR)
-# [1] 5.68
+# [1] 5.3
 
 # Helper function to create maps of SMR by catchment ----------------------------------
 create.smr.map <- function(smr.data, 
