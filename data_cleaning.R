@@ -7,7 +7,7 @@ library(sf)
 library(rgdal)
 
 # Tell R where the data is -----------------------------------------------------
-here::here() # make sure you are in the "~/R/upscaled_2021_updated_May/upscaled_2021" folder
+here::here() # make sure you are in the folder where the data is
 
 # Load 2020 NMCP confirmed cases data, remove unnecessary columns and rename 
 
@@ -18,7 +18,7 @@ here::here() # make sure you are in the "~/R/upscaled_2021_updated_May/upscaled_
 # Source: https://www.metmalawi.com/climate/climate.php.
 # From an epidemiological perspective, there's a lag-effect in 
 # rainy season malaria transmission that extends to May, which is
-# why for this analysis, the dry season starts from June to October
+# why for this analysis, the dry season is starting from June to October
 
 dry_season_malaria_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.csv")) %>% 
   dplyr::select(Names = `organisationunitname`,
@@ -45,8 +45,67 @@ dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv"))
                 September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2019,
                 October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2019,
                 November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2019,
-                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2019)
-    
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2019) %>% 
+  dplyr::select(-c(organisationunitid, organisationunitcode, organisationunitdescription,
+                   January, February, March, April, May, November, December)) %>% 
+  dplyr::filter(Names != "Fpam Clinic Kasungu",       # don't have any records
+                Names != "Kamuzu Academy Clinic",
+                Names != "Chilanga Health Centre",
+                Names != "Kapyanga Health Centre",
+                Names != "St Augustin Anglican Clinic (Shayona)") %>% 
+  dplyr::rowwise() %>% 
+  dplyr::mutate(dr_2019 = sum(June, July, August, September, October, na.rm = TRUE))
+
+dry_season_malaria_2018 <- read.csv(here::here("data/kasungu_malaria_2018.csv")) %>% 
+  dplyr::as_tibble() %>% 
+  dplyr::rename(Names = organisationunitname,
+                January = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.January.2018,
+                February = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.February.2018,
+                March = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.March.2018,
+                April = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.April.2018,
+                May = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.May.2018,
+                June = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.June.2018,
+                July = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.July.2018,
+                August = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.August.2018,
+                September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2018,
+                October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2018,
+                November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2018,
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2018) %>% 
+  dplyr::select(-c(organisationunitid, organisationunitcode, organisationunitdescription,
+                   January, February, March, April, May, November, December)) %>% 
+  dplyr::filter(Names != "Fpam Clinic Kasungu",       # don't have any records
+                Names != "Kamuzu Academy Clinic",
+                Names != "Chilanga Health Centre",
+                Names != "Kapyanga Health Centre",
+                Names != "St Augustin Anglican Clinic (Shayona)") %>% 
+  dplyr::rowwise() %>% 
+  dplyr::mutate(dr_2018 = sum(June, July, August, September, October, na.rm = TRUE))
+
+dry_season_malaria_2017 <- read.csv(here::here("data/kasungu_malaria_2017.csv"))%>% 
+  dplyr::as_tibble() %>% 
+  dplyr::rename(Names = organisationunitname,
+                January = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.January.2017,
+                February = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.February.2017,
+                March = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.March.2017,
+                April = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.April.2017,
+                May = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.May.2017,
+                June = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.June.2017,
+                July = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.July.2017,
+                August = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.August.2017,
+                September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2017,
+                October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2017,
+                November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2017,
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2017) %>% 
+  dplyr::select(-c(organisationunitid, organisationunitcode, organisationunitdescription,
+                   January, February, March, April, May, November, December)) %>% 
+  dplyr::filter(Names != "Fpam Clinic Kasungu",       # don't have any records
+                Names != "Kamuzu Academy Clinic",
+                Names != "Chilanga Health Centre",
+                Names != "Kapyanga Health Centre",
+                Names != "St Augustin Anglican Clinic (Shayona)") %>% 
+  dplyr::rowwise() %>% 
+  dplyr::mutate(dr_2017 = sum(June, July, August, September, October, na.rm = TRUE))
+
               
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
@@ -77,25 +136,15 @@ subtract.2017.may.cases <- function(dry.season.malaria.df, may.malaria.df, year 
              dry.season.malaria.df$Names == health.centre1)] - may.malaria.df$health.centre2[which(
                  may.malaria.df$periodname == month)]
   
-  # dry.season.malaria <- getElement(dry.season.malaria.df, "dr_2017")[
-  #   getElement(dry.season.malaria.df, "Names" == health.centre1)] <- getElement(dry.season.malaria.df, "dr_2017")[
-  #     getElement(dry.season.malaria.df, "Names" == health.centre1)] - getElement(may.malaria.df, health.centre2)[
-  #        getElement(may.malaria.df, "periodname" == month)]
-  # 
-  # dry.season.malaria <- dry.season.malaria.df['dr_2017'][which(
-  #   dry.season.malaria.df['Names'] == health.centre1)] <- dry.season.malaria.df['dr_2017'][which(
-  #     dry.season.malaria.df['Names'] == health.centre1)] - may.malaria.df[health.centre2][which(
-  #       may.malaria.df['periodname'] == month)]
-  
   return(dry.season.malaria)
 }
 
 # Invoking function 
 dry_season_malaria <- subtract.2017.may.cases(dry_season_malaria_2017_2020, 
-                                                        kasungu_monthly_malaria_filter,
-                                                        health.centre1 = "Anchor Farm",
-                                                        health.centre2 = "anchor.farm.health.centre",
-                                                         year = "dr_2017", month = "17-May")
+                                              kasungu_monthly_malaria_filter,
+                                              health.centre1 = "Anchor Farm",
+                                              health.centre2 = "anchor.farm.health.centre",
+                                              year = "dr_2017", month = "17-May")
 # Subtract May malaria cases
 dry_season_malaria_2017_2020$dr_2017[which(
   dry_season_malaria_2017_2020$Names == "Anchor Farm")] <- dry_season_malaria_2017_2020$dr_2017[which(
