@@ -115,7 +115,7 @@ dry_season_malaria_2019$rowID <- 1:nrow(dry_season_malaria_2019)
 
 dry_season_malaria_2020$rowID <- 1:nrow(dry_season_malaria_2020)
 
-# Merge malaria data for years 2017 to 2020
+# Merge 2017 to 2020 malaria data 
 dry_season_malaria_merge <- merge(
   merge(
     merge(
@@ -125,7 +125,11 @@ dry_season_malaria_merge <- merge(
   dplyr::select(1, 2, 8, 15, 22, 29) # select "rowID", "Names.x", "dr_2017", 
                                      # "dr_2018", "dr_2019" and "dr_2020"
 
-f <- dry_season_malaria_merge 
+# Get coordinates of health facility location
+coordinates <- read.csv(here::here("data", "dry_season_malaria 2015-2019.csv")) %>% 
+  dplyr::select(FID, LONGITU, LATITUD)
+
+# Add coordinates to 2017 to 2020 malaria data
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
 kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
