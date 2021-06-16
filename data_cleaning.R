@@ -116,22 +116,16 @@ dry_season_malaria_2019$rowID <- 1:nrow(dry_season_malaria_2019)
 dry_season_malaria_2020$rowID <- 1:nrow(dry_season_malaria_2020)
 
 # Merge malaria data for years 2017 to 2020
-f <- list(dry_season_malaria_2017, dry_season_malaria_2018,
-          dry_season_malaria_2019, dry_season_malaria_2020) %>% 
-  Reduce(dplyr::inner_join, by = "rowID")
-  
-  Reduce(function(x, y) merge(x, y, all=TRUE), 
-            list(dry_season_malaria_2017, dry_season_malaria_2018,
-                 dry_season_malaria_2019, dry_season_malaria_2020))
-
 dry_season_malaria_merge <- merge(
   merge(
     merge(
-      dry_season_malaria_2017, dry_season_malaria_2018, by = "rowID"),
-    dry_season_malaria_2019, by = "rowID"),
-  dry_season_malaria_2020, by = "rowID") %>% 
-  dplyr::select(rowID, Names = `Names.x`, dr_2017, 
-                dr_2018, dr_2019, dr_2020)
+      dry_season_malaria_2017, dry_season_malaria_2018, by = "rowID", all = TRUE),
+    dry_season_malaria_2019, by = "rowID", all = TRUE),
+  dry_season_malaria_2020, by = "rowID", all = TRUE)%>% 
+  dplyr::select(1, 2, 8, 15, 22, 29) # select "rowID", "Names.x", "dr_2017", 
+                                     # "dr_2018", "dr_2019" and "dr_2020"
+
+f <- dry_season_malaria_merge 
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
 kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
