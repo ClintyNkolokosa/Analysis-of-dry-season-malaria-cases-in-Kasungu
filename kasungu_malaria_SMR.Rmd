@@ -62,32 +62,8 @@ The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated wate
 
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
-# 2017, 2018 and 2019 dry season malaria cases 
-dry_season_malaria_2015_2019 <- read.csv(here::here("data", "dry_season_malaria 2015-2019.csv"))
-
-# Export 2017, 2018 and 2019 dry season malaria cases
-write.csv(dry_season_malaria_2015_2019, file = "data/dry_season_malaria_2017_2019.csv")
-
-write.table(dry_season_malaria_2015_2019, 
-            file = "dry_season_malaria_2017_2019.txt", 
-            sep = ",", 
-            quote = FALSE, 
-            row.names = FALSE)
-
-# 2020 dry season malaria cases
-ku_malaria_2020 <- read.csv(here::here("data", "dry_season_malaria_2020.csv"))
-
-
-# Merge 2015 to 2019 dry season malaria case data with 2020 data
-dry_season_malaria_2017_2020 <- cbind.data.frame(dry_season_malaria_2015_2019, ku_malaria_2020) 
- 
-dry_season_malaria_2017_2020 <- dry_season_malaria_2017_2020[,c("FID", "Names", "dr_2017", 
-                                                                "dr_2018", "dr_2019", "dr_2020",
-                                                                "LONGITU", "LATITUD")]
-
-# Export 'dry season malaria 2017-2020' as csv
-write.csv(dry_season_malaria_2017_2020, file = "data/dry_season_malaria_2017_2019.csv")
-
+# Kasungu dry season malaria data
+dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"))
 
 # Kasungu district boundary shapefile 
 kasungu_district <- sf::st_read(here::here("data", "kasungu_district.shp"))
