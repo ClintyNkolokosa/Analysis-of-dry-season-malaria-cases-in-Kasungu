@@ -93,7 +93,6 @@ write.csv(dry_season_malaria_2017_2020, file = "data/dry_season_malaria_2017_201
 kasungu_district <- sf::st_read(here::here("data", "kasungu_district.shp"))
   
 # Kasungu health facility catchments generated from accessibility mapping
-
 malire_new <- sf::st_read(here::here("data", "new_catchments.shp")) %>% 
               sf::st_transform(32736) # reproject to WGS UTM Zone 36 South
 
@@ -392,7 +391,7 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
 
   # Add the extracted ID, health facility names and dry season malaria cases to 
   # the health facility catchments (hfc)
-  hfc_malaria_shp <- merge(catchment_shp, hospitals_in_catchment, by.x = "DN", by.y = "FID")
+  hfc_malaria_shp <- merge(catchment_shp, hospitals_in_catchment, by.x = "DN", by.y = "rowID")
 
   # Convert the shapefile containing malaria data to sf-object
   hfc_malaria_sf <- sf::st_as_sf(hfc_malaria_shp)
@@ -457,7 +456,7 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   catchments$rowID <- 1:nrow(catchments)
   
   # Merge catchment areas and population data 
-  pop_by_catchments <- merge(catchments, pop_by_catchment_df, by.x = "rowID", by.y = "rowID")
+  pop_by_catchments <- merge(catchments, pop_by_catchment_df, by = "rowID")
   
   # Cleaning 'Inf' values
   pop_by_catchments %>% 
@@ -1433,7 +1432,7 @@ model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all
 #                    recorded dry season malaria cases in that year
 # risk factor: prop_pop_1km,  prop_pop_2km,  prop_pop_3km are the percentage of people living
 #             within 1km, 2km and 3km buffers of water bodies, respectively.
-# offset: expected_year is the number of malaria cases we would expect if the malaria rate
+# offset: expected_* is the number of malaria cases we would expect if the malaria rate
 #          was equal in all the catchment areas
 
 # 2017 -------------------------------------------------------------------------
@@ -1512,6 +1511,28 @@ model_3km_2020 <- glm(observed_2020~1+prop_pop_3km+offset(log(expected_2020)),
 
 summary(model_3km_2020)
 sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3)
+
+```
+
+Yearly Variation in malaria cases as a risk factor
+```{r, message=FALSE}
+# Gather year ------------------------------------------------------------------
+model_data_2017_longer <- as.data.frame(model_data_2017) %>%
+   dplyr::select(rowID, Names, observed_2017, dr_2018, dr_2019, dr_2020, 
+                 expected_2017, prop_pop_1km, prop_pop_2km, prop_pop_3km) %>% 
+   dplyr::rename(`2017` = observed_2017,
+                 `2018` = dr_2018,
+                 `2019` = dr_2019,
+                 `2020` = dr_2020) %>%
+   as.data.frame() %>% 
+   tidyr::pivot_longer(cols = `2017`:`2020`,
+                       names_to = 'year',
+                       values_to = 'malaria_cases')
+
+# Model fitting ----------------------------------------------------------------
+model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2020)),
+                      data = model_data_2020, family = 'poisson')
+
 
 ```
 
@@ -1609,8 +1630,7 @@ rownames(adj_matrix) <- colnames(adj_matrix) <- model_data_2017$rowID
 # Now we can fit the model. The spatial effect is called using the adjacency function which 
 # requires the grouping factor (i.e. the rowID of each catchment area)
 
-CAR_model_1km_2017 <- spaMM::fitme(observed_2017~prop_pop_1km+
-                                   offset(log(expected_2017)),
+CAR_model_1km_2017 <- spaMM::fitme(observed_2017~prop_pop_1km+offset(log(expected_2017)),
                                    adjMatrix = adj_matrix, 
                                    data = model_data_2017, 
                                    family = 'poisson')
