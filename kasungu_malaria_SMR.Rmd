@@ -774,7 +774,7 @@ A ratio greater than 1.0 indicates that more malaria cases have occurred than wo
 
 # Helper function to create maps of SMR by catchment ----------------------------------
 create.smr.map <- function(smr.data, 
-                           variable = "SMR", 
+                           variable = "SMR_category", 
                            title = NA, 
                            legend.title = "SMR"){
   # SMR by catchment map
@@ -784,12 +784,37 @@ create.smr.map <- function(smr.data,
   # legend.title: legend title in qoutes
   # returns:
   #   a tmap-element (plots a map)
- 
+  
+  # create category column
+  smr.data$SMR_category <- NA
+  
+  # assigning labels for the SMR estimate legends
+  # smr.category.list <- c("<0.49", "0.50 to 0.99", "1.00", "1.10 to 1.49", "1.50 to 1.99", 
+  #                        "2.00 to 2.49", "2.50 to 2.99", "3.00 & above")
+
+  smr.category.list <- c("<0.50", "0.51 to 0.75", "0.76 to 0.99", "1.00", 
+                         "1.10 to 1.24", "1.25 to 1.49", "1.50 & above")
+  
+  # assigning categories
+  smr.data$SMR_category[smr.data$SMR >= 0.0 & smr.data$SMR < 0.49] = -3
+  smr.data$SMR_category[smr.data$SMR >= 0.50 & smr.data$SMR < 0.75] = -2
+  smr.data$SMR_category[smr.data$SMR >= 0.76 & smr.data$SMR < 0.99] = -1
+  smr.data$SMR_category[smr.data$SMR >= 1.00 & smr.data$SMR < 1.09] = 0
+  smr.data$SMR_category[smr.data$SMR >= 1.10 & smr.data$SMR < 1.24] = 1
+  smr.data$SMR_category[smr.data$SMR >= 1.25 & smr.data$SMR < 1.49] = 2
+  smr.data$SMR_categroy[smr.data$SMR >= 1.50 & smr.data$SMR < 10.0] = 3
+  
+  # generating divergent colour schemes [Blues - Light Blues – White – Light Reds – Reds]
+  smr.palette <- c("#33a6fe", "#65bafe", "#98cffe", "#cbe6fe", "#dfeffe", 
+                   "#fef9f9", "#fed5d5", "#feb1b1", "#fe8e8e", "#fe6a6a",
+                   "#fe4646", "#fe2424", "#fe0000")
+  
   tm_shape(smr.data)+
     tm_fill(col = variable, 
-            breaks = c(0, 0.5, 1, 1.5, 2, 2.5, 5, 8),
-            palette = "-magma",
-            title = legend.title)+
+            style = "cat",
+            palette = smr.palette,
+            title = legend.title,
+            labels = smr.category.list)+
     tm_borders(lw = 0.3)+
     tm_layout(legend.position = c(0.75,"bottom"),
               legend.text.size = 0.5,
