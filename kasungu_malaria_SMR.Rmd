@@ -793,7 +793,7 @@ create.smr.map <- function(smr.data,
   #                        "2.00 to 2.49", "2.50 to 2.99", "3.00 & above")
 
   smr.category.list <- c("<0.50", "0.51 to 0.75", "0.76 to 0.99", "1.00", 
-                         "1.10 to 1.24", "1.25 to 1.49", "1.50 & above")
+                         "1.10 to 1.24", "1.25 to 1.49", ">1.50")
   
   # assigning categories
   smr.data$SMR_category[smr.data$SMR >= 0.0 & smr.data$SMR < 0.49] = -3
@@ -815,7 +815,8 @@ create.smr.map <- function(smr.data,
             palette = "-RdBu",
             title = legend.title,
             labels = smr.category.list)+
-    tm_borders(lw = 0.3)+
+    tm_borders(lw = 0.3,
+               col = "white")+
     tm_layout(legend.position = c(0.75,"bottom"),
               legend.text.size = 0.5,
               legend.title.size = 0.7,
