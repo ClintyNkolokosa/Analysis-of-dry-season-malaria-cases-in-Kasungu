@@ -54,6 +54,8 @@ library(mapview)
 ## Tell R where the data is
 
 ```{r}
+file.path(getwd(),"data")
+
 here::here()
 ```
 
