@@ -802,7 +802,7 @@ create.smr.map <- function(smr.data,
   smr.data$SMR_category[smr.data$SMR >= 1.00 & smr.data$SMR < 1.09] = 0
   smr.data$SMR_category[smr.data$SMR >= 1.10 & smr.data$SMR < 1.24] = 1
   smr.data$SMR_category[smr.data$SMR >= 1.25 & smr.data$SMR < 1.49] = 2
-  smr.data$SMR_categroy[smr.data$SMR >= 1.50 & smr.data$SMR < 10.0] = 3
+  smr.data$SMR_category[smr.data$SMR >= 1.50 & smr.data$SMR < 10.0] = 3
   
   # generating divergent colour schemes [Blues - Light Blues – White – Light Reds – Reds]
   smr.palette <- c("#33a6fe", "#65bafe", "#98cffe", "#cbe6fe", "#dfeffe", 
@@ -812,7 +812,7 @@ create.smr.map <- function(smr.data,
   tm_shape(smr.data)+
     tm_fill(col = variable, 
             style = "cat",
-            palette = smr.palette,
+            palette = "-RdBu",
             title = legend.title,
             labels = smr.category.list)+
     tm_borders(lw = 0.3)+
