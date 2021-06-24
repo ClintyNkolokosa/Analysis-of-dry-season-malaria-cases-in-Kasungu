@@ -789,9 +789,6 @@ create.smr.map <- function(smr.data,
   smr.data$SMR_category <- NA
   
   # assigning labels for the SMR estimate legends
-  # smr.category.list <- c("<0.49", "0.50 to 0.99", "1.00", "1.10 to 1.49", "1.50 to 1.99", 
-  #                        "2.00 to 2.49", "2.50 to 2.99", "3.00 & above")
-
   smr.category.list <- c("<0.50", "0.51 to 0.75", "0.76 to 0.99", "1.00", 
                          "1.10 to 1.24", "1.25 to 1.49", ">1.50")
   
@@ -805,9 +802,7 @@ create.smr.map <- function(smr.data,
   smr.data$SMR_category[smr.data$SMR >= 1.50 & smr.data$SMR < 10.0] = 3
   
   # generating divergent colour schemes [Blues - Light Blues – White – Light Reds – Reds]
-  smr.palette <- c("#33a6fe", "#65bafe", "#98cffe", "#cbe6fe", "#dfeffe", 
-                   "#fef9f9", "#fed5d5", "#feb1b1", "#fe8e8e", "#fe6a6a",
-                   "#fe4646", "#fe2424", "#fe0000")
+  # smr.palette <- c("#33a6fe", "#cbe6fe", "#dfeffe", "#feb1b1", "#fe8e8e","#fe0000")
   
   tm_shape(smr.data)+
     tm_fill(col = variable, 
