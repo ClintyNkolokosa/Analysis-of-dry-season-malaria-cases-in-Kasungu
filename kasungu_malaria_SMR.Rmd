@@ -810,8 +810,8 @@ create.smr.map <- function(smr.data,
             palette = "-RdBu",
             title = legend.title,
             labels = smr.category.list)+
-    tm_borders(lw = 0.3,
-               col = "white")+
+    tm_borders(lw = 0.5,
+               col = "burlywood")+
     tm_layout(legend.position = c(0.75,"bottom"),
               legend.text.size = 0.5,
               legend.title.size = 0.7,
@@ -1554,6 +1554,20 @@ summary(multivariate_3km_2017)
 sjPlot::tab_model(multivariate_3km_2017)
 
 ```
+
+## Assess the performance of the predictive model. 
+Here, we evaluate how well the model is predicting the outcome of a new test data that have not been used to build the model.
+
+Two important metrics that are used to assess the performance of the predictive regression model:
+
+`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model. RMSE is computed as RMSE = mean((observeds - predicteds)^2) %>% sqrt(). The lower the RMSE, the better the model.
+
+`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the R2, the better the model.
+
+```{r, message=FALSE}
+
+```
+
 
 ## Check how well the fitted values line up with the observations
 
