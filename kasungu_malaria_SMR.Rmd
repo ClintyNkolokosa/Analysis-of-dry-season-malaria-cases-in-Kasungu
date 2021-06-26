@@ -320,12 +320,12 @@ create.population.map <- function(population.raster, title){
   
   # plot map
   tmap::tm_shape(population.raster)+
-    tm_raster(palette = "-viridis", 
+    tmap::tm_raster(palette = "-viridis", 
               title = title,
               breaks = c(0,100,200,400,600,800,1000,2000,4000,6000,8000))+
-    tm_layout(legend.position = c("right", "bottom"),
+    tmap::tm_layout(legend.position = c("right", "bottom"),
               frame = FALSE)+
-    tm_scale_bar(position = c("left", "bottom"))
+    tmap::tm_scale_bar(position = c("left", "bottom"))
 }
 # Set to static map
 # tmap_mode("plot")
@@ -339,7 +339,8 @@ estimated_pop_2019 <- create.population.map(kasungu_population_2019, title = "20
 estimated_pop_2020 <- create.population.map(kasungu_population_2020, title = "2020 Population")
 
 # Layout the maps
-tmap_arrange(estimated_pop_2017, estimated_pop_2018, estimated_pop_2019, estimated_pop_2020, nrow = 2) 
+tmap::tmap_arrange(estimated_pop_2017, estimated_pop_2018, 
+                   estimated_pop_2019, estimated_pop_2020, nrow = 2) 
 
 ```
 
