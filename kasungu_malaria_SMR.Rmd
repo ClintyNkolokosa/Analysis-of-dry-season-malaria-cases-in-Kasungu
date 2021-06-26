@@ -76,7 +76,7 @@ dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_201
 kasungu_district <- sf::st_read(here::here("data", "kasungu_district.shp"))
   
 # Kasungu health facility catchments generated from accessibility mapping
-malire_new <- sf::st_read(here::here("data", "new_catchments.shp")) %>% 
+malire_new <- sf::st_read(here::here("data", "new_catchments.shp")) |> 
               sf::st_transform(32736) # reproject to WGS UTM Zone 36 South
 
 # Kasungu population raster layer
@@ -114,7 +114,7 @@ We observe that Kasungu district has 30 health facilities classified as dispensa
 
 ```{r, warning = FALSE, message = FALSE, fig.height = 10, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
 
-dry_season_malaria_2017_2020 %>% 
+dry_season_malaria_2017_2020 |>
   summary()
 
 # Plotly bar chart -------------------------------------------------------------
