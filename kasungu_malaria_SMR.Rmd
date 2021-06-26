@@ -418,7 +418,9 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   catchments_sp <- spTransform(catchments_sp, proj4string(kasungu_pop_raster))
   
   # Crop and mask the population raster to exclude Kasungu National Park
-  pop_raster_clip <- raster::mask(raster::crop(kasungu_pop_raster, extent(catchments_sp)), catchments_sp)
+  pop_raster_clip <- raster::crop(kasungu_pop_raster, extent(catchments_sp)) |>
+    raster::mask(catchments_sp)
+    #raster::mask(raster::crop(kasungu_pop_raster, extent(catchments_sp)), catchments_sp)
   
   # Extracting zonal statistics from a population raster layer. 
   # The population raster is a continuous gridded surface layer that has an 
