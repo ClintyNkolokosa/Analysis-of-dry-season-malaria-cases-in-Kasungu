@@ -1456,7 +1456,8 @@ Summary outputs:
 `Pr(>|t|)`    : The `p-value` corresponding to the `t-statistic`. The smaller the `p-value`, the more significant the estimate is.
 `Residuals`   : Provide a quick view of the distribution of the residuals, which by definition have a mean zero. Therefore, the `median` should not be far from zero, and the minimum (`min`)and maximum (`max`) should be roughly equal in absolute value.
 `Coefficients`: Shows the regression beta coefficients and their statistical significance. Predictor variables, that are significantly associated to the outcome variable, are marked by stars.
-`Residual standard error` (`RSE`), and `R-squared` (`R2`)  metrics tell how well the model fits to our data.
+`Residual standard error` (`RSE`), and `R-squared` (`R2`)  metrics tell how well the model fits to our data. 
+
 
 ```{r, message=FALSE}
 # Combine data for model fitting -----------------------------------------------
@@ -1491,9 +1492,9 @@ model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
 
 summary(model_1km_2017)
 # Coefficients:
-#                Estimate Std. Error z value Pr(>|z|)    
-# (Intercept)  -0.2223780  0.0059167  -37.58   <2e-16 ***
-# prop_pop_1km  0.0247164  0.0004965   49.78   <2e-16 ***
+#                Estimate  Std. Error  z value  Pr(>|z|)    
+# (Intercept)  -0.2223780  0.0059167   -37.58   <2e-16 ***
+# prop_pop_1km  0.0247164  0.0004965   49.78    <2e-16 ***
 # 
 # The estimated regression equation can be written as follow: 
 # observed malaria cases = -0.2223780 + 0.0247164 * percentage of catchment population living near dams. 
@@ -1505,6 +1506,18 @@ summary(model_1km_2017)
 #   for a buffer population equal 1000, we can expect  round(-0.22 + 0.02 * 1000) = 20 malaria cases.
 
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
+# ====================================================
+# Predictors	Incidence Rate   CI	             p
+#                 Ratios	
+# ----------------------------------------------------
+# (Intercept)	  0.801	        0.791 – 0.810	  <0.001
+# prop_pop_1km	1.025	        1.024  – 1.026	<0.001
+# ----------------------------------------------------
+# Observations	24
+# R2 Nagelkerke	1.000
+# An (adjusted) R^2 that is close to 1 indicates that a large proportion of the 
+# variability in the outcome has been explained by the regression model. 
+# A number near 0 indicates that the regression model did not explain much of the variability in the outcome.
 
 model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
@@ -1643,8 +1656,16 @@ train_data  <- model_assessment_data[training_samples, ]
 
 test_data <- model_assessment_data[-training_samples, ]
 
-# goodness-of-fit
+# make predictions using the test data in order to evaluate the performance 
+# of our regression model aka goodness-of-fit
 
+# Make predictions
+predictions <- model_1km_2017 |>
+  predict(test_data)
+
+# Model performance
+# (a) Compute the prediction error, RMSE
+RMSE(predictions, test_data$observed_2017)
 
 ```
 
