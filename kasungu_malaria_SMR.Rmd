@@ -118,24 +118,24 @@ dry_season_malaria_2017_2020 |>
   summary()
 
 # Plotly bar chart -------------------------------------------------------------
-bar_chart <- dry_season_malaria_2017_2020 %>%  
+bar_chart <- dry_season_malaria_2017_2020 |>  
   dplyr::filter(Names != "K2 Taso Clinic",          # Have missing malaria records
                 Names != "Kalikeni Private Clinic",
                 Names != "Kakwale Health Centre",
                 Names != "St Andrews Community Hospital",
                 Names != "St. Faith Health Centre",
-                Names != "Chambwe Health Centre") %>% 
+                Names != "Chambwe Health Centre") |> 
   plotly::plot_ly(y = ~Names,
                   x = ~dr_2017,
                   type = "bar",
                   orientation = 'h',
-                  name = "2017") %>%
+                  name = "2017") |>
   plotly::add_trace(x = ~ dr_2018,
-                    name = "2018") %>%
+                    name = "2018") |>
   plotly::add_trace(x = ~ dr_2019,
-                    name = "2019") %>% 
+                    name = "2019") |>
   plotly::add_trace(x = ~ dr_2020,
-                    name = "2020") %>% 
+                    name = "2020") |> 
   plotly::layout(xaxis = list(title = "Total malaria cases"),
                  yaxis = list(title = " "),
                  hovermode = "compare",
