@@ -420,7 +420,7 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   # Crop and mask the population raster to exclude Kasungu National Park
   pop_raster_clip <- raster::crop(kasungu_pop_raster, extent(catchments_sp)) |>
     raster::mask(catchments_sp)
-    #raster::mask(raster::crop(kasungu_pop_raster, extent(catchments_sp)), catchments_sp)
+  # pop_raster_clip <- raster::mask(raster::crop(kasungu_pop_raster, extent(catchments_sp)), catchments_sp)
   
   # Extracting zonal statistics from a population raster layer. 
   # The population raster is a continuous gridded surface layer that has an 
@@ -818,8 +818,7 @@ create.smr.map <- function(smr.data,
             palette = "-RdBu",
             title = legend.title,
             labels = smr.category.list)+
-    tm_borders(lw = 0.5,
-               col = "burlywood")+
+    tm_borders(lw = 0.6)+
     tm_layout(legend.position = c(0.75,"bottom"),
               legend.text.size = 0.5,
               legend.title.size = 0.7,
@@ -850,25 +849,46 @@ First, using `st_buffer`, we compute 1km, 2km and 3km buffers around dry season 
 
 ```{r, message=FALSE, warning=FALSE}
 # Combine and transform TropWet derived waterbody polygons -------------------------------
-surface_waterbodies_2017 <- sf::st_as_sf(
-  st_cast(
-    st_union(
-      st_buffer(dryseason_waterbodies_2017, dist = 30)), "POLYGON"))
+# surface_waterbodies_2017 <- sf::st_as_sf(
+#   st_cast(
+#     st_union(
+#       st_buffer(dryseason_waterbodies_2017, dist = 30)), "POLYGON"))
+#
+# surface_waterbodies_2018 <- sf::st_as_sf(
+#   st_cast(
+#     st_union(
+#       st_buffer(dryseason_waterbodies_2018, dist = 30)), "POLYGON"))
+# 
+# surface_waterbodies_2019 <- sf::st_as_sf(
+#   st_cast(
+#     st_union(
+#       st_buffer(dryseason_waterbodies_2019, dist = 30)), "POLYGON"))
+# 
+# surface_waterbodies_2020 <- sf::st_as_sf(
+#   st_cast(
+#     st_union(
+#       st_buffer(dryseason_waterbodies_2020, dist = 30)), "POLYGON"))
 
-surface_waterbodies_2018 <- sf::st_as_sf(
-  st_cast(
-    st_union(
-      st_buffer(dryseason_waterbodies_2018, dist = 30)), "POLYGON"))
+surface_waterbodies_2017 <- sf::st_buffer(dryseason_waterbodies_2017, dist = 30) |>
+  sf::st_union() |>
+  sf::st_cast("POLYGON") |>
+  sf::st_as_sf()
 
-surface_waterbodies_2019 <- sf::st_as_sf(
-  st_cast(
-    st_union(
-      st_buffer(dryseason_waterbodies_2019, dist = 30)), "POLYGON"))
+surface_waterbodies_2018 <- sf::st_buffer(dryseason_waterbodies_2018, dist = 30) |>
+  sf::st_union() |>
+  sf::st_cast("POLYGON") |>
+  sf::st_as_sf()
 
-surface_waterbodies_2020 <- sf::st_as_sf(
-  st_cast(
-    st_union(
-      st_buffer(dryseason_waterbodies_2020, dist = 30)), "POLYGON"))
+surface_waterbodies_2019 <- sf::st_buffer(dryseason_waterbodies_2019, dist = 30) |>
+  sf::st_union() |>
+  sf::st_cast("POLYGON") |>
+  sf::st_as_sf()
+
+surface_waterbodies_2020 <- sf::st_buffer(dryseason_waterbodies_2020, dist = 30) |>
+  sf::st_union() |>
+  sf::st_cast("POLYGON") |>
+  sf::st_as_sf()
+
 
 # Helper function to compute 1km, 2km and 3km buffers around the water bodies ---------------------
 
@@ -885,7 +905,10 @@ create.waterbody.buffer <- function(waterbody, distance, catchment){
   buffer_radius <- sf::st_buffer(waterbody, distance)
   
   # Dissolve the buffers
-  buffer_union <- sf::st_as_sf(st_cast(st_union(buffer_radius),"MULTIPOLYGON"))
+  # buffer_union <- sf::st_as_sf(st_cast(st_union(buffer_radius),"MULTIPOLYGON"))
+  buffer_union <- sf::st_union(buffer_radius) |>
+    sf::st_cast("MULTIPOLYGON") |>
+    sf::st_as_sf()
   
   # Assign attributes of the 'catchment' to each of the water bodies. 
    buffer_intersect <- sf::st_intersection(buffer_union, catchment)
@@ -893,9 +916,13 @@ create.waterbody.buffer <- function(waterbody, distance, catchment){
    buffer_intersect_sf <- sf::st_as_sf(buffer_intersect)
    
   # Convert the MULTIPOLYGON object into several POLYGON objects
-   buffer_intersect_polygons <- sf::st_cast(
-     sf::st_buffer(buffer_intersect_sf,0.0), "MULTIPOLYGON") %>% 
+   # buffer_intersect_polygons <- sf::st_cast(
+   #   sf::st_buffer(buffer_intersect_sf,0.0), "MULTIPOLYGON") %>% 
+   #   sf::st_cast("POLYGON")
+   buffer_intersect_polygons <- sf::st_buffer(buffer_intersect_sf, 0.0) |>
+     sf::st_cast("MULTIPOLYGON") |>
      sf::st_cast("POLYGON")
+   
   
   # Polygons being seen to be in multiple catchments
    sf::st_intersects(buffer_intersect_polygons, catchment)
@@ -1038,21 +1065,24 @@ estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
                                               
   # Find which catchment each polygon belongs to using its centroid - a point dataset 
   # representing the geographic center-points of the polygons 
-  buffer_by_catchment <- st_intersection(st_centroid(buffers), catchment.area)
+  # buffer_by_catchment <- st_intersection(st_centroid(buffers), catchment.area)
+  buffer_by_catchment <- sf::st_centroid(buffers) |>
+    sf::st_intersection(catchment.area)
   
   # Notice that the buffer_catchment is comprised of separate POLYGONS (buffer_by_catchment$x). 
   # The first step is to “dissolve” away these POLYGONS into one MULTIPOLYGON. 
   # There is no sf equivalent to the QGIS or ArcMap “dissolve” operation. 
   # Instead we use a combination of group_by and summarize from the dplyr package. 
   # Stats::aggregate from sf package, and dplyr::summarize both do essentially the same.
-   buffer_pop_aggregated <- buffer_by_catchment %>% 
-     dplyr::group_by(DN) %>%
-     dplyr::summarize(
-       buffer_pop_aggregated = round(sum(buffer_pop, na.rm = TRUE)))
+   buffer_pop_aggregated <- buffer_by_catchment |> 
+     dplyr::group_by(DN) |>
+     dplyr::summarize(buffer_pop_aggregated = round(sum(buffer_pop, na.rm = TRUE)))
    
-  buffer_pop <- merge(
-    catchment.area, st_drop_geometry(
-      buffer_pop_aggregated), by = 'DN', all.x = TRUE)
+  # buffer_pop <- merge(catchment.area, st_drop_geometry(buffer_pop_aggregated), 
+  #                     by = 'DN', all.x = TRUE)
+  
+  buffer_pop <- sf::st_drop_geometry(buffer_pop_aggregated) |>
+    merge(catchment.area, buffer_pop_aggregated, by = 'DN', all.x = TRUE)
   
   return(out = buffer_pop)
   
@@ -1564,13 +1594,13 @@ sjPlot::tab_model(multivariate_3km_2017)
 ```
 
 ## Assess the performance of the predictive model. 
-Here, we evaluate how well the model is predicting the outcome of a new test data that have not been used to build the model.
+Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model.
 
-Two important metrics that are used to assess the performance of the predictive regression model:
+Two important metrics that have been used to assess the performance of the predictive regression model:
 
-`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model. RMSE is computed as RMSE = mean((observeds - predicteds)^2) %>% sqrt(). The lower the RMSE, the better the model.
+`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model. `RMSE` is computed as RMSE = mean((observed - predicted)^2) %>% sqrt(). The lower the `RMSE`, the better the model.
 
-`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the R2, the better the model.
+`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the `R2`, the better the model.
 
 ```{r, message=FALSE}
 
