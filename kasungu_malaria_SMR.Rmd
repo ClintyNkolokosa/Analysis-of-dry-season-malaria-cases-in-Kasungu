@@ -316,7 +316,7 @@ create.population.map <- function(population.raster, title){
   #   a tmap-element (plots a map)
   
   # set to interactive view
-  tmap::tmap_mode("view")
+  # tmap::tmap_mode("view")
   
   # plot map
   tmap::tm_shape(population.raster)+
@@ -328,7 +328,7 @@ create.population.map <- function(population.raster, title){
     tmap::tm_scale_bar(position = c("left", "bottom"))
 }
 # Set to static map
-# tmap_mode("plot")
+ tmap_mode("plot")
 
 estimated_pop_2017 <- create.population.map(kasungu_population_2017, title = "2017 Population")
 
