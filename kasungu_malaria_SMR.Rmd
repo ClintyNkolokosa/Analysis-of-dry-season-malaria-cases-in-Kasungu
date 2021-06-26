@@ -1448,6 +1448,11 @@ ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
 
 ## Model fitting
 
+`Estimate` : the `intercept` (b0) and the beta coefficient estimates associated to each predictor variable
+`Std.Error`: the `standard error` of the coefficient estimates. This represents the accuracy of the coefficients.              The larger the standard error, the less confident we are about the estimate.
+`t value`  : the t-statistic, which is the coefficient estimate (column 2) divided by the standard error of the estimate (column 3)
+`Pr(>|t|)` : The `p-value` corresponding to the t-statistic. The smaller the `p-value`, the more significant the estimate is.
+
 ```{r, message=FALSE}
 # Combine data for model fitting -----------------------------------------------
 model_data_2017 <- merge(expected_malaria_2017, smr_pop_2017, by = "rowID", all = TRUE) %>% 
@@ -1487,7 +1492,13 @@ summary(model_1km_2017)
 # 
 # The estimated regression equation can be written as follow: 
 # observed malaria cases = -0.2223780 + 0.0247164 * percentage of catchment population living near dams. 
-# Using this formula, for each new malaria case, you can predict the number of sale units.
+# Using this formula, for each change in number of people living near dams,
+# we can predict the number of dry season malaria case.
+#
+# For example:
+#   for a buffer population equal zero, we can expect -0.22 malaria cases. 
+#   for a buffer population equal 1000, we can expect  round(-0.22 + 0.02 * 1000) = 20 malaria cases.
+
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
 
 model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
