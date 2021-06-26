@@ -314,7 +314,12 @@ create.population.map <- function(population.raster, title){
   #   legend.title: legend title
   # returns:
   #   a tmap-element (plots a map)
-  tm_shape(population.raster)+
+  
+  # set to interactive view
+  tmap::tmap_mode("view")
+  
+  # plot map
+  tmap::tm_shape(population.raster)+
     tm_raster(palette = "-viridis", 
               title = title,
               breaks = c(0,100,200,400,600,800,1000,2000,4000,6000,8000))+
@@ -323,7 +328,7 @@ create.population.map <- function(population.raster, title){
     tm_scale_bar(position = c("left", "bottom"))
 }
 # Set to static map
-tmap_mode("plot")
+# tmap_mode("plot")
 
 estimated_pop_2017 <- create.population.map(kasungu_population_2017, title = "2017 Population")
 
