@@ -188,10 +188,6 @@ zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_ma
 #  b) Bua and Mziza Health Centres, and 
 #  c) Kaluluma and Nkhamenya Rural Hospitals in order to 
 # generate catchment areas that are geographically correct
-with(zipatala_aggregated,
-     {dr_2017[which(Names == "Kasungu District Hospital")] <- dr_2017[which(
-       Names == "Kasungu District Hospital")] + dr_2017[which(
-         Names == "Kasalika Health Centre")]})
 
 zipatala_aggregated$dr_2017[which(
   zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2017[which(
