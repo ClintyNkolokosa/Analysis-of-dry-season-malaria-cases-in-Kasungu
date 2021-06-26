@@ -30,6 +30,7 @@ library(spaMM)
 library(popEpi)
 library(Epi)
 library(tidyverse)
+library(caret)
 library(ggpubr)
 library(plotly)
 library(lubridate)
@@ -1077,12 +1078,11 @@ estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
    buffer_pop_aggregated <- buffer_by_catchment |> 
      dplyr::group_by(DN) |>
      dplyr::summarize(buffer_pop_aggregated = round(sum(buffer_pop, na.rm = TRUE)))
-   
-  # buffer_pop <- merge(catchment.area, st_drop_geometry(buffer_pop_aggregated), 
-  #                     by = 'DN', all.x = TRUE)
+
+  buffer_pop <- merge(catchment.area, st_drop_geometry(buffer_pop_aggregated),
+                      by = 'DN', all.x = TRUE)
   
-  buffer_pop <- sf::st_drop_geometry(buffer_pop_aggregated) |>
-    merge(catchment.area, buffer_pop_aggregated, by = 'DN', all.x = TRUE)
+  
   
   return(out = buffer_pop)
   
@@ -1480,6 +1480,14 @@ model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_1km_2017)
+# Coefficients:
+#                Estimate Std. Error z value Pr(>|z|)    
+# (Intercept)  -0.2223780  0.0059167  -37.58   <2e-16 ***
+# prop_pop_1km  0.0247164  0.0004965   49.78   <2e-16 ***
+# 
+# The estimated regression equation can be written as follow: 
+# observed malaria cases = -0.2223780 + 0.0247164 * percentage of catchment population living near dams. 
+# Using this formula, for each new malaria case, you can predict the number of sale units.
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
 
 model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
@@ -1596,7 +1604,7 @@ sjPlot::tab_model(multivariate_3km_2017)
 ## Assess the performance of the predictive model. 
 Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model.
 
-Two important metrics that have been used to assess the performance of the predictive regression model:
+Two important metrics have been used to assess the performance of the predictive regression model:
 
 `Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model. `RMSE` is computed as RMSE = mean((observed - predicted)^2) %>% sqrt(). The lower the `RMSE`, the better the model.
 
