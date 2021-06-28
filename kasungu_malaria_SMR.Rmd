@@ -1748,11 +1748,25 @@ caret::R2(predictions_1km_2017, test_data_2017$observed_2017)
 # From the output above, the R2 is 0.85, meaning that the observed and the 
 # predicted outcome values are highly correlated
 
+caret::R2(predictions_2km_2017, test_data_2017$observed_2017)
+
 # 2018 -------------------------------------------------------------------------
 caret::R2(predictions_1km_2018, test_data_2018$observed_2018)
 # [1] 0.4304403
 # From the output above, the R2 is 0.43, meaning that the observed and the 
 # predicted outcome values are less correlated
+
+caret::R2(predictions_2km_2018, test_data_2018$observed_2018)
+
+# 2019 -------------------------------------------------------------------------
+caret::R2(predictions_1km_2019, test_data_2019$observed_2019)
+
+caret::R2(predictions_2km_2019, test_data_2019$observed_2019)
+
+# 2020 -------------------------------------------------------------------------
+caret::R2(predictions_1km_2020, test_data_2020$observed_2020)
+
+caret::R2(predictions_2km_2020, test_data_2020$observed_2020)
 
 ```
 
