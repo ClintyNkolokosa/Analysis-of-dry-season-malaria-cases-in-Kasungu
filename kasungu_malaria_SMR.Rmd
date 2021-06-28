@@ -1707,6 +1707,11 @@ predictions_2km_2018 <- model_2km_2018 |>
   stats::predict(test_data_2018)
 
 # 2019 -------------------------------------------------------------------------
+predictions_1km_2019 <- model_1km_2019 |>
+  stats::predict(test_data_2019)
+
+predictions_2km_2019 <- model_2km_2019 |>
+  stats::predict(test_data_2019)
 
 # Model performance
 # (a) Compute the prediction error, RMSE.The lower the RMSE, the better the model
