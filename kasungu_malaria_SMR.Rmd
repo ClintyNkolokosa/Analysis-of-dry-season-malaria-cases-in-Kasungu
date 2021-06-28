@@ -177,6 +177,7 @@ bar_chart
 #   ggplot2::theme_classic()+
 #   ggsci::scale_fill_jama()
 
+
 ```
 
 ## Kasungu health-care facilities and their catchment areas
@@ -1507,6 +1508,21 @@ model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all
   dplyr::select(-Names.y) |>
   dplyr::rename(Names = Names.x)
 
+# Normality test ---------------------------------------------------------------
+# Check whether the dependent variable follows a poisson distribution
+# Dry season malaria cases appear to be non normally distributed i.e highly skewed 
+
+graphics::hist(model_data_2017$observed_2017, 
+               main = "Histogram of 2017 dry season malaria cases ",
+               xlab = "Malaria cases",
+               las = 1)
+
+graphics::hist(model_data_2018$observed_2018)
+
+graphics::hist(model_data_2019$observed_2019)
+
+graphics::hist(model_data_2020$observed_2020)
+
 # Fit generalised linear model -------------------------------------------------
 # Defining model parameters:
 # response variable: observed_2017, observed_2018, observed_2019, observed_2020 are
@@ -1811,7 +1827,7 @@ plot(performance::compare_performance(model_1km_2017, model_2km_2017,
 ```
 
 
-## Check how well the fitted values line up with the observations
+Check how well the fitted values line up with the observations
 
 The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` (i.e., proportion of catchment population living near water bodies) can help us understand malaria risk in the catchment areas.
 
