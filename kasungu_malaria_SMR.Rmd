@@ -31,6 +31,10 @@ library(popEpi)
 library(Epi)
 library(tidyverse)
 library(caret)
+library(stats)
+library(performance)   # check linear model performance
+library(see)           # to plot model assumptions
+library(qqplotr)
 library(ggpubr)
 library(plotly)
 library(lubridate)
@@ -1490,6 +1494,7 @@ model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all
 model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
+# Display the statistical summary of the model
 summary(model_1km_2017)
  
 # The estimated regression equation can be written as follow: 
@@ -1628,7 +1633,7 @@ Two important metrics have been used to assess the performance of the predictive
 
 ```{r, message=FALSE}
 
-# Tidy and check model assessment data -----------------------------------------
+# Tidy model assessment data -----------------------------------------
 model_assessment_data_2017 <- model_data_2017 |>
   dplyr::as_tibble() |>
   dplyr::select(Names, observed_2017, expected_2017,
@@ -1654,7 +1659,7 @@ model_assessment_data_2020 <- model_data_2020 |>
                 prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
   dplyr::glimpse()
 
-# Split the data into training and test set
+# Split the data into training and test set 
 # 80% of the data is used for training
 set.seed(123) # generate a sequence of random numbers
 # 2017 -------------------------------------------------------------------------
@@ -1665,7 +1670,7 @@ train_data_2017  <- model_assessment_data_2017[training_samples_2017, ]
 
 test_data_2017 <- model_assessment_data_2017[-training_samples_2017, ]
 
-# 2018 -------------------------------------------------------------------------
+# 2018 
 training_samples_2018 <- model_assessment_data_2018$observed_2018 |>
   caret::createDataPartition(p = 0.8, list = FALSE) # see ?createDataPartition
 
@@ -1673,7 +1678,7 @@ train_data_2018 <- model_assessment_data_2018[training_samples_2018, ]
 
 test_data_2018 <- model_assessment_data_2018[-training_samples_2018, ]
 
-# 2019 -------------------------------------------------------------------------
+# 2019 
 training_samples_2019 <- model_assessment_data_2019$observed_2019 |>
   caret::createDataPartition(p = 0.8, list = FALSE)
 
@@ -1681,7 +1686,7 @@ train_data_2019 <- model_assessment_data_2019[training_samples_2019, ]
 
 test_data_2019 <- model_assessment_data_2019[-training_samples_2019, ]
 
-# 2020 -------------------------------------------------------------------------
+# 2020 
 training_samples_2020 <- model_assessment_data_2020$observed_2020 |>
   caret::createDataPartition(p = 0.8, list = FALSE)
 
@@ -1698,51 +1703,51 @@ predictions_1km_2017 <- model_1km_2017 |>
 predictions_2km_2017 <- model_2km_2017 |>
   stats::predict(test_data_2017)
 
-# 2018 -------------------------------------------------------------------------
+# 2018 
 predictions_1km_2018 <- model_1km_2018 |>
   stats::predict(test_data_2018)
 
 predictions_2km_2018 <- model_2km_2018 |>
   stats::predict(test_data_2018)
 
-# 2019 -------------------------------------------------------------------------
+# 2019 
 predictions_1km_2019 <- model_1km_2019 |>
   stats::predict(test_data_2019)
 
 predictions_2km_2019 <- model_2km_2019 |>
   stats::predict(test_data_2019)
 
-# 2020 -------------------------------------------------------------------------
+# 2020 
 predictions_1km_2020 <- model_1km_2020 |>
   stats::predict(test_data_2020)
 
 predictions_2km_2020 <- model_2km_2020 |>
   stats::predict(test_data_2020)
 
-# Model performance
+# Model performance ------------------------------------------------------------
 # (a) Compute the prediction error, RMSE.The lower the RMSE, the better the model
-# 2017 -------------------------------------------------------------------------
+# 2017
 caret::RMSE(predictions_1km_2017, test_data_2017$observed_2017)
 
 caret::RMSE(predictions_2km_2017, test_data_2017$observed_2017)
 
-# 2018 -------------------------------------------------------------------------
+# 2018 
 caret::RMSE(predictions_1km_2018, test_data_2018$observed_2018)
 
 caret::RMSE(predictions_2km_2018, test_data_2018$observed_2018)
 
-# 2019 ------------------------------------------------------------------------
+# 2019 
 caret::RMSE(predictions_1km_2019, test_data_2019$observed_2019)
 
 caret::RMSE(predictions_2km_2019, test_data_2019$observed_2019)
 
-# 2020 -------------------------------------------------------------------------
+# 2020 
 caret::RMSE(predictions_1km_2020, test_data_2020$observed_2020)
 
 caret::RMSE(predictions_2km_2020, test_data_2020$observed_2020)
 
-# (b) Compute R-square
-# 2017 -------------------------------------------------------------------------
+# (b) Compute R-square ---------------------------------------------------------
+# 2017 
 caret::R2(predictions_1km_2017, test_data_2017$observed_2017)
 # [1] 0.8549051
 # From the output above, the R2 is 0.85, meaning that the observed and the 
@@ -1750,7 +1755,7 @@ caret::R2(predictions_1km_2017, test_data_2017$observed_2017)
 
 caret::R2(predictions_2km_2017, test_data_2017$observed_2017)
 
-# 2018 -------------------------------------------------------------------------
+# 2018 
 caret::R2(predictions_1km_2018, test_data_2018$observed_2018)
 # [1] 0.4304403
 # From the output above, the R2 is 0.43, meaning that the observed and the 
@@ -1758,15 +1763,36 @@ caret::R2(predictions_1km_2018, test_data_2018$observed_2018)
 
 caret::R2(predictions_2km_2018, test_data_2018$observed_2018)
 
-# 2019 -------------------------------------------------------------------------
+# 2019 
 caret::R2(predictions_1km_2019, test_data_2019$observed_2019)
 
 caret::R2(predictions_2km_2019, test_data_2019$observed_2019)
 
-# 2020 -------------------------------------------------------------------------
+# 2020 
 caret::R2(predictions_1km_2020, test_data_2020$observed_2020)
 
 caret::R2(predictions_2km_2020, test_data_2020$observed_2020)
+
+# Check model assumptions, like check_collinearity(), check_normality() or 
+# check_heteroscedasticity() ---------------------------------------------------
+
+performance::check_model(model_1km_2017)
+
+performance::check_model(model_2km_2017)
+
+performance::check_model(model_1km_2018)
+
+performance::check_model(model_2km_2018)
+
+performance::check_model(model_1km_2019)
+
+performance::check_model(model_2km_2019)
+
+performance::check_model(model_1km_2020)
+
+performance::check_model(model_2km_2020)
+
+# Model performance summaries --------------------------------------------------
 
 ```
 
