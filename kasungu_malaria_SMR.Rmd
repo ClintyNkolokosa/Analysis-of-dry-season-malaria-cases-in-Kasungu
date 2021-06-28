@@ -4,7 +4,6 @@ output:
   html_document: 
     toc: yes
     toc_float: yes
-    theme: journal
     number_sections: yes
 latex_engine: MiKTeX
 author: Clinton Nkolokosa
@@ -158,18 +157,6 @@ bar_chart <- dry_season_malaria_2017_2020 |>
 bar_chart
 
 
-# Monthly variation in confirmed malaria cases ---------------------------------
-ggplot2::ggplot(monthly_malaria_2017_2021) +
-  aes(x = date, 
-      y = NMCP) +
-  geom_line(size = 0.6, 
-            colour = "#112446") +
-  scale_y_continuous(trans = "log2") +
-  labs(x = "Year", 
-       y = "Confirmed malaria cases") +
-  theme_classic()
-
-
 # Pivot longer -----------------------------------------------------------------
 # dry_season_malaria_longer <- dry_season_malaria_2017_2020 |>
 #   dplyr::filter(Names != "K2 Taso Clinic",                       
@@ -199,6 +186,23 @@ ggplot2::ggplot(monthly_malaria_2017_2021) +
 
 
 ```
+
+Monthly variation in malaria cases
+
+```{r, fig.cap= 'Fig.2: Seasonal variation in confirmed malaria cases'}
+
+ggplot2::ggplot(monthly_malaria_2017_2021) +
+  aes(x = date, 
+      y = NMCP) +
+  geom_line(size = 0.6, 
+            colour = "#112446") +
+  scale_y_continuous(trans = "log2") +
+  labs(x = "Year", 
+       y = "Confirmed malaria cases") +
+  theme_classic()
+
+```
+
 
 ## Kasungu health-care facilities and their catchment areas
 
