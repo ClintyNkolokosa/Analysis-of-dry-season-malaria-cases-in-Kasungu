@@ -1391,14 +1391,15 @@ create.scatter.plot <- function(smr.pop.df,
 # Invoking function 
 # 2017 scatter plots ------------------------------------------------------------
 
-scatter_1km_2017 <- create.scatter.plot(smr_pop_2017, independent.var = "prop_pop_1km",
-                                       x.label = "Percentage of catchment population \nliving in 1km buffer",
-                                       plot.title = "2017")
+scatter_1km_2017 <- create.scatter.plot(
+  smr_pop_2017, independent.var = "prop_pop_1km",
+  x.label = "Percentage of catchment population \nliving in 1km buffer",
+  plot.title = "2017")
 
 scatter_2km_2017 <- create.scatter.plot(
   smr_pop_2017, independent.var = "prop_pop_2km",
-                                        x.label = "Percentage of catchment population \nliving in 2km buffer",
-                                        plot.title = "2017")
+  x.label = "Percentage of catchment population \nliving in 2km buffer",
+  plot.title = "2017")
 
 scatter_3km_2017 <- create.scatter.plot(
   smr_pop_2017, independent.var = "prop_pop_3km",
