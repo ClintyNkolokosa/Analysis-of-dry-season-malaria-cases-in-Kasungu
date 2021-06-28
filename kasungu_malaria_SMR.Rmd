@@ -1635,30 +1635,26 @@ model_assessment_data <- model_data_2017 |>
   dplyr::glimpse()
 
 # Split the data into training and test set
-set.seed(123)
-training_samples <- model_assessment_data$observed_2017 |>
+set.seed(123) # generate a sequence of random numbers
+training_samples_2017 <- model_assessment_data$observed_2017 |>
   caret::createDataPartition(p = 0.8, list = FALSE)
 
-train_data  <- model_assessment_data[training_samples, ]
+train_data_2017  <- model_assessment_data[training_samples_2017, ]
 
-test_data <- model_assessment_data[-training_samples, ]
+test_data_2017 <- model_assessment_data[-training_samples_2017, ]
 
 
-# Build the model
-model <- glm(oberved ~., data = train_data)
-# make predictions using the test data in order to evaluate the performance 
+# Make predictions using the test data in order to evaluate the performance 
 # of our regression model aka goodness-of-fit
-
-# Make predictions
-predictions <- model_1km_2017 |>
-  predict(test_data)
+predictions_1km_2017 <- model_1km_2017 |>
+  predict(test_data_2017)
 
 # Model performance
 # (a) Compute the prediction error, RMSE.The lower the RMSE, the better the model
-caret::RMSE(predictions, test_data$observed_2017)
+caret::RMSE(predictions_1km_2017, test_data_2017$observed_2017)
 
 # (b) Compute R-square
-caret::R2(predictions, test_data$observed_2017)
+caret::R2(predictions_1km_2017, test_data_2017$observed_2017)
 # [1] 0.8549051
 # From the output above, the R2 is 0.85, meaning that the observed and the 
 # predicted outcome values are highly correlated
