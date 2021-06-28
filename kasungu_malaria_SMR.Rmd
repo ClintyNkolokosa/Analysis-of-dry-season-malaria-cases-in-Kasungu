@@ -189,7 +189,7 @@ bar_chart
 
 Monthly variation in malaria cases
 
-```{r, fig.cap= 'Fig.2: Seasonal variation in confirmed malaria cases'}
+```{r, message=FALSE, warning=FALSE, fig.width=10, fig.cap= 'Fig.2: Seasonal variation in confirmed malaria cases'}
 
 ggplot2::ggplot(monthly_malaria_2017_2021) +
   aes(x = date, 
