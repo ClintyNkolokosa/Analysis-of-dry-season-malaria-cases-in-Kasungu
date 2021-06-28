@@ -1629,12 +1629,14 @@ Two important metrics have been used to assess the performance of the predictive
 ```{r, message=FALSE}
 
 # Inspect model data
-model_assessment_data <- model_data_2017 |>
-  dplyr::rename(observed_2018 = dr_2018,
-                observed_2019 = dr_2019,
-                observed_2020 = dr_2020) |>
+model_assessment_data_2017 <- model_data_2017 |>
   dplyr::as_tibble() |>
-  dplyr::select(-geometry) |>
+  dplyr::select(Names, observed_2017, expected_2017) |>
+  dplyr::glimpse()
+
+model_assessment_data_2018 <- model_data_2018 |>
+  dplyr::as_tibble() |>
+  dplyr::select(Names, observed_2018, expected_2018) |>
   dplyr::glimpse()
 
 # Split the data into training and test set
