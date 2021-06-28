@@ -1664,8 +1664,13 @@ train_data_2019 <- model_assessment_data[training_samples_2019, ]
 
 test_data_2019 <- model_assessment_data[-training_samples_2019, ]
 
-# 2019 -------------------------------------------------------------------------
+# 2020 -------------------------------------------------------------------------
+training_samples_2020 <- model_assessment_data$observed_2020 |>
+  caret::createDataPartition(p = 0.8, list = FALSE)
 
+train_data_2020 <- model_assessment_data[training_samples_2020, ]
+
+test_data_2020 <- model_assessment_data[-training_samples_2020, ]
 
 # Make predictions using the test data in order to evaluate the performance 
 # of our regression model aka goodness-of-fit
