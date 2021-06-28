@@ -1474,7 +1474,7 @@ offset, 𝑒= expected malaria cases
 
 Summary outputs:
 
-`Estimate`    : the `intercept` (b0) and the beta coefficient estimates associated to each predictor variable.
+`Estimate`    : the `intercept` ($𝜷_0$) and the beta coefficient estimates associated to each predictor variable.
 
 `Std.Error`   : the `standard error` of the coefficient estimates. This represents the accuracy of the coefficients. The larger the standard error, the less confident we are about the estimate.
 
@@ -1486,7 +1486,7 @@ Summary outputs:
 
 `Coefficients`: Shows the regression beta coefficients and their statistical significance. Predictor variables, that are significantly associated to the outcome variable, are marked by stars.
 
-`Residual standard error` (`RSE`), and `R-squared` (`R2`)  metrics tell how well the model fits to our data. An (adjusted) `R2` that is close to 1 indicates that a large proportion of the variability in the outcome has been explained by the regression model. A number near 0 indicates that the regression model did not explain much of the variability in the outcome.
+`Residual standard error` (`RSE`), and `R-squared` ($R^2$)  metrics tell how well the model fits to our data. An (adjusted) $R^2$ that is close to 1 indicates that a large proportion of the variability in the outcome has been explained by the regression model. A number near 0 indicates that the regression model did not explain much of the variability in the outcome.
 
 
 ```{r, message=FALSE}
@@ -1614,14 +1614,14 @@ Here, we evaluate how well the `Poisson regression` model is predicting the outc
 
 Two important metrics have been used to assess the performance of the predictive regression model:
 
-`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model.`RMSE` is computed as RMSE = mean((observed - predicted)^2) %>% sqrt(). The lower the `RMSE`, the better the model.
+`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model.`RMSE` is computed as `RMSE = mean((observed - predicted)^2) %>% sqrt()`. The lower the `RMSE`, the better the model.
 
 
 $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
 
 
 
-`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the `R2`, the better the model. 
+`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the $R^2$, the better the model. 
 
 
 $$R^2 = \frac {\Sigma {(y - \bar y)^2} - \Sigma {(y - \hat y)^2}}{\Sigma {(y - \bar y)^2}}$$
