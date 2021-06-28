@@ -1630,18 +1630,30 @@ Two important metrics have been used to assess the performance of the predictive
 
 # Inspect model data
 model_assessment_data <- model_data_2017 |>
+  dplyr::rename(observed_2018 = dr_2018,
+                observed_2019 = dr_2019,
+                observed_2020 = dr_2020) |>
   dplyr::as_tibble() |>
   dplyr::select(-geometry) |>
   dplyr::glimpse()
 
 # Split the data into training and test set
 set.seed(123) # generate a sequence of random numbers
+# 2017 -------------------------------------------------------------------------
 training_samples_2017 <- model_assessment_data$observed_2017 |>
   caret::createDataPartition(p = 0.8, list = FALSE)
 
 train_data_2017  <- model_assessment_data[training_samples_2017, ]
 
 test_data_2017 <- model_assessment_data[-training_samples_2017, ]
+
+# 2018 -------------------------------------------------------------------------
+training_samples_2018 <- model_assessment_data$observed_2018 |>
+  caret::createDataPartition(p = 0.8, list = FALSE)
+
+train_data_2018 <- model_assessment_data[training_samples_2018, ]
+
+test_data_2018 <- model_assessment_data[-training_samples_2018, ]
 
 
 # Make predictions using the test data in order to evaluate the performance 
