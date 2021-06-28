@@ -115,7 +115,7 @@ dryseason_waterbodies_2020$ID <- 1:nrow(dryseason_waterbodies_2020)
 ```
 
 ## View the dry season malaria case data
-
+Lets have a closer look at the malaria dataset.
 We observe that Kasungu district has 30 health facilities classified as dispensary, health centre, district hospital and rural hospital, and the highest malaria cases were recorded at Kasungu District Hospital.
 
 ```{r, warning = FALSE, message = FALSE, fig.height = 10, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
@@ -1834,16 +1834,19 @@ performance::model_performance(model_2km_2020)
 
 
 # Compare the quality of the models --------------------------------------------
-model_comparison <- performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
-                                                     model_2km_2018, model_1km_2019, model_2km_2019,
-                                                     model_1km_2020, model_2km_2020, rank = TRUE)
+model_comparison <- performance::compare_performance(model_1km_2017, model_2km_2017,
+                                                     model_1km_2018, model_2km_2018, 
+                                                     model_1km_2019, model_2km_2019,
+                                                     model_1km_2020, model_2km_2020, 
+                                                     metrics = "common", rank = TRUE)
 
-model_comparison_table <- model_comparison %>%  
-  dplyr::as_tibble() %>% 
-  kable %>% 
-  kableExtra::kable_styling(full_width = FALSE)
+model_comparison
 
-model_comparison_table
+# model_comparison_table <- model_comparison %>% 
+#   kable %>% 
+#   kableExtra::kable_styling(full_width = FALSE)
+# 
+# model_comparison_table
 
 ```
 
