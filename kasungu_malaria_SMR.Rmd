@@ -103,7 +103,7 @@ dryseason_waterbodies_2019 <- sf::st_read(here::here("data", "kasungu_2019_water
 
 dryseason_waterbodies_2020 <- sf::st_read(here::here("data", "water_bodies_2020.shp"))
 
-# Add a field ID to water bodies polygons 
+# Add a row ID to water bodies polygons 
 dryseason_waterbodies_2017$ID <- 1:nrow(dryseason_waterbodies_2017)
 
 dryseason_waterbodies_2018$ID <- 1:nrow(dryseason_waterbodies_2018)
@@ -327,10 +327,10 @@ create.population.map <- function(population.raster, title){
   # plot map
   tmap::tm_shape(population.raster)+
     tmap::tm_raster(palette = "-viridis", 
-              title = title,
-              breaks = c(0,100,200,400,600,800,1000,2000,4000,6000,8000))+
+                    title = title,
+                    breaks = c(0,100,200,400,600,800,1000,2000,4000,6000,8000))+
     tmap::tm_layout(legend.position = c("right", "bottom"),
-              frame = FALSE)+
+                    frame = FALSE)+
     tmap::tm_scale_bar(position = c("left", "bottom"))
 }
 # Set to static map
