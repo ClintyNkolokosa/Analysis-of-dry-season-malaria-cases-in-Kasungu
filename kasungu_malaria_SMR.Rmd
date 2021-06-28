@@ -1724,8 +1724,22 @@ predictions_2km_2020 <- model_2km_2020 |>
 # 2017 -------------------------------------------------------------------------
 caret::RMSE(predictions_1km_2017, test_data_2017$observed_2017)
 
+caret::RMSE(predictions_2km_2017, test_data_2017$observed_2017)
+
 # 2018 -------------------------------------------------------------------------
 caret::RMSE(predictions_1km_2018, test_data_2018$observed_2018)
+
+caret::RMSE(predictions_2km_2018, test_data_2018$observed_2018)
+
+# 2019 ------------------------------------------------------------------------
+caret::RMSE(predictions_1km_2019, test_data_2019$observed_2019)
+
+caret::RMSE(predictions_2km_2019, test_data_2019$observed_2019)
+
+# 2020 -------------------------------------------------------------------------
+caret::RMSE(predictions_1km_2020, test_data_2020$observed_2020)
+
+caret::RMSE(predictions_2km_2020, test_data_2020$observed_2020)
 
 # (b) Compute R-square
 # 2017 -------------------------------------------------------------------------
