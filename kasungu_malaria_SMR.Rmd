@@ -1210,7 +1210,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 Mapping proportion of catchment population living within waterbodies
 
-```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig 8. Proportion of catchment population living around water bodies'}
+```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig 9. Proportion of catchment population living around water bodies'}
 
 # Helper function to create maps of proportion of people living in proximity ----------
 # to water bodies in each catchment area
@@ -1452,11 +1452,18 @@ ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
 
 ## Model fitting
 $$ ln (E(y)) = 𝜷_0 + 𝜷_1 x + ln(𝒆_𝒊)$$
+where,
+dependent variable, 𝑦 = observed malaria cases;
+𝐸(𝑦) = expected count value;
+independent variable, 𝑥 = percentage of people living near dams; and
+offset, 𝑒= expected malaria cases
+
+
 Summary outputs:
 
 `Estimate`    : the `intercept` (b0) and the beta coefficient estimates associated to each predictor variable.
 
-`Std.Error`   : the `standard error` of the coefficient estimates. This represents the accuracy of the coefficients.              The larger the standard error, the less confident we are about the estimate.
+`Std.Error`   : the `standard error` of the coefficient estimates. This represents the accuracy of the coefficients. The larger the standard error, the less confident we are about the estimate.
 
 `t value`     : the `t-statistic`, which is the coefficient estimate (column 2) divided by the standard error of the estimate (column 3). For a given the predictor, the `t-statistic` evaluates whether or not there is significant association between the predictor and the outcome variable, i.e., whether the beta coefficient of the predictor is significantly different from zero.
 
@@ -1629,13 +1636,17 @@ sjPlot::tab_model(multivariate_3km_2017)
 ```
 
 ## Assess the performance and accuracy of the regression model. 
-Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model.
+Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the predicton is close to the real value.
 
 Two important metrics have been used to assess the performance of the predictive regression model:
 
 `Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model. `RMSE` is computed as RMSE = mean((observed - predicted)^2) %>% sqrt(). The lower the `RMSE`, the better the model.
+$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$  
 
-`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the `R2`, the better the model.
+
+
+`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the `R2`, the better the model. 
+$R^2 = \frac {\Sigma {(y - \bar y)^2} - \Sigma {(y - \hat y)^2}}{\Sigma {(y - \bar y)^2}}$
 
 ```{r, message=FALSE}
 
@@ -1824,12 +1835,20 @@ performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
 
 ```
 
+Visualization of indices of models’ performance
+
+```{r, message=FALSE, warning=FALSE'}
+plot(performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
+                                      model_2km_2018, model_1km_2019, model_2km_2019,
+                                      model_1km_2020, model_2km_2020, rank = TRUE))
+```
+
 
 ## Check how well the fitted values line up with the observations
 
 The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` (i.e., proportion of catchment population living near water bodies) can help us understand malaria risk in the catchment areas.
 
-```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
+```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
 plot.fitted.values <- function(fitted.values.df, model.df, title){
@@ -1888,7 +1907,7 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ## Test for residual spatial autocorrelation using adjacency as criterion
 
-```{r, fig.keep='all', fig.cap='Fig 13. Neighbourhood matrix'}
+```{r, fig.keep='all', fig.cap='Fig 12. Neighbourhood matrix'}
 # Find adjacent polygons,
 # Contiguity neighbors - all that share a boundary point
 catchment_neighbours <- spdep::poly2nb(model_data_2017)  # Queen contiguity
