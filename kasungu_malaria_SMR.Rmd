@@ -1,9 +1,11 @@
 ---
 title: "Analysis of Role of Dams on Recorded Dry Season Malaria Incidences in Kasungu"
 output: 
-  html_document:
-    toc: true
-    toc_float: true
+  html_document: 
+    toc: yes
+    toc_float: yes
+    theme: journal
+    number_sections: yes
 latex_engine: MiKTeX
 author: Clinton Nkolokosa
 date: " Last edited `r format(Sys.time(),'%d %B %Y')`"
@@ -78,6 +80,11 @@ The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated wate
 # Kasungu dry season malaria data
 dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"))
 
+# Kasungu monthly NMCP confirmed malaria cases
+monthly_malaria_2017_2021 <- read.csv(here::here("data/Kasungu monthly malaria 2017-2021.csv"))
+
+monthly_malaria_2017_2021$date <- lubridate::ym(monthly_malaria_2017_2021$periodid) 
+
 # Kasungu district boundary shapefile 
 kasungu_district <- sf::st_read(here::here("data", "kasungu_district.shp"))
   
@@ -149,6 +156,20 @@ bar_chart <- dry_season_malaria_2017_2020 |>
                                t = 10,
                                pad = 2))
 bar_chart
+
+
+# Monthly variation in confirmed malaria cases ---------------------------------
+ggplot2::ggplot(kasungu_monthly_malaria_2017_2021) +
+  aes(x = date, 
+      y = NMCP) +
+  geom_line(size = 0.6, 
+            colour = "#112446") +
+  scale_y_continuous(trans = "log2") +
+  labs(x = "Year", 
+       y = "Confirmed malaria cases") +
+  theme_classic()
+
+
 
 # Pivot longer -----------------------------------------------------------------
 # dry_season_malaria_longer <- dry_season_malaria_2017_2020 |>
