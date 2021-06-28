@@ -1674,8 +1674,14 @@ test_data_2020 <- model_assessment_data[-training_samples_2020, ]
 
 # Make predictions using the test data in order to evaluate the performance 
 # of our regression model aka goodness-of-fit
+# 2017 -------------------------------------------------------------------------
 predictions_1km_2017 <- model_1km_2017 |>
   predict(test_data_2017)
+
+
+# 2018 -------------------------------------------------------------------------
+predictions_1km_2018 <- model_1km_2018 |>
+  predict(test_data_2018)
 
 # Model performance
 # (a) Compute the prediction error, RMSE.The lower the RMSE, the better the model
