@@ -1638,6 +1638,7 @@ model_assessment_data <- model_data_2017 |>
   dplyr::glimpse()
 
 # Split the data into training and test set
+# 80% of the data is used for training
 set.seed(123) # generate a sequence of random numbers
 # 2017 -------------------------------------------------------------------------
 training_samples_2017 <- model_assessment_data$observed_2017 |>
@@ -1649,11 +1650,21 @@ test_data_2017 <- model_assessment_data[-training_samples_2017, ]
 
 # 2018 -------------------------------------------------------------------------
 training_samples_2018 <- model_assessment_data$observed_2018 |>
-  caret::createDataPartition(p = 0.8, list = FALSE)
+  caret::createDataPartition(p = 0.8, list = FALSE) # see ?createDataPartition
 
 train_data_2018 <- model_assessment_data[training_samples_2018, ]
 
 test_data_2018 <- model_assessment_data[-training_samples_2018, ]
+
+# 2019 -------------------------------------------------------------------------
+training_samples_2019 <- model_assessment_data$observed_2019 |>
+  caret::createDataPartition(p = 0.8, list = FALSE)
+
+train_data_2019 <- model_assessment_data[training_samples_2019, ]
+
+test_data_2019 <- model_assessment_data[-training_samples_2019, ]
+
+# 2019 -------------------------------------------------------------------------
 
 
 # Make predictions using the test data in order to evaluate the performance 
