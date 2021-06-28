@@ -474,7 +474,7 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 
 ```
 
-### View population by catchment maps
+## View population by catchment maps
 
 Estimated total number of people within health facility catchment areas.
 
@@ -587,7 +587,7 @@ tmap::tmap_arrange(pop_density_2017_map, pop_density_2018_map,
 
 ```
 
-### Calculate the expected number of cases for each catchment area
+## Calculate the expected number of cases for each catchment area
 
 The `expected` number of dry season malaria cases in catchment *i* are calculated as the observed risk (r) of malaria i.e. the total number of malaria cases in Kasungu district divided by the total population of the district, multiplied by the number of people in the catchment area: $$E_i = \frac{\sum_i O_i}{\sum_i N_i}\times N_i$$
 
