@@ -474,7 +474,7 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 
 ```
 
-### View Kasungu population by catchment maps
+### View population by catchment maps
 
 Estimated total number of people within health facility catchment areas.
 
@@ -1768,8 +1768,7 @@ caret::R2(predictions_1km_2020, test_data_2020$observed_2020)
 
 caret::R2(predictions_2km_2020, test_data_2020$observed_2020)
 
-# Check model assumptions, like check_collinearity(), check_normality() or 
-# check_heteroscedasticity() ---------------------------------------------------
+# Check for collinearity, normality or heteroscedasticity() --------------------
 
 performance::check_model(model_1km_2017)
 
