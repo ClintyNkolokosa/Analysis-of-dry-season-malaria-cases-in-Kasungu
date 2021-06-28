@@ -1517,11 +1517,20 @@ graphics::hist(model_data_2017$observed_2017,
                xlab = "Malaria cases",
                las = 1)
 
-graphics::hist(model_data_2018$observed_2018)
+graphics::hist(model_data_2018$observed_2018, 
+               main = "Histogram of 2018 dry season malaria cases ",
+               xlab = "Malaria cases",
+               las = 1)
 
-graphics::hist(model_data_2019$observed_2019)
+graphics::hist(model_data_2019$observed_2019,
+               main = "Histogram of 2019 dry season malaria cases ",
+               xlab = "Malaria cases",
+               las = 1)
 
-graphics::hist(model_data_2020$observed_2020)
+graphics::hist(model_data_2020$observed_2020, 
+               main = "Histogram of 2020 dry season malaria cases ",
+               xlab = "Malaria cases",
+               las = 1)
 
 # Fit generalised linear model -------------------------------------------------
 # Defining model parameters:
