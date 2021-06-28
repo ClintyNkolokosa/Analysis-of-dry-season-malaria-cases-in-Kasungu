@@ -1834,6 +1834,7 @@ performance::model_performance(model_2km_2020)
 
 
 # Compare the quality of the models --------------------------------------------
+# Note that all score value do not necessarily sum up to 100%. See ?compare_performance
 model_comparison <- performance::compare_performance(model_1km_2017, model_2km_2017,
                                                      model_1km_2018, model_2km_2018, 
                                                      model_1km_2019, model_2km_2019,
@@ -1853,9 +1854,11 @@ model_comparison
 Visualization of indices of models’ performance
 
 ```{r, message=FALSE, warning=FALSE, fig.width=11}
-plot(performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
-                                      model_2km_2018, model_1km_2019, model_2km_2019,
-                                      model_1km_2020, model_2km_2020, rank = TRUE))
+plot(performance::compare_performance(model_1km_2017, model_2km_2017,
+                                      model_1km_2018, model_2km_2018, 
+                                      model_1km_2019, model_2km_2019,
+                                      model_1km_2020, model_2km_2020, 
+                                      metrics = "common", rank = TRUE))
 ```
 
 
