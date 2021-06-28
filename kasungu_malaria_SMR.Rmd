@@ -1837,7 +1837,7 @@ performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
 
 Visualization of indices of models’ performance
 
-```{r, message=FALSE, warning=FALSE'}
+```{r, message=FALSE, warning=FALSE}
 plot(performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
                                       model_2km_2018, model_1km_2019, model_2km_2019,
                                       model_1km_2020, model_2km_2020, rank = TRUE))
