@@ -1597,47 +1597,8 @@ sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3)
 
 ```
 
-## Yearly variation in malaria cases as a risk factor
-
-```{r, message=FALSE, eval=FALSE}
-# Gather year ------------------------------------------------------------------
-model_data_2017_longer <- as.data.frame(model_data_2017) %>%
-  dplyr::select(rowID, Names, observed_2017, dr_2018, dr_2019, dr_2020, 
-                expected_2017, prop_pop_1km, prop_pop_2km, prop_pop_3km) %>% 
-  dplyr::mutate(observed = observed_2017) %>% 
-  dplyr::rename(`2017` = observed_2017,
-                `2018` = dr_2018,
-                `2019` = dr_2019,
-                `2020` = dr_2020) %>%
-  as.data.frame() %>% 
-  tidyr::pivot_longer(cols = `2017`:`2020`,
-                      names_to = 'year',
-                      values_to = 'malaria_cases')
-
-# Model fitting ----------------------------------------------------------------
-multivariate_1km_2017 <- glm(observed~1+prop_pop_1km+year+offset(log(expected_2017)),
-                             data = model_data_2017_longer, family = 'poisson')
-
-summary(multivariate_1km_2017)
-sjPlot::tab_model(multivariate_1km_2017)
-
-
-multivariate_2km_2017 <- glm(observed~1+prop_pop_2km+year+offset(log(expected_2017)),
-                             data = model_data_2017_longer, family = 'poisson')
-
-summary(multivariate_2km_2017)
-sjPlot::tab_model(multivariate_2km_2017)
-
-multivariate_3km_2017 <- glm(observed~1+prop_pop_3km+year+offset(log(expected_2017)),
-                             data = model_data_2017_longer, family = 'poisson')
-
-summary(multivariate_3km_2017)
-sjPlot::tab_model(multivariate_3km_2017)
-
-```
-
 ## Assess the performance and accuracy of the regression model. 
-Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the predicton is close to the real value.
+Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the prediction is close to the real value.
 
 Two important metrics have been used to assess the performance of the predictive regression model:
 
@@ -1948,5 +1909,45 @@ MI_2017 <- spdep::moran(model_data_2017$observed_2017, nb2listw(catchment_neighb
                         length(model_data_2017$observed_2017),Szero(nb2listw(catchment_neighbours)))
 
 
+
+```
+
+
+## Yearly variation in malaria cases as a risk factor
+
+```{r, message=FALSE, eval=FALSE}
+# Gather year ------------------------------------------------------------------
+model_data_2017_longer <- as.data.frame(model_data_2017) %>%
+  dplyr::select(rowID, Names, observed_2017, dr_2018, dr_2019, dr_2020, 
+                expected_2017, prop_pop_1km, prop_pop_2km, prop_pop_3km) %>% 
+  dplyr::mutate(observed = observed_2017) %>% 
+  dplyr::rename(`2017` = observed_2017,
+                `2018` = dr_2018,
+                `2019` = dr_2019,
+                `2020` = dr_2020) %>%
+  as.data.frame() %>% 
+  tidyr::pivot_longer(cols = `2017`:`2020`,
+                      names_to = 'year',
+                      values_to = 'malaria_cases')
+
+# Model fitting ----------------------------------------------------------------
+multivariate_1km_2017 <- glm(observed~1+prop_pop_1km+year+offset(log(expected_2017)),
+                             data = model_data_2017_longer, family = 'poisson')
+
+summary(multivariate_1km_2017)
+sjPlot::tab_model(multivariate_1km_2017)
+
+
+multivariate_2km_2017 <- glm(observed~1+prop_pop_2km+year+offset(log(expected_2017)),
+                             data = model_data_2017_longer, family = 'poisson')
+
+summary(multivariate_2km_2017)
+sjPlot::tab_model(multivariate_2km_2017)
+
+multivariate_3km_2017 <- glm(observed~1+prop_pop_3km+year+offset(log(expected_2017)),
+                             data = model_data_2017_longer, family = 'poisson')
+
+summary(multivariate_3km_2017)
+sjPlot::tab_model(multivariate_3km_2017)
 
 ```
