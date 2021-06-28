@@ -1640,15 +1640,19 @@ Here, we evaluate how well the `Poisson regression` model is predicting the outc
 
 Two important metrics have been used to assess the performance of the predictive regression model:
 
-`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model. `RMSE` is computed as RMSE = mean((observed - predicted)^2) %>% sqrt(). The lower the `RMSE`, the better the model.
+`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model.`RMSE` is computed as RMSE = mean((observed - predicted)^2) %>% sqrt(). The lower the `RMSE`, the better the model.
+
+
 $RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$  
 
 
 
 `R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the `R2`, the better the model. 
+
+
 $R^2 = \frac {\Sigma {(y - \bar y)^2} - \Sigma {(y - \hat y)^2}}{\Sigma {(y - \bar y)^2}}$
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.height=17}
 
 # Tidy model assessment data -----------------------------------------
 model_assessment_data_2017 <- model_data_2017 |>
@@ -1837,7 +1841,7 @@ performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
 
 Visualization of indices of models’ performance
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.width=11}
 plot(performance::compare_performance(model_1km_2017, model_2km_2017, model_1km_2018,
                                       model_2km_2018, model_1km_2019, model_2km_2019,
                                       model_1km_2020, model_2km_2020, rank = TRUE))
