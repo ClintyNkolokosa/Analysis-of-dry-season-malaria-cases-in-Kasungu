@@ -159,7 +159,7 @@ bar_chart
 
 
 # Monthly variation in confirmed malaria cases ---------------------------------
-ggplot2::ggplot(kasungu_monthly_malaria_2017_2021) +
+ggplot2::ggplot(monthly_malaria_2017_2021) +
   aes(x = date, 
       y = NMCP) +
   geom_line(size = 0.6, 
@@ -168,7 +168,6 @@ ggplot2::ggplot(kasungu_monthly_malaria_2017_2021) +
   labs(x = "Year", 
        y = "Confirmed malaria cases") +
   theme_classic()
-
 
 
 # Pivot longer -----------------------------------------------------------------
