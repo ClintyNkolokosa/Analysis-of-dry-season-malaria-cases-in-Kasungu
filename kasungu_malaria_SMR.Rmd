@@ -1718,6 +1718,21 @@ test_2017 <- subset(model_assessment_data_2017, split = "FALSE")
 model_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
                       data = train_2017, family = 'poisson')
 
+summary(model_2017)
+
+# Prediction
+predicted_2017 <- predict(model_2017, test_2017)
+
+# Compare predicted vs actual dry season malaria cases
+par(mfrow = c(2, 1))
+
+plot(test_2017$observed_2017, type = "l", lty = 1.8, col = "blue")
+
+plot(predicted_2017, type = "l", lty = 1.8, col = "red", add = TRUE)
+
+par(mfrow = c(1, 1)) # Create a 2 x 2 plotting matrix
+
+
 # Split the data into training and test set 
 set.seed(123) # generate a sequence of random numbers
 # 2017 -------------------------------------------------------------------------
