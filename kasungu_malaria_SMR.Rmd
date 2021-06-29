@@ -35,6 +35,7 @@ library(caret)
 library(stats)
 library(performance)   # check linear model performance
 library(see)           # to plot model assumptions
+library(caTools)       # splitting data into training and test data sets
 library(qqplotr)
 library(ggpubr)
 library(plotly)
@@ -1703,12 +1704,19 @@ model_assessment_data_2020 <- model_data_2020 |>
                 prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
   dplyr::glimpse()
 
+# Split the data into training and test set ------------------------------------
+set.seed(2) # generate random numbers
+
+split_2017 <- caTools::sample.split(model_assessment_data_2017, 
+                                    SplitRatio = 0.8) # use 80% of the data for training
+
+
+
 # Split the data into training and test set 
-# 80% of the data is used for training
 set.seed(123) # generate a sequence of random numbers
 # 2017 -------------------------------------------------------------------------
 training_samples_2017 <- model_assessment_data_2017$observed_2017 |>
-  caret::createDataPartition(p = 0.8, list = FALSE)
+  caret::createDataPartition(p = 0.8, list = FALSE) # use 80% of the data for training
 
 train_data_2017  <- model_assessment_data_2017[training_samples_2017, ]
 
