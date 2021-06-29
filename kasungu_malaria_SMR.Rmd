@@ -1710,7 +1710,13 @@ set.seed(2) # generate random numbers
 split_2017 <- caTools::sample.split(model_assessment_data_2017, 
                                     SplitRatio = 0.8) # use 80% of the data for training
 
+train_2017 <- subset(model_assessment_data_2017, split = "TRUE")
 
+test_2017 <- subset(model_assessment_data_2017, split = "FALSE")
+
+# Build model
+model_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
+                      data = train_2017, family = 'poisson')
 
 # Split the data into training and test set 
 set.seed(123) # generate a sequence of random numbers
