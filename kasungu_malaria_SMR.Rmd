@@ -503,7 +503,7 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 
 Estimated total number of people within health facility catchment areas.
 
-```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 4: Estimated population by health facility catchment areas'}
+```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 5: Estimated population by health facility catchment areas'}
 # Helper function to create maps of estimated population by catchment areas --------------------------------
 create.population.map <- function(catchment.area, 
                                   variable = "pop", 
@@ -549,7 +549,7 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 Population density by catchment
 
-```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 5: Estimated population density by health facility catchment areas'}
+```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 6: Estimated population density by health facility catchment areas'}
 # Helper function to calculate population density by catchment -----------------
 calculate.population.density <- function(pop.data){
   
@@ -713,7 +713,7 @@ SMR_table_2020
 
 ## View observed and expected dry season malaria cases
 
-```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig 6: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
+```{r, message=FALSE, fig.height=10, fig.width=7, fig.cap= 'Fig. 7: Observed and expected malaria incidence by health facility catchment area, Kasungu'}
 # Helper function to create maps of observed and expected dry season malaria cases
 create.malaria.map <- function(malaria.data, 
                                variable = NA, 
@@ -800,7 +800,7 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 
 A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred.
 
-```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 7: Standardised morbidity ratio of malaria by health facility catchment'}
+```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 8: Standardised morbidity ratio of malaria by health facility catchment'}
 
 # max(SMR_2017$SMR)
 # [1] 7.9
