@@ -300,7 +300,7 @@ health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
 
 View location of the health facilities in the new catchment areas
 
-```{r, message=FALSE, fig.cap='Fig 2. Kasungu health-care facilities and catchment areas'}
+```{r, message=FALSE, fig.cap='Fig 3. Kasungu health-care facilities and catchment areas'}
 
 # Plot map
 tm_shape(malire_new)+
@@ -326,7 +326,7 @@ tm_shape(malire_new)+
 
 ## Kasungu district estimated population per grid-cell
 
-```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.3 Estimated total number of people per 1km grid-cell'}
+```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.4 Estimated total number of people per 1km grid-cell'}
 
 # Take a glimpse at the WorldPop raster layers
 kasungu_population_2017
