@@ -30,6 +30,7 @@ library(spdep)
 library(spaMM)
 library(popEpi)
 library(Epi)
+library(epitools)      # compute confidence intervals of malaria data
 library(tidyverse)
 library(caret)
 library(stats)
@@ -682,8 +683,10 @@ The `SMR` compares the risk of morbidity in a population of interest with that o
 
 We do this by comparing what we `observe` (O) with what we would `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR of catchment *i* can be calculated as follows: $$SMR_i = \frac{O_i}{E_i}$$
 
+SMRs above 1 represent high rates of dry season malaria and SMRs below 1, viceversa.
+
 ```{r}
-# Calculate Standardised Morbidity Ratio (SMR) -------------------------------------
+# Calculate the ratio of observed to expected (SMR) ----------------------------
 SMR_2017 <- expected_malaria_2017 |>
   dplyr::mutate(SMR = round(observed_2017/expected_2017, 1)) |> 
   dplyr::select(rowID,Names, pop_2017, observed_2017, expected_2017, SMR) 
@@ -735,6 +738,21 @@ SMR_table_2019
 SMR_table_2020
 
 ```
+
+# Calculate confidence intervals for dry season malaria cases
+```{r message = FALSE, warning=FALSE}
+# Get CI from binomial distribution
+malaria_CI_2017 <- malaria_pop_by_catchment_2017 |>
+  dplyr::mutate(epitools::binom.exact(dr_2017, pop))
+
+malaria_CI_2018 <- malaria_pop_by_catchment_2018 |>
+  dplyr::mutate(epitools::binom.exact(dr_2018, pop))
+
+malaria_CI_2019 <- malaria_pop_by_catchment_2019 |>
+  dplyr::mutate(epitools::binom.exact(dr_2019, pop))
+
+```
+
 
 ## View observed and expected dry season malaria cases
 
