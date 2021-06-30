@@ -751,6 +751,9 @@ malaria_CI_2018 <- malaria_pop_by_catchment_2018 |>
 malaria_CI_2019 <- malaria_pop_by_catchment_2019 |>
   dplyr::mutate(epitools::binom.exact(dr_2019, pop))
 
+malaria_CI_2020 <- malaria_pop_by_catchment_2020 |>
+  dplyr::mutate(epitools::binom.exact(dr_2020, pop))
+
 ```
 
 
