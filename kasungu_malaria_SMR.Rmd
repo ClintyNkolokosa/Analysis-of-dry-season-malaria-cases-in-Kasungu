@@ -1960,7 +1960,10 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ```{r, fig.keep='all', fig.cap='Fig. 13. Neighbourhood matrix'}
 # Prep data
-
+spatial_dependency_data <- model_data_2017 |>
+  dplyr::rename(observed_2018 = dr_2018,
+                observed_2019 = dr_2019,
+                observed_2020 = dr_2020)
 
 # Find adjacent polygons i.e., make neigbhour list,
 # Contiguity neighbors - all that share a boundary point
