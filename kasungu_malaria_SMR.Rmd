@@ -1959,9 +1959,12 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 ## Test for residual spatial autocorrelation using adjacency as criterion
 
 ```{r, fig.keep='all', fig.cap='Fig. 13. Neighbourhood matrix'}
+# Prep data
+
+
 # Find adjacent polygons i.e., make neigbhour list,
 # Contiguity neighbors - all that share a boundary point
-catchment_neighbours <- spdep::poly2nb(model_data_2017)  # Queen contiguity
+catchment_neighbours <- spdep::poly2nb(spatial_dependency_data)  # Queen contiguity
 
 summary(catchment_neighbours)
 
@@ -1974,9 +1977,14 @@ coords <- coordinates(catchment_points)
 # Get catchment boundaries and convert to spatial object
 catchment_polygons <- as(model_data_2017, "Spatial")
 
-# View the neighbors
+# View the connections
 {plot(catchment_polygons, asp = 1)+
 plot(catchment_neighbours, coords, col = "blue", add = TRUE)}
+
+# Run a Moran I test on observed malaria cases
+moran.test(model_data_2017$observed_2017, nb2listw(catchment_neighbours))
+
+moran.test(model_data_2017$observed_2017, nb2listw(catchment_neighbours))
 
 # Run a Conditional Autoregressive (CAR) model, which allows us to incorporate 
 # the spatial autocorrelation between neighbours within our GLM
