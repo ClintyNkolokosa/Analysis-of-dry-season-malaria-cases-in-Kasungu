@@ -741,7 +741,7 @@ SMR_table_2020
 
 # Calculate confidence intervals for dry season malaria cases
 ```{r message = FALSE, warning=FALSE}
-# Get CI from binomial distribution and malaria proportion
+# Get CI from binomial distribution and malaria proportion ---------------------
 malaria_CI_2017 <- SMR_2017 |>
   dplyr::mutate(epitools::binom.exact(
     observed_2017, pop_2017)) |>
@@ -766,7 +766,7 @@ malaria_CI_2020 <- SMR_2020 |>
   dplyr::mutate(
     malaria_prop = round(observed_2020/ sum(observed_2020), 2))
 
-# Add Kasungu dry season malaria rate
+# Add Kasungu dry season malaria rate ------------------------------------------
 malaria_CI_2017$overall_rate <- overall_malaria_incidence_rate_2017
 
 malaria_CI_2018$overall_rate <- overall_malaria_incidence_rate_2018
@@ -775,7 +775,7 @@ malaria_CI_2019$overall_rate <- overall_malaria_incidence_rate_2019
 
 malaria_CI_2020$overall_rate <- overall_malaria_incidence_rate_2020
 
-# Subset the high SMR data
+# Subset the high SMR data -----------------------------------------------------
 SMR_high_2017 <- malaria_CI_2017[malaria_CI_2017$SMR > 1, ]
 
 SMR_high_2018 <- malaria_CI_2018[malaria_CI_2018$SMR > 1, ]
@@ -784,7 +784,7 @@ SMR_high_2019 <- malaria_CI_2019[malaria_CI_2019$SMR > 1, ]
 
 SMR_high_2020 <- malaria_CI_2020[malaria_CI_2020$SMR > 1, ]
 
-# Plot estimates with CIs
+# Plot estimates with CIs ------------------------------------------------------
 ggplot2::ggplot(SMR_high_2017, aes(x = Names, 
                                    y = malaria_prop / overall_rate,
                                    ymin = lower / overall_rate, 
@@ -794,6 +794,33 @@ ggplot2::ggplot(SMR_high_2017, aes(x = Names,
               panel.background = NULL)
 
 
+# Probability of a binomial exceeding a multiple -------------------------------
+# Check probability that a value is over a threshold. 
+binom.exceed <- function(observed, population, expected, e){
+  
+    1 - pbinom(e * expected, population, prob = observed / population)
+}
+
+# Compute probability of a doubling SMR i.e., P(rate > 2)
+malaria_CI_2017$prob_exceedance <- binom.exceed(observed = malaria_CI_2017$observed_2017,
+                                                population = malaria_CI_2017$pop_2017,
+                                                expected = malaria_CI_2017$expected_2017,
+                                                e = 2)
+
+# Use a 50-color palette that only starts changing at around 0.9
+pal <- c(
+  rep("#B0D0B0", 5),
+  colorRampPalette(c("#B0D0B0", "orange"))(5), 
+  colorRampPalette(c("orange", "red"))(5)
+)
+
+# Convert to spatial object
+
+malaria_CI_2017_sp <- as(malaria_CI_2017, "Spatial")
+# Plot the P(rate > 2) map
+spplot(malaria_CI_2017_sp, "prob_exceedance", col.regions = pal, at = seq(0, 1, len = 20))
+
+mapview(malaria_CI_2017_sp, zcol = "prob_exceedance")
 
 ```
 
