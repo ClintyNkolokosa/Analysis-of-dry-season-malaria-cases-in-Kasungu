@@ -812,7 +812,7 @@ A ratio greater than 1.0 indicates that more malaria cases have occurred than wo
 # > max(SMR_2020$SMR)
 # [1] 5.3
 
-# Helper function to create maps of SMR by catchment ----------------------------------
+# Define function to create maps of SMR by catchment ---------------------------
 create.smr.map <- function(smr.data, 
                            variable = "SMR_category", 
                            title = NA, 
@@ -860,7 +860,7 @@ create.smr.map <- function(smr.data,
                size = 1)
 }
 
-# Invoking function -------------------------------------------------------------------
+# Invoking function ------------------------------------------------------------
 SMR_2017_map <- create.smr.map(SMR_2017, title = "2017")
 
 SMR_2018_map <- create.smr.map(SMR_2018, title = "2018")
@@ -869,8 +869,12 @@ SMR_2019_map <- create.smr.map(SMR_2019, title = "2019")
 
 SMR_2020_map <- create.smr.map(SMR_2020, title = "2020")
 
-# Layout maps -------------------------------------------------------------------------
+# Layout maps ------------------------------------------------------------------
 tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol = 2)
+
+SMR_2017_sp <- as(SMR_2017, "Spatial")
+
+raster::spplot(SMR_2017_sp, zcol = "SMR")
 
 
 ```
