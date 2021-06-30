@@ -766,6 +766,13 @@ malaria_CI_2020 <- SMR_2020 |>
   dplyr::mutate(
     malaria_prop = round(observed_2020/ sum(observed_2020), 2))
 
+# Add Kasungu dry season malaria rate
+malaria_CI_2017$overall_rate <- overall_malaria_incidence_rate_2017
+
+malaria_CI_2018$overall_rate <- overall_malaria_incidence_rate_2018
+
+
+
 # Subset the high SMR data
 SMR_high_2017 <- SMR_2017[SMR_2017$SMR > 1, ]
 
