@@ -874,6 +874,8 @@ tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol 
 
 SMR_2017_sp <- as(SMR_2017, "Spatial")
 
+mapview::mapview(SMR_2017_sp, zcol = "SMR")
+
 raster::spplot(SMR_2017_sp, zcol = "SMR")
 
 
@@ -1957,7 +1959,7 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 ## Test for residual spatial autocorrelation using adjacency as criterion
 
 ```{r, fig.keep='all', fig.cap='Fig. 13. Neighbourhood matrix'}
-# Find adjacent polygons,
+# Find adjacent polygons i.e., make neigbhour list,
 # Contiguity neighbors - all that share a boundary point
 catchment_neighbours <- spdep::poly2nb(model_data_2017)  # Queen contiguity
 
@@ -1966,6 +1968,7 @@ summary(catchment_neighbours)
 # Get coordinates from catchment polygons
 catchment_points <- as(model_data_2017, "Spatial")
 
+# Get center points of each catchment area
 coords <- coordinates(catchment_points)
 
 # Get catchment boundaries and convert to spatial object
