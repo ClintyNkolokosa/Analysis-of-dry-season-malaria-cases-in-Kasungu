@@ -1972,22 +1972,47 @@ catchment_neighbours <- spdep::poly2nb(spatial_dependency_data)  # Queen contigu
 summary(catchment_neighbours)
 
 # Get coordinates from catchment polygons
-catchment_points <- as(model_data_2017, "Spatial")
+catchment_points <- as(spatial_dependency_data, "Spatial")
 
 # Get center points of each catchment area
 coords <- coordinates(catchment_points)
 
 # Get catchment boundaries and convert to spatial object
-catchment_polygons <- as(model_data_2017, "Spatial")
+catchment_polygons <- as(spatial_dependency_data, "Spatial")
 
 # View the connections
 {plot(catchment_polygons, asp = 1)+
 plot(catchment_neighbours, coords, col = "blue", add = TRUE)}
 
 # Run a Moran I test on observed malaria cases
-moran.test(model_data_2017$observed_2017, nb2listw(catchment_neighbours))
+moran.test(spatial_dependency_data$observed_2017, 
+           nb2listw(catchment_neighbours))
 
-moran.test(model_data_2017$observed_2017, nb2listw(catchment_neighbours))
+moran.test(spatial_dependency_data$observed_2018, 
+           nb2listw(catchment_neighbours))
+
+moran.test(spatial_dependency_data$observed_2019, 
+           nb2listw(catchment_neighbours))
+
+moran.test(spatial_dependency_data$observed_2020, 
+           nb2listw(catchment_neighbours))
+
+# Run a Moran I MC test on observed malaria cases
+moran.mc(spatial_dependency_data$observed_2017, 
+         nb2listw(catchment_neighbours), 
+         nsim = 999)
+
+moran.mc(spatial_dependency_data$observed_2018, 
+         nb2listw(catchment_neighbours), 
+         nsim = 999)
+
+moran.mc(spatial_dependency_data$observed_2019, 
+         nb2listw(catchment_neighbours), 
+         nsim = 999)
+
+moran.mc(spatial_dependency_data$observed_2020, 
+         nb2listw(catchment_neighbours), 
+         nsim = 999)
 
 # Run a Conditional Autoregressive (CAR) model, which allows us to incorporate 
 # the spatial autocorrelation between neighbours within our GLM
