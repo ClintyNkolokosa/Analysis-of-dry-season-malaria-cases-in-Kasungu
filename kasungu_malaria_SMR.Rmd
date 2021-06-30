@@ -742,17 +742,30 @@ SMR_table_2020
 # Calculate confidence intervals for dry season malaria cases
 ```{r message = FALSE, warning=FALSE}
 # Get CI from binomial distribution
-malaria_CI_2017 <- malaria_pop_by_catchment_2017 |>
-  dplyr::mutate(epitools::binom.exact(dr_2017, pop))
+malaria_CI_2017 <- SMR_2017 |>
+  dplyr::mutate(epitools::binom.exact(
+    observed_2017, pop_2017))
 
-malaria_CI_2018 <- malaria_pop_by_catchment_2018 |>
-  dplyr::mutate(epitools::binom.exact(dr_2018, pop))
+malaria_CI_2018 <- SMR_2018 |>
+  dplyr::mutate(epitools::binom.exact(
+    observed_2018, pop_2018))
 
-malaria_CI_2019 <- malaria_pop_by_catchment_2019 |>
-  dplyr::mutate(epitools::binom.exact(dr_2019, pop))
+malaria_CI_2019 <-SMR_2019  |>
+  dplyr::mutate(epitools::binom.exact(
+    observed_2019, pop_2019))
 
-malaria_CI_2020 <- malaria_pop_by_catchment_2020 |>
-  dplyr::mutate(epitools::binom.exact(dr_2020, pop))
+malaria_CI_2020 <- SMR_2020 |>
+  dplyr::mutate(epitools::binom.exact(
+    observed_2020, pop_2020))
+
+# Subset the high SMR data
+SMR_high_2017 <- SMR_2017[SMR_2017$SMR > 1, ]
+
+SMR_high_2018 <- SMR_2018[SMR_2018$SMR > 1, ]
+
+SMR_high_2019 <- SMR_2019[SMR_2019$SMR > 1, ]
+
+SMR_high_2020 <- SMR_2020[SMR_2020$SMR > 1, ]
 
 ```
 
