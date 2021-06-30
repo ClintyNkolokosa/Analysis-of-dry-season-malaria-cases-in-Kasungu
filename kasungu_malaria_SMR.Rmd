@@ -620,6 +620,30 @@ The `expected` number of dry season malaria cases in catchment *i* are calculate
 The `expected` number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, i.e., no difference in infection rates between the catchment areas.
 
 ```{r, message=FALSE}
+# Compute and print the overall incidence of dry season malaria cases
+overall_malaria_incidence_rate_2017 <- sum(
+  malaria_pop_by_catchment_2017$dr_2017) / sum(
+    malaria_pop_by_catchment_2017$pop)
+
+overall_malaria_incidence_rate_2017
+
+overall_malaria_incidence_rate_2018 <- sum(
+  malaria_pop_by_catchment_2018$dr_2018) / sum(
+    malaria_pop_by_catchment_2018$pop)
+
+overall_malaria_incidence_rate_2018
+
+overall_malaria_incidence_rate_2019 <- sum(
+  malaria_pop_by_catchment_2019$dr_2019) / sum(
+    malaria_pop_by_catchment_2019$pop)
+
+overall_malaria_incidence_rate_2019
+
+overall_malaria_incidence_rate_2020 <- sum(
+  malaria_pop_by_catchment_2020$dr_2020) / sum(
+    malaria_pop_by_catchment_2020$pop)
+
+overall_malaria_incidence_rate_2020
 
 # Calculate expected malaria cases ------------------------------------------------
 expected_malaria_2017 <- malaria_pop_by_catchment_2017 |>
