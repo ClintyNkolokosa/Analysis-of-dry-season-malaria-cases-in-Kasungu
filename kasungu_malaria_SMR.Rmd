@@ -807,19 +807,11 @@ malaria_CI_2017$prob_exceedance <- binom.exceed(observed = malaria_CI_2017$obser
                                                 expected = malaria_CI_2017$expected_2017,
                                                 e = 2)
 
-# Use a 50-color palette that only starts changing at around 0.9
-pal <- c(
-  rep("#B0D0B0", 5),
-  colorRampPalette(c("#B0D0B0", "orange"))(5), 
-  colorRampPalette(c("orange", "red"))(5)
-)
 
 # Convert to spatial object
-
 malaria_CI_2017_sp <- as(malaria_CI_2017, "Spatial")
-# Plot the P(rate > 2) map
-spplot(malaria_CI_2017_sp, "prob_exceedance", col.regions = pal, at = seq(0, 1, len = 20))
 
+# Plot the P(rate > 2) map
 mapview(malaria_CI_2017_sp, zcol = "prob_exceedance")
 
 ```
@@ -1614,7 +1606,9 @@ where,
 dependent variable, 𝑦 = observed malaria cases;
 𝐸(𝑦) = expected count value;
 independent variable, 𝑥 = percentage of people living near dams; and
-offset, 𝑒 = expected malaria cases
+offset, 𝑒 = expected malaria cases.
+
+To cope with the malaria count data coming from populations of different sizes, we specify an offset argument. This adds a constant term for each row of the data in the model. The log of the population is used in the offset term.
 
 
 Summary outputs:
@@ -1686,33 +1680,33 @@ graphics::hist(model_data_2020$observed_2020,
 #          was equal in all the catchment areas
 
 # 2017 -------------------------------------------------------------------------
-model_1km_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
+model_1km_2017 <- glm(observed_2017~prop_pop_1km, offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 # Display the statistical summary of the model
 summary(model_1km_2017)
  
 # The estimated regression equation can be written as follow: 
-# observed malaria cases = -0.2223780 + 0.0247164 * percentage of catchment population living near dam 
+# observed malaria cases = 7.204975 + 0.074927 * percentage of catchment population living near dam 
 # Using this formula, for each change in number of people living near dams,
 # we can predict the number of dry season malaria case.
 #
 # For example:
-#   for a buffer population equal zero, we can expect -0.22 malaria cases. 
-#   for a buffer population equal 1000, we can expect  round(-0.22 + 0.02 * 1000) = 20 malaria cases.
+#   for a buffer population equal zero, we can expect 7 malaria cases. 
+#   for a buffer population equal 1000, we can expect  round(7.2 + 0.07* 1000) = 77 malaria cases.
 
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
 
 # From the output above, the R2 is 1, meaning that the observed and the predicted 
 # outcome values are highly correlated, which is very good. 
 
-model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
+model_2km_2017 <- glm(observed_2017~prop_pop_2km, offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_2km_2017)
 sjPlot::tab_model(model_2km_2017, digits = 3, digits.re = 3)
 
-model_3km_2017 <- glm(observed_2017~1+prop_pop_3km+offset(log(expected_2017)),
+model_3km_2017 <- glm(observed_2017~prop_pop_3km, offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_3km_2017)
