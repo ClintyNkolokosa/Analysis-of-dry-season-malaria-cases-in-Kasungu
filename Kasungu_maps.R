@@ -37,4 +37,7 @@ leaflet(options = leafletOptions(
              popup = kasungu_hospitals$Names) |>
   addCircleMarkers(lng = kasungu_hospitals$LONGITU, 
                    lat = kasungu_hospitals$LATITUD,
+                   label = kasungu_hospitals$Names, 
                    radius = 3)
+
+
