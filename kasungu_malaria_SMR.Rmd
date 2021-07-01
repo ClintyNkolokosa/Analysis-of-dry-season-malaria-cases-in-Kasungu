@@ -2168,7 +2168,7 @@ missing_2017 <- is.na(zipatala_sp$dr_2017)
 table(missing_2017) # no missing data
 
 # Plot a map of dry season malaria cases
-raster::spplot(zipatala_sp, zcol = "dr_2017")
+# raster::spplot(zipatala_sp, zcol = "dr_2017")
 
 
 # Kriging with linear trend, predicting over the missing points
