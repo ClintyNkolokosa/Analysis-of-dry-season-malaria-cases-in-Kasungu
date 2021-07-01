@@ -38,10 +38,10 @@ leaflet(options = leafletOptions(
   addCircleMarkers(lng = kasungu_hospitals$LONGITU, 
                    lat = kasungu_hospitals$LATITUD,
                    label = kasungu_hospitals$Names, 
-                   popup = paste0(kasungu_hospitals$Names, "<br/>",
-                                   kasungu_hospitals$dr_2017, "<br/>",
-                                   kasungu_hospitals$dr_2018, "<br/>",
-                                   kasungu_hospitals$dr_2019),
+                   popup = paste0("<b>",kasungu_hospitals$Names, "</b>", 
+                                  "<br/>", kasungu_hospitals$dr_2017, "<br/>",
+                                  kasungu_hospitals$dr_2018, "<br/>",
+                                  kasungu_hospitals$dr_2019),
                    #color = "#2cb42c",
                    radius = 3)
 
