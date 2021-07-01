@@ -2153,7 +2153,7 @@ MI_2017 <- spdep::moran(model_data_2017$observed_2017, nb2listw(catchment_neighb
 Let's use `autoKrige()` function in the `automap` package to compute binned variograms, fit Kriging model, do model selection, and performs kriging by making multiple calls to the `gstat` functions.
 
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.height=15}
 
 # Get point location of health facilities and convert to spatial object
 
@@ -2176,7 +2176,10 @@ malaria_autoKrige_2017 <- automap::autoKrige(
   dr_2017 ~ coords.x1 + coords.x2, 
   input_data = zipatala_sp[!missing_2017, ], 
   new_data = zipatala_sp, 
-  model = "Mat")
+  model = "Mat") # Matern
+
+# Plot the variogram, predictions, and standard error
+plot(malaria_autoKrige_2017)
 
 
 
