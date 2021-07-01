@@ -292,7 +292,7 @@ zipatala_aggregated <- zipatala_aggregated |>
 
 # write.csv(zipatala_aggregated, "data/health_facilities_aggregated.csv")
 
-# Convert to csv spatial to spatial object
+# Convert to csv to sf object
 health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
                                         crs = 4326, agr = "constant")
@@ -2153,7 +2153,22 @@ MI_2017 <- spdep::moran(model_data_2017$observed_2017, nb2listw(catchment_neighb
 Let's use `autoKrige()` function in the `automap` package to compute binned variograms, fit Kriging model, do model selection, and performs kriging by making multiple calls to the `gstat` functions.
 
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
+
+# Get point location of health facilities and convert to spatial object
+
+zipatala <- as(health_facility_aggr_sf, "Spatial")
+
+# Make a vector that is TRUE for the missing dry season malaria data
+# 2017
+missing_2017 <- is.na(zipatala$dr_2017)
+table(missing_2017) # no missing data
+
+# Plot a map of dry season malaria cases
+raster::spplot(zipatala, zcol = "dr_2017")
+
+
+
 
 ```
 
