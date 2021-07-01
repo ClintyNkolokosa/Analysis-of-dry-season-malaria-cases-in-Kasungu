@@ -21,7 +21,9 @@ leaflet() |>
   setView(lng = 33.48041, lat = -13.03579, zoom = 8)
 
 # Alternatively
-leaflet() |>
+leaflet(options = leafletOptions(
+  # Set minZoom and dragging 
+  minZoom = 8, dragging = FALSE)) |>
   addProviderTiles("CartoDB.PositronNoLabels") |>
   setView(lng = kasungu_hospitals$LONGITU[17], 
           lat = kasungu_hospitals$LATITUD[17], 
