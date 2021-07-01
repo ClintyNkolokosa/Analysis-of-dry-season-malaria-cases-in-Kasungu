@@ -740,7 +740,7 @@ SMR_table_2020
 ```
 
 # Calculate confidence intervals for dry season malaria cases
-```{r message = FALSE, warning=FALSE}
+```{r message = FALSE, warning=FALSE, fig.height=5, fig.width=6}
 # Get CI from binomial distribution and malaria proportion ---------------------
 malaria_CI_2017 <- SMR_2017 |>
   dplyr::mutate(epitools::binom.exact(
@@ -976,13 +976,6 @@ SMR_2020_map <- create.smr.map(SMR_2020, title = "2020")
 
 # Layout maps ------------------------------------------------------------------
 tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol = 2)
-
-SMR_2017_sp <- as(SMR_2017, "Spatial")
-
-mapview::mapview(SMR_2017_sp, zcol = "SMR")
-
-raster::spplot(SMR_2017_sp, zcol = "SMR")
-
 
 ```
 
@@ -1680,33 +1673,33 @@ graphics::hist(model_data_2020$observed_2020,
 #          was equal in all the catchment areas
 
 # 2017 -------------------------------------------------------------------------
-model_1km_2017 <- glm(observed_2017~prop_pop_1km, offset(log(expected_2017)),
+model_1km_2017 <- glm(observed_2017~prop_pop_1km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 # Display the statistical summary of the model
 summary(model_1km_2017)
  
 # The estimated regression equation can be written as follow: 
-# observed malaria cases = 7.204975 + 0.074927 * percentage of catchment population living near dam 
+# observed malaria cases = -0.2263102 + 0.0247164 * percentage of catchment population living near dam 
 # Using this formula, for each change in number of people living near dams,
 # we can predict the number of dry season malaria case.
 #
 # For example:
-#   for a buffer population equal zero, we can expect 7 malaria cases. 
-#   for a buffer population equal 1000, we can expect  round(7.2 + 0.07* 1000) = 77 malaria cases.
+#   for a buffer population equal zero, we can expect -0.22 malaria cases. 
+#   for a buffer population equal 1000, we can expect  round(-0.22 + 0.02 * 1000) = 20 malaria cases.
 
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
 
 # From the output above, the R2 is 1, meaning that the observed and the predicted 
 # outcome values are highly correlated, which is very good. 
 
-model_2km_2017 <- glm(observed_2017~prop_pop_2km, offset(log(expected_2017)),
+model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_2km_2017)
 sjPlot::tab_model(model_2km_2017, digits = 3, digits.re = 3)
 
-model_3km_2017 <- glm(observed_2017~prop_pop_3km, offset(log(expected_2017)),
+model_3km_2017 <- glm(observed_2017~1+prop_pop_3km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_3km_2017)
@@ -1789,7 +1782,7 @@ $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
 
 $$R^2 = \frac {\Sigma {(y - \bar y)^2} - \Sigma {(y - \hat y)^2}}{\Sigma {(y - \bar y)^2}}$$
 
-```{r, message=FALSE, warning=FALSE, fig.height=17}
+```{r, message=FALSE, warning=FALSE}
 
 # Tidy model assessment data -----------------------------------------
 model_assessment_data_2017 <- model_data_2017 |>
@@ -1959,6 +1952,10 @@ caret::R2(predictions_1km_2020, test_data_2020$observed_2020)
 
 caret::R2(predictions_2km_2020, test_data_2020$observed_2020)
 
+
+```
+
+```{r, message=FALSE, warning=FALSE, fig.height=17}
 # Check for collinearity, normality or heteroscedasticity() --------------------
 
 performance::check_model(model_1km_2017, theme = "see::theme_modern")
@@ -1988,8 +1985,8 @@ model_comparison <- performance::compare_performance(model_1km_2017, model_2km_2
                                                      metrics = "common", rank = TRUE)
 
 model_comparison
-
 ```
+
 
 Visualization of indices of models’ performance
 
