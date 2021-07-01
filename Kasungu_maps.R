@@ -7,9 +7,13 @@ names(providers)
 
 # Read in data containing location of zipatala
 
-kasungu_hospitals <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"))
+kasungu_hospitals <- read.csv(
+  here::here("data/dry_season_malaria_2017_2020.csv"))
 
 view(kasungu_hospitals)
+
+# Remove hospitals with missing lat/lon values
+kasungu_hospitals <- kasungu_hospitals[complete.cases(kasungu_hospitals),]
 
 # Get coordinates for Kasungu
 ggmap::geocode("Kasungu") # requires an API key. Zosayenda
@@ -27,4 +31,6 @@ leaflet(options = leafletOptions(
   addProviderTiles("CartoDB.PositronNoLabels") |>
   setView(lng = kasungu_hospitals$LONGITU[17], 
           lat = kasungu_hospitals$LATITUD[17], 
-          zoom = 8)
+          zoom = 8) |>
+  addMarkers(lng = kasungu_hospitals$LONGITU, 
+             lat = kasungu_hospitals$LATITUD)
