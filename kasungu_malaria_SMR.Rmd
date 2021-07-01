@@ -2182,6 +2182,25 @@ malaria_autoKrige_2017 <- automap::autoKrige(
 plot(malaria_autoKrige_2017)
 
 
+# Plot the polygon and points
+# plot(malire_new); points(zipatala_sp)
+
+# Find the corners of the boundary
+# sp::bbox(malire_new)
+
+# Define a 2.5km square grid over the polygon extent. The first parameter is
+# the bottom left corner.
+# grid <- GridTopology(x.min, ymin, c(2500, 2500), c(72, 48))
+# 
+# # Create points with the same coordinate system as the boundary
+# gridpoints <- ___(___, proj4string = CRS(projection(___)))
+# plot(gridpoints)
+# 
+# # Crop out the points outside the boundary
+# cropped_gridpoints <- ___(gridpoints, ___)
+# plot(cropped_gridpoints)
+
+
 
 
 ```
