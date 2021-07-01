@@ -2148,6 +2148,15 @@ MI_2017 <- spdep::moran(model_data_2017$observed_2017, nb2listw(catchment_neighb
 
 
 ```
+## Run a Kriging model
+
+Let's use `autoKrige()` function in the `automap` package to compute binned variograms, fit Kriging model, do model selection, and performs kriging by making multiple calls to the `gstat` functions.
+
+
+```{r}
+
+```
+
 
 
 ## Yearly variation in malaria cases as a risk factor
