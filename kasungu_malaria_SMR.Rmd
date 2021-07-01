@@ -38,6 +38,7 @@ library(performance)   # check linear model performance
 library(see)           # to plot model assumptions
 library(caTools)       # splitting data into training and test data sets
 library(qqplotr)
+library(automap)       # auto krigging
 library(ggpubr)
 library(plotly)
 library(lubridate)
@@ -1782,7 +1783,7 @@ $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
 
 $$R^2 = \frac {\Sigma {(y - \bar y)^2} - \Sigma {(y - \hat y)^2}}{\Sigma {(y - \bar y)^2}}$$
 
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.height=14}
 
 # Tidy model assessment data -----------------------------------------
 model_assessment_data_2017 <- model_data_2017 |>
