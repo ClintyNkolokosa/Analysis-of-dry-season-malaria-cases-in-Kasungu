@@ -82,7 +82,7 @@ leaflet(kasungu_hospitals) |>
                    lat = ~LATITUD,
                    weight = 1, 
                    fillOpacity = 0.5,
-                   radius = 4, 
+                   radius = 5, 
                    popup = ~Names, 
                    label = ~Names, 
                    group ='circles') |> # group needs to be different than addMarkers()
@@ -92,14 +92,19 @@ leaflet(kasungu_hospitals) |>
              lng = ~LONGITU, 
              lat = ~LATITUD, 
              label = kasungu_hospitals$Names,
+             popup = ~Names,
              group = 'kasungu_hospitals', # this is the group to use in addSearchFeatures()
     # make custom icon that is so small you can't see it:
     icon = makeIcon(iconUrl = "http://leafletjs.com/examples/custom-icons/leaf-green.png",
-                    iconWidth = 1, iconHeight = 1)) |>
+                    iconWidth = 2, 
+                    iconHeight = 2)) |>
   addSearchFeatures(targetGroups = 'kasungu_hospitals', # group should match addMarkers() group
-                    options = searchFeaturesOptions(zoom=12, 
+                    options = searchFeaturesOptions(zoom = 12, 
                                                     openPopup = TRUE, 
                                                     firstTipSubmit = TRUE,
                                                     autoCollapse = TRUE, 
-                                                    hideMarkerOnCollapse = TRUE)) 
+                                                    hideMarkerOnCollapse = TRUE)) |>
+  addControl("<P><B>Hint!</B> Search for ...<br/><ul><li>Kasungu..</li>
+            <li>Hospital</li><li>Dispensary</li><li>Health Centre</li></P>",
+            position = 'bottomleft')
 
