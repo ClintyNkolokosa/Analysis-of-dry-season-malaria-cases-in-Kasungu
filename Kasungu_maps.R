@@ -1,6 +1,10 @@
 library(leaflet)
+library(leaflet.extras)
 library(tidyverse)
 library(ggmap)
+library(inlmisc)
+# devtools::install_github('byzheng/leaflet')
+
 
 # Print only the names of the map tiles in the providers list 
 names(providers)
@@ -22,10 +26,16 @@ ggmap::geocode("Kasungu") # requires an API key. Zosayenda
 # Map with CartoDB tile centered on Kasungu District Hospital with zoom of 8
 leaflet() |>
   addProviderTiles("CartoDB.PositronNoLabels") |>
-  setView(lng = 33.48041, lat = -13.03579, zoom = 8)
+  setView(lng = 33.48041, lat = -13.03579, zoom = 8) |>
+  addMarkers(lng = kasungu_hospitals$LONGITU, 
+             lat = kasungu_hospitals$LATITUD,
+             popup = kasungu_hospitals$Names,
+             group = 'circles') |>
+  inlmisc::AddSearchButton(map, group = 'kasungu_hospitals', zoom = 8,
+                           textPlaceholder = "Search here")
 
 # Alternatively
-leaflet(options = leafletOptions(
+map1 <- leaflet(options = leafletOptions(
   # Set minZoom and dragging 
   minZoom = 8, dragging = FALSE)) |>
   addProviderTiles("CartoDB.PositronNoLabels") |>
@@ -43,6 +53,53 @@ leaflet(options = leafletOptions(
                                   kasungu_hospitals$dr_2018, "<br/>",
                                   kasungu_hospitals$dr_2019),
                    #color = "#2cb42c",
-                   radius = 3)
+                   radius = 3) |>
+  addSearchOSM() |> 
+  addReverseSearchOSM() 
 
+map1
+
+  inlmisc::AddSearchButton(map1, group = '', zoom = 8,
+                           textPlaceholder = "Search here")
+
+
+
+cities <- read.csv(
+  textConnection("City,Lat,Long,Pop
+                    Boston,42.3601,-71.0589,645966
+                    Hartford,41.7627,-72.6743,125017
+                    New York City,40.7127,-74.0059,8406000
+                    Philadelphia,39.9500,-75.1667,1553000
+                    Pittsburgh,40.4397,-79.9764,305841
+                    Providence,41.8236,-71.4222,177994
+                    "))
+
+
+leaflet(kasungu_hospitals) |>
+  addProviderTiles(providers$CartoDB) |>
+  # these markers will appear on your map:
+  addCircleMarkers(lng = ~LONGITU, 
+                   lat = ~LATITUD,
+                   weight = 1, 
+                   fillOpacity = 0.5,
+                   radius = 4, 
+                   popup = ~Names, 
+                   label = ~Names, 
+                   group ='circles') |> # group needs to be different than addMarkers()
+  addResetMapButton() |>
+  # these markers will be "invisible" on the map:
+  addMarkers(data = kasungu_hospitals, 
+             lng = ~LONGITU, 
+             lat = ~LATITUD, 
+             label = kasungu_hospitals$Names,
+             group = 'kasungu_hospitals', # this is the group to use in addSearchFeatures()
+    # make custom icon that is so small you can't see it:
+    icon = makeIcon(iconUrl = "http://leafletjs.com/examples/custom-icons/leaf-green.png",
+                    iconWidth = 1, iconHeight = 1)) |>
+  addSearchFeatures(targetGroups = 'kasungu_hospitals', # group should match addMarkers() group
+                    options = searchFeaturesOptions(zoom=12, 
+                                                    openPopup = TRUE, 
+                                                    firstTipSubmit = TRUE,
+                                                    autoCollapse = TRUE, 
+                                                    hideMarkerOnCollapse = TRUE)) 
 
