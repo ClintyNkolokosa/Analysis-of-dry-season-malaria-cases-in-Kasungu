@@ -74,17 +74,39 @@ cities <- read.csv(
                     Providence,41.8236,-71.4222,177994
                     "))
 
+# Function to map icon based on region
+getColor <- function(hospitals) {
+  sapply(quakes$district, function(mag) {
+    if(region == "central") {
+      "green"
+    } else if(region == "south") {
+      "orange"
+    } else {
+      "red"
+    } })
+}
 
-leaflet(kasungu_hospitals) |>
-  addProviderTiles(providers$CartoDB) |>
+icons <- awesomeIcons(icon = 'ios-close',
+                      iconColor = 'black',
+                      library = 'ion',
+                      markerColor = getColor(hospitals))
+
+leaflet(kasungu_hospitals) |> 
+  addProviderTiles(providers$CartoDB.Voyager) |>
+  # addAwesomeMarkers(~LONGITU, 
+  #                   ~LATITUD, 
+  #                   icon = icons, 
+  #                   label = ~as.character(region)) |>
   # these markers will appear on your map:
   addCircleMarkers(lng = ~LONGITU, 
                    lat = ~LATITUD,
                    weight = 1, 
                    fillOpacity = 0.5,
+                   stroke = FALSE,
                    radius = 5, 
                    popup = ~Names, 
                    label = ~Names, 
+                   clusterOptions = markerClusterOptions(),
                    group ='circles') |> # group needs to be different than addMarkers()
   addResetMapButton() |>
   # these markers will be "invisible" on the map:
@@ -98,6 +120,7 @@ leaflet(kasungu_hospitals) |>
     icon = makeIcon(iconUrl = "http://leafletjs.com/examples/custom-icons/leaf-green.png",
                     iconWidth = 2, 
                     iconHeight = 2)) |>
+  leaflet.extras::addSearchOSM(options = searchOptions(collapsed = FALSE)) |>
   addSearchFeatures(targetGroups = 'kasungu_hospitals', # group should match addMarkers() group
                     options = searchFeaturesOptions(zoom = 12, 
                                                     openPopup = TRUE, 
@@ -106,5 +129,5 @@ leaflet(kasungu_hospitals) |>
                                                     hideMarkerOnCollapse = TRUE)) |>
   addControl("<P><B>Hint!</B> Search for ...<br/><ul><li>Kasungu..</li>
             <li>Hospital</li><li>Dispensary</li><li>Health Centre</li></P>",
-            position = 'bottomleft')
+            position = 'bottomleft') 
 
