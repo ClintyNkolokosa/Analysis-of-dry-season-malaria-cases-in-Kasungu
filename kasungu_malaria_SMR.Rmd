@@ -209,7 +209,7 @@ ggplot2::ggplot(monthly_malaria_2017_2021) +
 
 ## Kasungu health-care facilities and their catchment areas
 
-Heath facility catchment area is the area from which a health facility attracts patients. The new health facility catchments polygon was generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
+Heath facility catchment area is the area from which a health facility attracts patients. Since there are no official catchment areas and no spatial data about the catchment areas for Kasungu hospitals, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
 
 ```{r, warning = FALSE, message = FALSE}
 
