@@ -1130,6 +1130,8 @@ buffer_3km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020,
 
 View the created waterbody buffers
 
+Note that blank areas in the map represent catchment areas in which no water body was detected — this may be a limitation of using moderate resolution satellite imagery (>30m spatial resolution) to identify surface water.
+
 ```{r, fig.height=9, fig.width=10, fig.cap='Fig 9. Buffers around dry season waterbodies in Kasungu'}
 
 # Map the buffers
@@ -1341,6 +1343,8 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 ```
 
 Mapping proportion of catchment population living within waterbodies
+
+
 
 ```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig. 10. Proportion of catchment population living around water bodies'}
 
