@@ -2193,8 +2193,8 @@ merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
                   `2019` = observed_2019,
                   `2020` = observed_2020) |> 
     tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
-                       names_to = 'year',
-                       values_to = 'malaria_cases') |> 
+                        names_to = 'year',
+                        values_to = 'malaria_cases') |> 
     dplyr::select(rowID, Names, expected_2017, prop_pop_1km_2017, 
                   prop_pop_2km_2017, expected_2018, prop_pop_1km_2018, 
                   prop_pop_2km_2018, expected_2019, prop_pop_1km_2019,
@@ -2209,39 +2209,22 @@ merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
 model_data <- merge.model.data(model_data_2017, model_data_2018, 
                                model_data_2019, model_data_2020) 
 
-# Gather year ------------------------------------------------------------------
-model_data_2017_longer <- as.data.frame(model_data_2017) |> 
-  dplyr::mutate(malaria_2017 = observed_2017) |> 
-  dplyr::select(rowID, Names, observed_2017, dr_2018, 
-                dr_2019, dr_2020, malaria_2017,
-                expected_2017, prop_pop_1km, prop_pop_2km, prop_pop_3km) |> 
-  dplyr::rename(`2017` = observed_2017,
-                `2018` = dr_2018,
-                `2019` = dr_2019,
-                `2020` = dr_2020) |> 
-  as.data.frame() |>  
-  tidyr::pivot_longer(cols = `2017`:`2020`,
-                      names_to = 'year',
-                      values_to = 'malaria_cases')
+dplyr::glimpse(model_data)
+
 
 # Model fitting ----------------------------------------------------------------
-multivariate_1km_2017 <- glm(malaria_2017~1+prop_pop_1km+year+offset(log(expected_2017)),
-                             data = model_data_2017_longer, family = 'poisson')
+multivariate_1km_2017 <- glm(malaria_cases~1+prop_pop_1km_2017+year+offset(log(expected_2017)),
+                             data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2017)
 sjPlot::tab_model(multivariate_1km_2017)
 
 
-multivariate_2km_2017 <- glm(malaria_2017~1+prop_pop_2km+year+offset(log(expected_2017)),
-                             data = model_data_2017_longer, family = 'poisson')
+multivariate_2km_2017 <- glm(malaria_cases~1+prop_pop_2km_2017+year+offset(log(expected_2017)),
+                             data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2017)
 sjPlot::tab_model(multivariate_2km_2017)
 
-multivariate_3km_2017 <- glm(malaria_2017~1+prop_pop_3km+year+offset(log(expected_2017)),
-                             data = model_data_2017_longer, family = 'poisson')
-
-summary(multivariate_3km_2017)
-sjPlot::tab_model(multivariate_3km_2017)
 
 ```
