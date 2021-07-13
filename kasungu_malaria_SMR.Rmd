@@ -2152,6 +2152,24 @@ plot(malaria_autoKrige_2017)
 # Custom function to merge and tidy model data ---------------------------------
 merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
   
+  data_2017 <- data_2017 |> 
+    dplyr::rename(prop_pop_1km_2017 = prop_pop_1km,
+                  prop_pop_2km_2017 = prop_pop_2km) |> 
+    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X
+                     dr_2018, dr_2019, dr_2020)
+                  
+  data_2018 <- data_2018 |> 
+    dplyr::rename(prop_pop_1km_2018 = prop_pop_1km.
+                  prop_pop_2km_2018 = prop_pop_1km) |> 
+    dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
+                     DN, X, dr_2017, dr_2019, dr_200))
+  
+  data_2019 <- data_2019 |> 
+    dplyr::rename(prop_pop_1km_2019 = prop_pop_1km,
+                  prop_pop_2km_2019 = prop_pop_2km) |> 
+    dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
+                     DN, X, dr_2017, dr_2018, dr_200))
+  
   tibble_2017 <- dplyr::as_tibble(data_2017)
   
   tibble_2018 <- dplyr::as_tibble(data_2018)
@@ -2163,12 +2181,17 @@ merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
 model_data <- merge(
   merge(
     merge(
-      data_2017, data_2018, by = "rowID", all = TRUE),
-      data_2019, by = "rowID", all = TRUE),
-      2020, by = "rowID", all = TRUE)
+      tibble_2017, tibble_2018, by = "rowID", all = TRUE),
+      tibble_2019, by = "rowID", all = TRUE),
+      tibble_2020, by = "rowID", all = TRUE)
+
+return(model_data)
+
 }
 
 # Invoking function ------------------------------------------------------------
+model_data <- merge.model.data(model_data_2017, model_data_2018, 
+                               model_data_2019, model_data_2020) 
 
 # Gather year ------------------------------------------------------------------
 model_data_2017_longer <- as.data.frame(model_data_2017) |> 
