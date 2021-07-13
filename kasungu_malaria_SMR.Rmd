@@ -1300,8 +1300,6 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 Mapping proportion of catchment population living within waterbodies
 
-
-
 ```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig. 10. Proportion of catchment population living around water bodies'}
 
 # Helper function to create maps of proportion of people living in proximity ----------
@@ -1731,7 +1729,7 @@ Here, we evaluate how well the `Poisson regression` model is predicting the outc
 
 Two important metrics have been used to assess the performance of the predictive regression model:
 
-`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model.`RMSE` is computed as `RMSE = mean((observed - predicted)^2) %>% sqrt()`. The lower the `RMSE`, the better the model.
+`Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model.`RMSE` is computed as `RMSE = mean((observed - predicted)^2) |> sqrt()`. The lower the `RMSE`, the better the model.
 
 
 $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
