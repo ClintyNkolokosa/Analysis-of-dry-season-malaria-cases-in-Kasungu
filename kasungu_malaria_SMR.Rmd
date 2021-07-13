@@ -209,7 +209,7 @@ ggplot2::ggplot(monthly_malaria_2017_2021) +
 
 ## Kasungu health-care facilities and their catchment areas
 
-Heath facility catchment area is the area from which a health facility attracts patients. Since there are no official catchment areas and no spatial data about the catchment areas for Kasungu hospitals, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
+Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are oudated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
 
 ```{r, warning = FALSE, message = FALSE}
 
@@ -737,83 +737,6 @@ SMR_table_2018
 SMR_table_2019
 
 SMR_table_2020
-
-```
-
-# Calculate confidence intervals for dry season malaria cases
-```{r message = FALSE, warning=FALSE, fig.height=5, fig.width=6}
-# Get CI from binomial distribution and malaria proportion ---------------------
-malaria_CI_2017 <- SMR_2017 |>
-  dplyr::mutate(epitools::binom.exact(
-    observed_2017, pop_2017)) |>
-  dplyr::mutate(
-    malaria_prop = round(observed_2017/ sum(observed_2017), 2))
-
-malaria_CI_2018 <- SMR_2018 |>
-  dplyr::mutate(epitools::binom.exact(
-    observed_2018, pop_2018)) |>
-  dplyr::mutate(
-    malaria_prop = round(observed_2018/ sum(observed_2018), 2))
-
-malaria_CI_2019 <-SMR_2019  |>
-  dplyr::mutate(epitools::binom.exact(
-    observed_2019, pop_2019)) |>
-  dplyr::mutate(
-    malaria_prop = round(observed_2019/ sum(observed_2019), 2))
-
-malaria_CI_2020 <- SMR_2020 |>
-  dplyr::mutate(epitools::binom.exact(
-    observed_2020, pop_2020)) |>
-  dplyr::mutate(
-    malaria_prop = round(observed_2020/ sum(observed_2020), 2))
-
-# Add Kasungu dry season malaria rate ------------------------------------------
-malaria_CI_2017$overall_rate <- overall_malaria_incidence_rate_2017
-
-malaria_CI_2018$overall_rate <- overall_malaria_incidence_rate_2018
-
-malaria_CI_2019$overall_rate <- overall_malaria_incidence_rate_2019
-
-malaria_CI_2020$overall_rate <- overall_malaria_incidence_rate_2020
-
-# Subset the high SMR data -----------------------------------------------------
-SMR_high_2017 <- malaria_CI_2017[malaria_CI_2017$SMR > 1, ]
-
-SMR_high_2018 <- malaria_CI_2018[malaria_CI_2018$SMR > 1, ]
-
-SMR_high_2019 <- malaria_CI_2019[malaria_CI_2019$SMR > 1, ]
-
-SMR_high_2020 <- malaria_CI_2020[malaria_CI_2020$SMR > 1, ]
-
-# Plot estimates with CIs ------------------------------------------------------
-ggplot2::ggplot(SMR_high_2017, aes(x = Names, 
-                                   y = malaria_prop / overall_rate,
-                                   ymin = lower / overall_rate, 
-                                   ymax = upper / overall_rate)) +
-        geom_pointrange() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              panel.background = NULL)
-
-
-# Probability of a binomial exceeding a multiple -------------------------------
-# Check probability that a value is over a threshold. 
-binom.exceed <- function(observed, population, expected, e){
-  
-    1 - pbinom(e * expected, population, prob = observed / population)
-}
-
-# Compute probability of a doubling SMR i.e., P(rate > 2)
-malaria_CI_2017$prob_exceedance <- binom.exceed(observed = malaria_CI_2017$observed_2017,
-                                                population = malaria_CI_2017$pop_2017,
-                                                expected = malaria_CI_2017$expected_2017,
-                                                e = 2)
-
-
-# Convert to spatial object
-malaria_CI_2017_sp <- as(malaria_CI_2017, "Spatial")
-
-# Plot the P(rate > 2) map
-mapview(malaria_CI_2017_sp, zcol = "prob_exceedance")
 
 ```
 
