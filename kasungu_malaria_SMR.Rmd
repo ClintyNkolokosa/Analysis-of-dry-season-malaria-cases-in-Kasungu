@@ -1969,17 +1969,17 @@ plot.fitted.values <- function(fitted.values.df, model.df, title){
   
   # Remove missing values from model data since 
   # model fitting deletes missing observations
-  model.df.complete <- model.df %>% 
-    tidyr::drop_na() %>% 
+  model.df.complete <- model.df |> 
+    tidyr::drop_na() |>  
     dplyr::rename_at(vars(starts_with("observed_")), ~ str_c("observed"))
 
   # Plot fitted versus observed values
   scatter.plot <- ggplot2::ggplot()+ 
-                  ggplot2::geom_point(aes(fitted.values.df$fitted.values, 
-                                      model.df.complete$observed))+
+                  ggplot2::geom_point(aes(fitted.values.df$fitted.values,
+                                          model.df.complete$observed))+
                   ggplot2::theme_classic()+
-                  ggplot2::labs(y = "Observed values", 
-                                x = "Fitted values",
+                  ggplot2::labs(x = "Fitted values",
+                                y = "Observed values",
                                 title = title)
   return(scatter.plot)
 }
