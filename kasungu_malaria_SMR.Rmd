@@ -220,7 +220,8 @@ zipatala <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_
 # Aggregate health facilities close to each other: 
 #  a) Kasalika Health Centre and Kasungu District Hospital, 
 #  b) Bua and Mziza Health Centres, and 
-#  c) Kaluluma and Nkhamenya Rural Hospitals in order to 
+#  c) Kaluluma and Nkhamenya Rural Hospitals 
+#  d) Anchor and Santhe Health Centres in order to 
 # generate catchment areas that are geographically correct
 
 zipatala$dr_2017[which(
@@ -282,45 +283,45 @@ zipatala$dr_2019[which(
 zipatala$dr_2020[which(
   zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2020[which(
     zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2020[which(
-      zipatala_d$Names == "Bua Health Centre")]
+      zipatala$Names == "Bua Health Centre")]
 
 zipatala$dr_2017[which(
-  zipatala$Names == "Anchor Farm")] <- zipatala$dr_2017[which(
-    zipatala$Names == "Anchor Farm")] + zipatala$dr_2017[which(
-      zipatala_$Names == "Santhe Health Centre")]
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2017[which(
+      zipatala$Names == "Anchor Farm")]
 
 zipatala$dr_2018[which(
-  zipatala$Names == "Anchor Farm")] <- zipatala$dr_2018[which(
-    zipatala$Names == "Anchor Farm")] + zipatala$dr_2018[which(
-      zipatala$Names == "Santhe Health Centre")]
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2018[which(
+      zipatala$Names == "Anchor Farm")]
 
-zipatala_aggregated$dr_2019[which(
-  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2019[which(
-    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2019[which(
-      zipatala_aggregated$Names == "Santhe Health Centre")]
+zipatala$dr_2019[which(
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2019[which(
+      zipatala$Names == "Anchor Farm")]
 
-zipatala_aggregated$dr_2020[which(
-  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2020[which(
-    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2020[which(
-      zipatala_aggregated$Names == "Santhe Health Centre")]
+zipatala$dr_2020[which(
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2020[which(
+      zipatala$Names == "Anchor Farm")]
 
 
 # Drop out the other health facilities
-zipatala_aggregated <- zipatala_aggregated |>
+zipatala_aggregated <- zipatala |>
   dplyr::filter(Names != "Kasalika Health Centre",
                 Names != "Bua Health Centre",
                 Names != "Kaluluma Rural Hospital",
-                Names != "Santhe Health Centre")
+                Names != "Anchor Farm")
 
 # Save csv file
 # write.csv(zipatala_aggregated, "data/health_facilities_aggregated.csv")
 
 # Convert to csv to sf object
-health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
+zipatala_aggregated_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
                                         crs = 4326, agr = "constant")
 
-# st_write(health_facility_aggr_sf, "data/zipatala_aggregated_july.shp")
+# st_write(zipatala_aggregated_sf, "data/zipatala_aggregated_july.shp")
 
 ```
 
@@ -331,7 +332,7 @@ View location of the health facilities in the new catchment areas
 # Plot map
 tm_shape(malire_new)+
   tm_polygons()+
-  tm_shape(health_facility_aggr_sf)+
+  tm_shape(zipatala_aggregated_sf)+
   tm_dots(size = .3, 
           col = "blue", 
           alpha = 0.5)+
