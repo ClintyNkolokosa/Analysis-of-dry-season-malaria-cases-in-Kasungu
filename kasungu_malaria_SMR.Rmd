@@ -91,7 +91,7 @@ monthly_malaria_2017_2021$date <- lubridate::ym(monthly_malaria_2017_2021$period
 kasungu_district <- sf::st_read(here::here("data", "kasungu_district.shp"))
   
 # Kasungu health facility catchments generated from accessibility mapping
-malire_new <- sf::st_read(here::here("data", "new_catchments.shp")) |> 
+malire_new <- sf::st_read(here::here("data", "zipatala_catchment_areas.shp")) |> 
               sf::st_transform(32736) # reproject to WGS UTM Zone 36 South
 
 # Kasungu population raster layer
@@ -314,14 +314,14 @@ zipatala_aggregated <- zipatala |>
                 Names != "Anchor Farm")
 
 # Save csv file
-# write.csv(zipatala_aggregated, "data/health_facilities_aggregated.csv")
+# write.csv(zipatala_aggregated, "data/zipatala_aggregated.csv")
 
 # Convert to csv to sf object
 zipatala_aggregated_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
                                         crs = 4326, agr = "constant")
 
-# st_write(zipatala_aggregated_sf, "data/zipatala_aggregated_july.shp")
+# st_write(zipatala_aggregated_sf, "data/zipatala_combined.shp")
 
 ```
 
