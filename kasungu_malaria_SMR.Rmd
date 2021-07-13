@@ -258,41 +258,41 @@ zipatala$dr_2019[which(
     zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2019[which(
       zipatala$Names == "Kaluluma Rural Hospital")]
 
-zipatala_aggregated$dr_2020[which(
-  zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] <- zipatala_aggregated$dr_2020[which(
-    zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] + zipatala_aggregated$dr_2020[which(
-      zipatala_aggregated$Names == "Kaluluma Rural Hospital")]
+zipatala$dr_2020[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2020[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
 
-zipatala_aggregated$dr_2017[which(
-  zipatala_aggregated$Names == "Mziza Health Centre")] <- zipatala_aggregated$dr_2017[which(
-    zipatala_aggregated$Names == "Mziza Health Centre")] + zipatala_aggregated$dr_2017[which(
-      zipatala_aggregated$Names == "Bua Health Centre")]
+zipatala$dr_2017[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2017[which(
+      zipatala$Names == "Bua Health Centre")]
 
-zipatala_aggregated$dr_2018[which(
-  zipatala_aggregated$Names == "Mziza Health Centre")] <- zipatala_aggregated$dr_2018[which(
-    zipatala_aggregated$Names == "Mziza Health Centre")] + zipatala_aggregated$dr_2018[which(
-      zipatala_aggregated$Names == "Bua Health Centre")]
+zipatala$dr_2018[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2018[which(
+      zipatala$Names == "Bua Health Centre")]
 
-zipatala_aggregated$dr_2019[which(
-  zipatala_aggregated$Names == "Mziza Health Centre")] <- zipatala_aggregated$dr_2019[which(
-    zipatala_aggregated$Names == "Mziza Health Centre")] + zipatala_aggregated$dr_2019[which(
-      zipatala_aggregated$Names == "Bua Health Centre")] 
+zipatala$dr_2019[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2019[which(
+      zipatala$Names == "Bua Health Centre")] 
   
 
-zipatala_aggregated$dr_2020[which(
-  zipatala_aggregated$Names == "Mziza Health Centre")] <- zipatala_aggregated$dr_2020[which(
-    zipatala_aggregated$Names == "Mziza Health Centre")] + zipatala_aggregated$dr_2020[which(
-      zipatala_aggregated$Names == "Bua Health Centre")]
+zipatala$dr_2020[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2020[which(
+      zipatala_d$Names == "Bua Health Centre")]
 
-zipatala_aggregated$dr_2017[which(
-  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2017[which(
-    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2017[which(
-      zipatala_aggregated$Names == "Santhe Health Centre")]
+zipatala$dr_2017[which(
+  zipatala$Names == "Anchor Farm")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Anchor Farm")] + zipatala$dr_2017[which(
+      zipatala_$Names == "Santhe Health Centre")]
 
-zipatala_aggregated$dr_2018[which(
-  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2018[which(
-    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2018[which(
-      zipatala_aggregated$Names == "Santhe Health Centre")]
+zipatala$dr_2018[which(
+  zipatala$Names == "Anchor Farm")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Anchor Farm")] + zipatala$dr_2018[which(
+      zipatala$Names == "Santhe Health Centre")]
 
 zipatala_aggregated$dr_2019[which(
   zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2019[which(
