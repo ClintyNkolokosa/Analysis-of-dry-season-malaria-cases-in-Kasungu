@@ -215,7 +215,7 @@ Heath facility catchment area is the area from which a health facility attracts 
 
 # Using the complete.cases() function to select health centres with complete 
 # longitude and latitude coordinates.
-zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] 
+zipatala <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] 
 
 # Aggregate health facilities close to each other: 
 #  a) Kasalika Health Centre and Kasungu District Hospital, 
@@ -223,40 +223,40 @@ zipatala_aggregated <- dry_season_malaria_2017_2020[complete.cases(dry_season_ma
 #  c) Kaluluma and Nkhamenya Rural Hospitals in order to 
 # generate catchment areas that are geographically correct
 
-zipatala_aggregated$dr_2017[which(
-  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2017[which(
-    zipatala_aggregated$Names == "Kasungu District Hospital")] + zipatala_aggregated$dr_2017[which(
-      zipatala_aggregated$Names == "Kasalika Health Centre")]
+zipatala$dr_2017[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2017[which(
+      zipatala$Names == "Kasalika Health Centre")]
 
-zipatala_aggregated$dr_2018[which(
-  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2018[which(
-    zipatala_aggregated$Names == "Kasungu District Hospital")] + zipatala_aggregated$dr_2018[which(
-      zipatala_aggregated$Names == "Kasalika Health Centre")]
+zipatala$dr_2018[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2018[which(
+      zipatala$Names == "Kasalika Health Centre")]
 
-zipatala_aggregated$dr_2019[which(
-  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2019[which(
-    zipatala_aggregated$Names == "Kasungu District Hospital")] + zipatala_aggregated$dr_2019[which(
-      zipatala_aggregated$Names == "Kasalika Health Centre")]
+zipatala$dr_2019[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2019[which(
+      zipatala$Names == "Kasalika Health Centre")]
 
-zipatala_aggregated$dr_2020[which(
-  zipatala_aggregated$Names == "Kasungu District Hospital")] <- zipatala_aggregated$dr_2020[which(
-    zipatala_aggregated$Names == "Kasungu District Hospital")] + zipatala_aggregated$dr_2020[which(
-      zipatala_aggregated$Names == "Kasalika Health Centre")]
+zipatala$dr_2020[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2020[which(
+      zipatala$Names == "Kasalika Health Centre")]
   
-zipatala_aggregated$dr_2017[which(
-  zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] <- zipatala_aggregated$dr_2017[which(
-    zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] + zipatala_aggregated$dr_2017[which(
-      zipatala_aggregated$Names == "Kaluluma Rural Hospital")]
+zipatala$dr_2017[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2017[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
 
-zipatala_aggregated$dr_2018[which(
-  zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] <- zipatala_aggregated$dr_2018[which(
-    zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] +zipatala_aggregated$dr_2018[which(
-      zipatala_aggregated$Names == "Kaluluma Rural Hospital")]
+zipatala$dr_2018[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] +zipatala$dr_2018[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
 
-zipatala_aggregated$dr_2019[which(
-  zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] <- zipatala_aggregated$dr_2019[which(
-    zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] + zipatala_aggregated$dr_2019[which(
-      zipatala_aggregated$Names == "Kaluluma Rural Hospital")]
+zipatala$dr_2019[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2019[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
 
 zipatala_aggregated$dr_2020[which(
   zipatala_aggregated$Names == "Nkhamenya Rural Hospital")] <- zipatala_aggregated$dr_2020[which(
@@ -285,24 +285,24 @@ zipatala_aggregated$dr_2020[which(
       zipatala_aggregated$Names == "Bua Health Centre")]
 
 zipatala_aggregated$dr_2017[which(
-  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2017[which(
-    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2017[which(
-      zipatala_aggregated$Names == "Anchor Farm")]
+  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2017[which(
+    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2017[which(
+      zipatala_aggregated$Names == "Santhe Health Centre")]
 
 zipatala_aggregated$dr_2018[which(
-  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2018[which(
-    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2018[which(
-      zipatala_aggregated$Names == "Anchor Farm")]
+  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2018[which(
+    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2018[which(
+      zipatala_aggregated$Names == "Santhe Health Centre")]
 
 zipatala_aggregated$dr_2019[which(
-  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2019[which(
-    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2019[which(
-      zipatala_aggregated$Names == "Anchor Farm")]
+  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2019[which(
+    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2019[which(
+      zipatala_aggregated$Names == "Santhe Health Centre")]
 
 zipatala_aggregated$dr_2020[which(
-  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2020[which(
-    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2020[which(
-      zipatala_aggregated$Names == "Anchor Farm")]
+  zipatala_aggregated$Names == "Anchor Farm")] <- zipatala_aggregated$dr_2020[which(
+    zipatala_aggregated$Names == "Anchor Farm")] + zipatala_aggregated$dr_2020[which(
+      zipatala_aggregated$Names == "Santhe Health Centre")]
 
 
 # Drop out the other health facilities
@@ -310,8 +310,9 @@ zipatala_aggregated <- zipatala_aggregated |>
   dplyr::filter(Names != "Kasalika Health Centre",
                 Names != "Bua Health Centre",
                 Names != "Kaluluma Rural Hospital",
-                Names != "Anchor Farm")
+                Names != "Santhe Health Centre")
 
+# Save csv file
 # write.csv(zipatala_aggregated, "data/health_facilities_aggregated.csv")
 
 # Convert to csv to sf object
@@ -319,7 +320,7 @@ health_facility_aggr_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
                                         crs = 4326, agr = "constant")
 
-# st_write(health_facility_aggr_sf, "data/health_facilities_aggregated.shp")
+# st_write(health_facility_aggr_sf, "data/zipatala_aggregated_july.shp")
 
 ```
 
