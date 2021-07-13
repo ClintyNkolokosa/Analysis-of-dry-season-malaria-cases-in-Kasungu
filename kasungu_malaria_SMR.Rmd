@@ -866,13 +866,13 @@ A ratio greater than 1.0 indicates that more malaria cases have occurred than wo
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 8: Standardised morbidity ratio of malaria by health facility catchment'}
 
 # max(SMR_2017$SMR)
-# [1] 7.9
-# > max(SMR_2018$SMR)
-# [1] 7
-# > max(SMR_2019$SMR)
-# [1] 7.7
-# > max(SMR_2020$SMR)
-# [1] 5.3
+# [1] 2.6
+# max(SMR_2018$SMR)
+# [1] 2.9
+# max(SMR_2019$SMR)
+# [1] 2.1
+# max(SMR_2020$SMR)
+# [1] 1.9
 
 # Define function to create maps of SMR by catchment ---------------------------
 create.smr.map <- function(smr.data, 
