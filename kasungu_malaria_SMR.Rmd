@@ -2149,6 +2149,27 @@ plot(malaria_autoKrige_2017)
 ## Yearly variation in malaria cases as a risk factor
 
 ```{r, message=FALSE, eval=FALSE}
+# Custom function to merge and tidy model data ---------------------------------
+merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
+  
+  tibble_2017 <- dplyr::as_tibble(data_2017)
+  
+  tibble_2018 <- dplyr::as_tibble(data_2018)
+  
+  tibble_2019 <- dplyr::as_tibble(data_2019)
+  
+  tibble_2020 <- dplyr::as_tibble(data_2020)
+  
+model_data <- merge(
+  merge(
+    merge(
+      data_2017, data_2018, by = "rowID", all = TRUE),
+      data_2019, by = "rowID", all = TRUE),
+      2020, by = "rowID", all = TRUE)
+}
+
+# Invoking function ------------------------------------------------------------
+
 # Gather year ------------------------------------------------------------------
 model_data_2017_longer <- as.data.frame(model_data_2017) |> 
   dplyr::mutate(malaria_2017 = observed_2017) |> 
