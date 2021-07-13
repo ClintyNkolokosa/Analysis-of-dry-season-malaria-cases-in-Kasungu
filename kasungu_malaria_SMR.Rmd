@@ -2152,31 +2152,34 @@ plot(malaria_autoKrige_2017)
 # Custom function to merge and tidy model data ---------------------------------
 merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
   
-  data_2017 <- data_2017 |> 
+  tibble_2017 <- data_2017 |> 
+    dplyr::as_tibble() |> 
     dplyr::rename(prop_pop_1km_2017 = prop_pop_1km,
                   prop_pop_2km_2017 = prop_pop_2km) |> 
-    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X
-                     dr_2018, dr_2019, dr_2020)
+    dplyr::select(-geometry, -prop_pop_3km, -fid, -DN, -X,
+                  -dr_2018, -dr_2019, -dr_2020, -SMR)
                   
-  data_2018 <- data_2018 |> 
-    dplyr::rename(prop_pop_1km_2018 = prop_pop_1km.
-                  prop_pop_2km_2018 = prop_pop_1km) |> 
+  tibble_2018 <- data_2018 |> 
+    dplyr::as_tibble() |>
+    dplyr::rename(prop_pop_1km_2018 = prop_pop_1km,
+                  prop_pop_2km_2018 = prop_pop_2km) |> 
     dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
-                     DN, X, dr_2017, dr_2019, dr_200))
+                     DN, X, dr_2017, dr_2019, dr_2020, SMR))
   
-  data_2019 <- data_2019 |> 
+  tibble_2019 <- data_2019 |> 
+    dplyr::as_tibble() |>
     dplyr::rename(prop_pop_1km_2019 = prop_pop_1km,
                   prop_pop_2km_2019 = prop_pop_2km) |> 
     dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
-                     DN, X, dr_2017, dr_2018, dr_200))
+                     DN, X, dr_2017, dr_2018, dr_2020, SMR))
   
-  tibble_2017 <- dplyr::as_tibble(data_2017)
+  tibble_2020 <- data_2020 |> 
+    dplyr::as_tibble() |>
+    dplyr::rename(prop_pop_1km_2020 = prop_pop_1km,
+                  prop_pop_2km_2020 = prop_pop_2km) |> 
+    dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
+                     DN, X, dr_2017, dr_2018, dr_2019, SMR))
   
-  tibble_2018 <- dplyr::as_tibble(data_2018)
-  
-  tibble_2019 <- dplyr::as_tibble(data_2019)
-  
-  tibble_2020 <- dplyr::as_tibble(data_2020)
   
 model_data <- merge(
   merge(
