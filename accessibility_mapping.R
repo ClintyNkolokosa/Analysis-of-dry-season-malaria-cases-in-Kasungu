@@ -35,12 +35,12 @@ transition.matrix.exists.flag <- 0 # if the geo-corrected graph has already been
 # Input Files
 friction.surface.filename <- here::here('data/friction_surface_clip.tif') # Clipped Kasungu friction surface raster
   
-point.filename <- here::here('data/dry_season_malaria_2017_2019.csv') #  Use a header.
+point.filename <- here::here('data/zipatala_aggregated.csv') #  Use a header.
 
 # Output Files
 T.filename <- here::here('data/study.area.T.rds')
 T.GC.filename <- here::here('data/study.area.T.GC.rds')
-output.filename <- here::here('data/study.area.accessibility.tif')
+output.filename <- here::here('data/kasungu_accessibility_clip.tif')
 
 # Read in the points table
 points <- read.csv(file = point.filename) 
