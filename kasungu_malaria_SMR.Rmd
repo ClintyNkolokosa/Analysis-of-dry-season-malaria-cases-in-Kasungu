@@ -2180,15 +2180,28 @@ merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
     dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
                      DN, X, dr_2017, dr_2018, dr_2019, SMR))
   
-  
-model_data <- merge(
+  merged_data <- merge(
   merge(
     merge(
       tibble_2017, tibble_2018, by = "rowID", all = TRUE),
       tibble_2019, by = "rowID", all = TRUE),
       tibble_2020, by = "rowID", all = TRUE)
-
-return(model_data)
+  
+  model_data <- merged_data |> 
+    dplyr::rename(`2017` = observed_2017,
+                  `2018` = observed_2018,
+                  `2019` = observed_2019,
+                  `2020` = observed_2020) |> 
+    tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
+                       names_to = 'year',
+                       values_to = 'malaria_cases') |> 
+    dplyr::select(rowID, Names, expected_2017, prop_pop_1km_2017, 
+                  prop_pop_2km_2017, expected_2018, prop_pop_1km_2018, 
+                  prop_pop_2km_2018, expected_2019, prop_pop_1km_2019,
+                  prop_pop_2km_2019, expected_2020, prop_pop_1km_2020,
+                  prop_pop_2km_2020, year, malaria_cases)
+    
+    return(model_data)
 
 }
 
