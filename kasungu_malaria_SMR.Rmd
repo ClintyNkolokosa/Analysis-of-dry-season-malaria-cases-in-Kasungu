@@ -284,11 +284,33 @@ zipatala_aggregated$dr_2020[which(
     zipatala_aggregated$Names == "Mziza Health Centre")] + zipatala_aggregated$dr_2020[which(
       zipatala_aggregated$Names == "Bua Health Centre")]
 
+zipatala_aggregated$dr_2017[which(
+  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2017[which(
+    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2017[which(
+      zipatala_aggregated$Names == "Anchor Farm")]
+
+zipatala_aggregated$dr_2018[which(
+  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2018[which(
+    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2018[which(
+      zipatala_aggregated$Names == "Anchor Farm")]
+
+zipatala_aggregated$dr_2019[which(
+  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2019[which(
+    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2019[which(
+      zipatala_aggregated$Names == "Anchor Farm")]
+
+zipatala_aggregated$dr_2020[which(
+  zipatala_aggregated$Names == "Santhe Health Centre")] <- zipatala_aggregated$dr_2020[which(
+    zipatala_aggregated$Names == "Santhe Health Centre")] + zipatala_aggregated$dr_2020[which(
+      zipatala_aggregated$Names == "Anchor Farm")]
+
+
 # Drop out the other health facilities
 zipatala_aggregated <- zipatala_aggregated |>
   dplyr::filter(Names != "Kasalika Health Centre",
                 Names != "Bua Health Centre",
-                Names != "Kaluluma Rural Hospital")
+                Names != "Kaluluma Rural Hospital",
+                Names != "Anchor Farm")
 
 # write.csv(zipatala_aggregated, "data/health_facilities_aggregated.csv")
 
