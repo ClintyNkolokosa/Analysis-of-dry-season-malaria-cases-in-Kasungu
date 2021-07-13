@@ -450,7 +450,7 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
 
 
 # Invoking the function ------------------------------------------------------------------
-malaria_by_catchment <- assign.malaria.data(malire_new, health_facility_aggr_sf)
+malaria_by_catchment <- assign.malaria.data(malire_new, zipatala_aggregated_sf)
 
 ```
 
@@ -531,7 +531,16 @@ malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, mal
 Estimated total number of people within health facility catchment areas.
 
 ```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 5: Estimated population by health facility catchment areas'}
-# Helper function to create maps of estimated population by catchment areas --------------------------
+# max(malaria_pop_by_catchment_2017$pop)
+# [1] 143490
+# max(malaria_pop_by_catchment_2018$pop)
+# [1] 147175
+# max(malaria_pop_by_catchment_2019$pop)
+# [1] 151079
+# max(malaria_pop_by_catchment_2020$pop)
+# [1] 185282
+
+# Custom function to create maps of estimated population by catchment areas --------------------------
 create.population.map <- function(catchment.area, 
                                   variable = "pop", 
                                   title, 
