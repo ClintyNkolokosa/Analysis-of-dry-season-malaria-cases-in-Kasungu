@@ -2129,7 +2129,7 @@ plot(malaria_autoKrige_2017)
 
 ## Yearly variation in malaria cases as a risk factor
 
-```{r, message=FALSE, eval=FALSE}
+```{r, message=FALSE}
 # Custom function to merge and tidy model data ---------------------------------
 merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
   
