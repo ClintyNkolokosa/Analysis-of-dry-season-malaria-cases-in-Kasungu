@@ -895,13 +895,13 @@ create.smr.map <- function(smr.data,
                          "1.10 to 1.24", "1.25 to 1.49", ">1.50")
   
   # assigning categories
-  smr.data$SMR_category[smr.data$SMR >= 0.0 & smr.data$SMR < 0.49] = -3
+  smr.data$SMR_category[smr.data$SMR >= 0.00 & smr.data$SMR < 0.49] = -3
   smr.data$SMR_category[smr.data$SMR >= 0.50 & smr.data$SMR < 0.75] = -2
   smr.data$SMR_category[smr.data$SMR >= 0.76 & smr.data$SMR < 0.99] = -1
   smr.data$SMR_category[smr.data$SMR >= 1.00 & smr.data$SMR < 1.09] = 0
   smr.data$SMR_category[smr.data$SMR >= 1.10 & smr.data$SMR < 1.24] = 1
   smr.data$SMR_category[smr.data$SMR >= 1.25 & smr.data$SMR < 1.49] = 2
-  smr.data$SMR_category[smr.data$SMR >= 1.50 & smr.data$SMR < 10.0] = 3
+  smr.data$SMR_category[smr.data$SMR >= 1.50 & smr.data$SMR < 3.00] = 3
   
   # generating divergent colour schemes [Blues - Light Blues – White – Light Reds – Reds]
   # smr.palette <- c("#33a6fe", "#cbe6fe", "#dfeffe", "#feb1b1", "#fe8e8e","#fe0000")
