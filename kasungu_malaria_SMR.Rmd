@@ -2176,6 +2176,9 @@ merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
     tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
                         names_to = 'year',
                         values_to = 'malaria_cases') |> 
+    tidyr::pivot_longer(cols = starts_with('prop_'),
+                        names_to = 'buffer',
+                        values_to = 'prop_pop') |> 
     dplyr::select(rowID, Names, expected_2017, prop_pop_1km_2017, 
                   prop_pop_2km_2017, expected_2018, prop_pop_1km_2018, 
                   prop_pop_2km_2018, expected_2019, prop_pop_1km_2019,
@@ -2191,7 +2194,7 @@ model_data <- merge.model.data(model_data_2017, model_data_2018,
                                model_data_2019, model_data_2020) 
 
 dplyr::glimpse(model_data)
-
+head(model_data)
 
 # Model fitting ----------------------------------------------------------------
 multivariate_1km_2017 <- glm(malaria_cases~1+prop_pop_1km_2017+year+offset(log(expected_2017)),
