@@ -1449,7 +1449,7 @@ create.scatter.plot <- function(smr.pop.df,
                                     xlab = x.label,      # x-axis label
                                     ylab = "SMR",        # y-axis label
                                     title = plot.title)+    
-                  ggpubr::stat_cor(label.y = 4)+         # Add correlation coefficient
+                  ggpubr::stat_cor(label.y = 3)+         # Add correlation coefficient
                   ggpubr::font("title", size = 10, face = "bold")+
                   ggpubr::font("xlab", size = 10)+
                   ggpubr::font("ylab", size = 10)
