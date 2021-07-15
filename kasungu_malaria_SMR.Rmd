@@ -32,7 +32,7 @@ library(popEpi)
 library(Epi)
 library(epitools)      # compute confidence intervals of malaria data
 library(tidyverse)
-library(caret)
+library(caret)         # easily compute cross-validation methods to test model perfomance
 library(stats)
 library(performance)   # check linear model performance
 library(see)           # to plot model assumptions
@@ -1753,6 +1753,7 @@ model_assessment_data_2020 <- model_data_2020 |>
                 prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
   dplyr::glimpse()
 
+# Note to self: do LOOCV(Leave One Out Cross-Validation) and k-fold Cross Validation
 # Split the data into training and test set ------------------------------------
 set.seed(2) # generate random numbers
 
