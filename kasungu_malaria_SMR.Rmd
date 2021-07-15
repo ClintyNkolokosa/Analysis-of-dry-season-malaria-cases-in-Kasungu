@@ -2311,16 +2311,14 @@ multivariate_1km_2020 <- glm(
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2020)
-sjPlot::tab_model(multivariate_1km_2020)
+sjPlot::tab_model(multivariate_1km_2020, show.r2 = FALSE, show.aic = TRUE)
 
 multivariate_2km_2020 <- glm(
   malaria_cases~1+prop_pop_2km_2020+factor(year)+offset(log(expected_2020)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2020)
-sjPlot::tab_model(multivariate_2km_2020, 
-                  show.r2 = FALSE,
-                  show.aic = FALSE)
+sjPlot::tab_model(multivariate_2km_2020, show.r2 = FALSE, show.aic = TRUE)
 
 
 ```
