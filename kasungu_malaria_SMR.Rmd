@@ -2249,52 +2249,60 @@ dplyr::glimpse(model_data)
 head(model_data)
 
 # Model fitting ----------------------------------------------------------------
-multivariate_1km_2017 <- glm(malaria_cases~1+prop_pop_1km_2017+as.factor(year)+offset(log(expected_2017)),
+multivariate_1km_2017 <- glm(
+  malaria_cases~1+prop_pop_1km_2017+factor(year)+offset(log(expected_2017)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2017)
 sjPlot::tab_model(multivariate_1km_2017)
 
 
-multivariate_2km_2017 <- glm(malaria_cases~1+prop_pop_2km_2017+year+offset(log(expected_2017)),
+multivariate_2km_2017 <- glm(
+  malaria_cases~1+prop_pop_2km_2017+factor(year)+offset(log(expected_2017)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2017)
 sjPlot::tab_model(multivariate_2km_2017)
 
 
-multivariate_1km_2018 <- glm(malaria_cases~1+prop_pop_1km_2018+year+offset(log(expected_2018)),
+multivariate_1km_2018 <- glm(
+  malaria_cases~1+prop_pop_1km_2018+factor(year)+offset(log(expected_2018)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2018)
 sjPlot::tab_model(multivariate_1km_2018)
 
-multivariate_2km_2018 <- glm(malaria_cases~1+prop_pop_2km_2018+year+offset(log(expected_2018)),
+multivariate_2km_2018 <- glm(
+  malaria_cases~1+prop_pop_2km_2018+factor(year)+offset(log(expected_2018)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2018)
 sjPlot::tab_model(multivariate_2km_2018)
 
-multivariate_1km_2019 <- glm(malaria_cases~1+prop_pop_1km_2019+year+offset(log(expected_2019)),
+multivariate_1km_2019 <- glm(
+  malaria_cases~1+prop_pop_1km_2019+factor(year)+offset(log(expected_2019)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2019)
 sjPlot::tab_model(multivariate_1km_2019)
 
-multivariate_2km_2019 <- glm(malaria_cases~1+prop_pop_2km_2019+year+offset(log(expected_2019)),
+multivariate_2km_2019 <- glm(
+  malaria_cases~1+prop_pop_2km_2019+factor(year)+offset(log(expected_2019)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2019)
 sjPlot::tab_model(multivariate_2km_2019)
 
 
-multivariate_1km_2020 <- glm(malaria_cases~1+prop_pop_1km_2020+year+offset(log(expected_2020)),
+multivariate_1km_2020 <- glm(
+  malaria_cases~1+prop_pop_1km_2020+factor(year)+offset(log(expected_2020)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2020)
 sjPlot::tab_model(multivariate_1km_2020)
 
-multivariate_2km_2020 <- glm(malaria_cases~1+prop_pop_2km_2020+year+offset(log(expected_2020)),
+multivariate_2km_2020 <- glm(
+  malaria_cases~1+prop_pop_2km_2020+factor(year)+offset(log(expected_2020)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2020)
