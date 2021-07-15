@@ -1826,28 +1826,28 @@ predictions_1km_2017 <- model_1km_2017 |>
   stats::predict.glm(test_data_2017, type = "response") # see ?stats::predict.glm
 
 predictions_2km_2017 <- model_2km_2017 |>
-  stats::predict(test_data_2017, type = "response")
+  stats::predict.glm(test_data_2017, type = "response")
 
 # 2018 
 predictions_1km_2018 <- model_1km_2018 |>
-  stats::predict(test_data_2018, type = "response")
+  stats::predict.glm(test_data_2018, type = "response")
 
 predictions_2km_2018 <- model_2km_2018 |>
-  stats::predict(test_data_2018, type = "response")
+  stats::predict.glm(test_data_2018, type = "response")
 
 # 2019 
 predictions_1km_2019 <- model_1km_2019 |>
-  stats::predict(test_data_2019, type = "response")
+  stats::predict.glm(test_data_2019, type = "response")
 
 predictions_2km_2019 <- model_2km_2019 |>
-  stats::predict(test_data_2019, type = "response")
+  stats::predict.glm(test_data_2019, type = "response")
 
 # 2020 
 predictions_1km_2020 <- model_1km_2020 |>
-  stats::predict(test_data_2020, type = "response")
+  stats::predict.glm(test_data_2020, type = "response")
 
 predictions_2km_2020 <- model_2km_2020 |>
-  stats::predict(test_data_2020, type = "response")
+  stats::predict.glm(test_data_2020, type = "response")
 
 # Model performance ------------------------------------------------------------
 # (a) Compute the prediction error, RMSE. The lower the RMSE, the better the model
@@ -1872,33 +1872,39 @@ caret::RMSE(predictions_1km_2020, test_data_2020$observed_2020)
 caret::RMSE(predictions_2km_2020, test_data_2020$observed_2020)
 
 # (b) Compute pseudo R-square 
-# The goodness of fit of the Poisson regression model has been expressed by 
-# widely variants of pseudo R squared statistics, most of which are based on 
+# We express the goodness of fit of the Poisson regression model by widely 
+# used variants of pseudo R squared statistics, most of which are based on 
 # the deviance of the model: 
 #    - the Aldrich-Nelson pseudo-R2 with the Veall-Zimmermann correction, which
 #      is the best approximation of the McKelvey-Zavoina.
 # Efron, Aldrich-Nelson, McFadden and Nagelkerke approaches severely underestimate 
 # the "true R2". -----------------------------------------------------------------
-# 2017 
-DescTools::PseudoR2(model_1km_2017)
 
-DescTools::PseudoR2(model_2km_2017)
+# DescTools::PseudoR2(model_1km_2017, "all")
 
-DescTools::PseudoR2(model_1km_2018)
+round(DescTools::PseudoR2(model_1km_2017, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
 
-round(DescTools::PseudoR2(model_2km_2018), 2)
+round(DescTools::PseudoR2(model_2km_2017, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
 
-round(DescTools::PseudoR2(model_1km_2019), 2)
+round(DescTools::PseudoR2(model_1km_2018, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
 
-round(DescTools::PseudoR2(model_2km_2019, "all"), 2)
+round(DescTools::PseudoR2(model_2km_2018, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
 
-round(DescTools::PseudoR2(model_1km_2020, "all"), 2)
+round(DescTools::PseudoR2(model_1km_2019, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
+
+round(DescTools::PseudoR2(model_2km_2019, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
+
+round(DescTools::PseudoR2(model_1km_2020, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
 
 round(DescTools::PseudoR2(model_2km_2020, c("AldrichNelson", "AIC", "LogLikNull",
                                             "LogLik", "G2", "VeallZimmermann")), 2)
-
-
-
 
 
 ```
