@@ -1727,7 +1727,7 @@ denotes the predicted mean for observation i based on the estimated model parame
 
 ```{r, message=FALSE, warning=FALSE, fig.height=14, fig.width=15}
 
-# Tidy model assessment data -----------------------------------------
+# Tidy model assessment data ---------------------------------------------------
 model_assessment_data_2017 <- model_data_2017 |>
   dplyr::as_tibble() |>
   dplyr::select(Names, observed_2017, expected_2017,
@@ -2019,11 +2019,34 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ```{r, fig.keep='all', fig.cap='Fig. 13. Neighbourhood matrix'}
 # Prep data
-spatial_dependency_data <- model_data_2017 |>
-  dplyr::rename(observed_2018 = dr_2018,
-                observed_2019 = dr_2019,
-                observed_2020 = dr_2020,
-                SMR_2017 = SMR)
+prep.spatial.dependency.data <- function(df_2017, df_2018, df_2019, df_2020){
+  df_2017 |>
+    dplyr::rename(observed_2018 = dr_2018,
+                  observed_2019 = dr_2019,
+                  observed_2020 = dr_2020,
+                  SMR_2017 = SMR) |> 
+    dplyr::select(rowID, SMR_2017)
+  df_2018 |> 
+    dplyr::rename(SMR_2018 = SMR) |> 
+    dplyr::select(rowID, SMR_2018)
+  
+  df_2019 |> 
+    dplyr::rename(SMR_2019 = SMR) |> 
+    dplyr::select(rowID, SMR_2019)
+  
+  df_2020 |> 
+    dplyr::rename(SMR_2020 = SMR) |>
+    dplyr::select(rowID, SMR_2020)
+    
+  
+  spatial_dependency_data <- merge(
+    merge(
+      merge(
+        df_2017, df_2018, by = "rowID", all = TRUE),
+        df_2019, by = "rowID", all = TRUE),
+        df_2020, by = "rowID", all = TRUE)
+  
+}
 
 # Find adjacent polygons i.e., make neigbhour list,
 # Contiguity neighbors - all that share a boundary point
