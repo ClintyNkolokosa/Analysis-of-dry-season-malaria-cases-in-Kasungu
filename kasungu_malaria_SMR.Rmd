@@ -2266,7 +2266,7 @@ multivariate_1km_2017 <- glm(
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2017)
-sjPlot::tab_model(multivariate_1km_2017)
+sjPlot::tab_model(multivariate_1km_2017, show.r2 = FALSE, show.aic = TRUE)
 
 
 multivariate_2km_2017 <- glm(
@@ -2274,7 +2274,7 @@ multivariate_2km_2017 <- glm(
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2017)
-sjPlot::tab_model(multivariate_2km_2017)
+sjPlot::tab_model(multivariate_2km_2017, show.r2 = FALSE, show.aic = TRUE)
 
 
 multivariate_1km_2018 <- glm(
@@ -2289,21 +2289,21 @@ multivariate_2km_2018 <- glm(
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2018)
-sjPlot::tab_model(multivariate_2km_2018)
+sjPlot::tab_model(multivariate_2km_2018, show.r2 = FALSE, show.aic = TRUE)
 
 multivariate_1km_2019 <- glm(
   malaria_cases~1+prop_pop_1km_2019+factor(year)+offset(log(expected_2019)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2019)
-sjPlot::tab_model(multivariate_1km_2019)
+sjPlot::tab_model(multivariate_1km_2019, show.r2 = FALSE, show.aic = TRUE)
 
 multivariate_2km_2019 <- glm(
   malaria_cases~1+prop_pop_2km_2019+factor(year)+offset(log(expected_2019)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2019)
-sjPlot::tab_model(multivariate_2km_2019)
+sjPlot::tab_model(multivariate_2km_2019, show.r2 = FALSE, show.aic = TRUE)
 
 
 multivariate_1km_2020 <- glm(
