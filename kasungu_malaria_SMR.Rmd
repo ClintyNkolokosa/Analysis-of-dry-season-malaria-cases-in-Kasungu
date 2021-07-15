@@ -1629,7 +1629,8 @@ summary(model_1km_2017)
 #   for a buffer population equal zero, we can expect -0.22 malaria cases. 
 #   for a buffer population equal 1000, we can expect  round(-0.22 + 0.02 * 1000) = 20 malaria cases.
 
-sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 # From the output above, the R2 is 1, meaning that the observed and the predicted 
 # outcome values are highly correlated, which is very good. 
@@ -1638,71 +1639,82 @@ model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_2km_2017)
-sjPlot::tab_model(model_2km_2017, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_2km_2017, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 model_3km_2017 <- glm(observed_2017~1+prop_pop_3km+offset(log(expected_2017)),
                       data = model_data_2017, family = 'poisson')
 
 summary(model_3km_2017)
-sjPlot::tab_model(model_3km_2017, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_3km_2017, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 # 2018 -------------------------------------------------------------------------
 model_1km_2018 <- glm(observed_2018~1+prop_pop_1km+offset(log(expected_2018)),
                       data = model_data_2018, family = 'poisson')
 
 summary(model_1km_2018)
-sjPlot::tab_model(model_1km_2018, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_1km_2018, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 model_2km_2018 <- glm(observed_2018~1+prop_pop_2km+offset(log(expected_2018)),
                       data = model_data_2018, family = 'poisson')
 
 summary(model_2km_2018)
-sjPlot::tab_model(model_2km_2018, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_2km_2018, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 model_3km_2018 <- glm(observed_2018~1+prop_pop_3km+offset(log(expected_2018)),
                       data = model_data_2018, family = 'poisson')
 
 summary(model_3km_2018)
-sjPlot::tab_model(model_3km_2018, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_3km_2018, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 # 2019 -------------------------------------------------------------------------
 model_1km_2019 <- glm(observed_2019~1+prop_pop_1km+offset(log(expected_2019)),
                       data = model_data_2019, family = 'poisson')
 
 summary(model_1km_2019)
-sjPlot::tab_model(model_1km_2019, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_1km_2019, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 
 model_2km_2019 <- glm(observed_2019~1+prop_pop_2km+offset(log(expected_2019)),
                       data = model_data_2019, family = 'poisson')
 
 summary(model_2km_2019)
-sjPlot::tab_model(model_2km_2019, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_2km_2019, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 model_3km_2019 <- glm(observed_2019~1+prop_pop_3km+offset(log(expected_2019)),
                       data = model_data_2019, family = 'poisson')
 
 summary(model_3km_2019)
-sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
 
 summary(model_1km_2020)
-sjPlot::tab_model(model_1km_2020, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_1km_2020, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 model_2km_2020 <- glm(observed_2020~1+prop_pop_2km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
 
 summary(model_2km_2020)
-sjPlot::tab_model(model_2km_2020, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_2km_2020, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 model_3km_2020 <- glm(observed_2020~1+prop_pop_3km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
 
 summary(model_3km_2020)
-sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3)
+sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3,
+                  show.r2 = FALSE, show.aic = TRUE)
 
 ```
 
@@ -2306,7 +2318,9 @@ multivariate_2km_2020 <- glm(
                              data = model_data, family = 'poisson')
 
 summary(multivariate_2km_2020)
-sjPlot::tab_model(multivariate_2km_2020)
+sjPlot::tab_model(multivariate_2km_2020, 
+                  show.r2 = FALSE,
+                  show.aic = FALSE)
 
 
 ```
