@@ -39,6 +39,7 @@ library(see)           # to plot model assumptions
 library(caTools)       # splitting data into training and test data sets
 library(qqplotr)
 library(automap)       # auto krigging
+library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
 library(ggpubr)
 library(plotly)
 library(lubridate)
@@ -1715,12 +1716,7 @@ Two important metrics have been used to assess the performance of the predictive
 
 $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
 
-
-
-`R-square`, representing the squared correlation between the observed known outcome values and the predicted values by the model. The higher the $R^2$, the better the model. 
-
-
-$$R^2 = \frac {\Sigma {(y - \bar y)^2} - \Sigma {(y - \hat y)^2}}{\Sigma {(y - \bar y)^2}}$$
+`Pseudo R-squared goodness-of-fit` measure
 
 ```{r, message=FALSE, warning=FALSE, fig.height=14, fig.width=15}
 
@@ -2176,9 +2172,9 @@ merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
     tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
                         names_to = 'year',
                         values_to = 'malaria_cases') |> 
-    tidyr::pivot_longer(cols = starts_with('prop_'),
-                        names_to = 'buffer',
-                        values_to = 'prop_pop') |> 
+    # tidyr::pivot_longer(cols = starts_with('20'),
+    #                     names_to = 'year',
+    #                     values_to = 'malaria_cases') |> 
     dplyr::select(rowID, Names, expected_2017, prop_pop_1km_2017, 
                   prop_pop_2km_2017, expected_2018, prop_pop_1km_2018, 
                   prop_pop_2km_2018, expected_2019, prop_pop_1km_2019,
@@ -2197,7 +2193,7 @@ dplyr::glimpse(model_data)
 head(model_data)
 
 # Model fitting ----------------------------------------------------------------
-multivariate_1km_2017 <- glm(malaria_cases~1+prop_pop_1km_2017+year+offset(log(expected_2017)),
+multivariate_1km_2017 <- glm(malaria_cases~1+prop_pop_1km_2017+as.factor(year)+offset(log(expected_2017)),
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2017)
