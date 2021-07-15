@@ -2019,22 +2019,28 @@ cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km
 
 ```{r, fig.keep='all', fig.cap='Fig. 13. Neighbourhood matrix'}
 # Prep data
-prep.spatial.dependency.data <- function(df_2017, df_2018, df_2019, df_2020){
-  df_2017 |>
+prep.spatial.dependency.data <- function(sf_2017, sf_2018, sf_2019, sf_2020){
+  
+  df_2017 <- sf_2017 |>
+    dplyr::as_tibble() |> 
     dplyr::rename(observed_2018 = dr_2018,
                   observed_2019 = dr_2019,
                   observed_2020 = dr_2020,
                   SMR_2017 = SMR) |> 
-    dplyr::select(rowID, SMR_2017)
-  df_2018 |> 
+    dplyr::select(rowID, Names, SMR_2017, geometry)
+  
+  df_2018 <- sf_2018 |> 
+    dplyr::as_tibble() |> 
     dplyr::rename(SMR_2018 = SMR) |> 
     dplyr::select(rowID, SMR_2018)
   
-  df_2019 |> 
+  df_2019 <- sf_2019 |> 
+    dplyr::as_tibble() |> 
     dplyr::rename(SMR_2019 = SMR) |> 
     dplyr::select(rowID, SMR_2019)
   
-  df_2020 |> 
+  df_2020 <- sf_2020 |> 
+    dplyr::as_tibble() |> 
     dplyr::rename(SMR_2020 = SMR) |>
     dplyr::select(rowID, SMR_2020)
     
@@ -2046,54 +2052,62 @@ prep.spatial.dependency.data <- function(df_2017, df_2018, df_2019, df_2020){
         df_2019, by = "rowID", all = TRUE),
         df_2020, by = "rowID", all = TRUE)
   
+  return(spatial_dependency_data)
+  
 }
+
+# Invoking function ------------------------------------------------------------
+spatial_dependency_data <- prep.spatial.dependency.data(model_data_2017,
+                                                        model_data_2018, 
+                                                        model_data_2019,
+                                                        model_data_2020)
 
 # Find adjacent polygons i.e., make neigbhour list,
 # Contiguity neighbors - all that share a boundary point
-catchment_neighbours <- spdep::poly2nb(spatial_dependency_data)  # Queen contiguity
+spatial_dependency_shp <- sf::st_as_sf(spatial_dependency_data) |> 
+  as("Spatial")
+
+catchment_neighbours <- spdep::poly2nb(spatial_dependency_shp)  # Queen contiguity
 
 summary(catchment_neighbours)
 
 # Get coordinates from catchment polygons
-catchment_points <- as(spatial_dependency_data, "Spatial")
-
 # Get center points of each catchment area
-coords <- coordinates(catchment_points)
 
-# Get catchment boundaries and convert to spatial object
-catchment_polygons <- as(spatial_dependency_data, "Spatial")
+coords <- coordinates(spatial_dependency_shp)
+
 
 # View the connections
-{plot(catchment_polygons, asp = 1)+
+{plot(spatial_dependency_shp, asp = 1)+
 plot(catchment_neighbours, coords, col = "blue", add = TRUE)}
 
-# Run a Moran I test on observed malaria cases
+# Run a Moran I test on SMR
 moran.test(spatial_dependency_data$SMR_2017, 
            nb2listw(catchment_neighbours))
 
-moran.test(spatial_dependency_data$observed_2018, 
+moran.test(spatial_dependency_data$SMR_2018, 
            nb2listw(catchment_neighbours))
 
-moran.test(spatial_dependency_data$observed_2019, 
+moran.test(spatial_dependency_data$SMR_2019, 
            nb2listw(catchment_neighbours))
 
-moran.test(spatial_dependency_data$observed_2020, 
+moran.test(spatial_dependency_data$SMR_2020, 
            nb2listw(catchment_neighbours))
 
-# Run a Moran I MC test on observed malaria cases
-moran.mc(spatial_dependency_data$observed_2017, 
+# Run a Moran I MC test on SMR
+moran.mc(spatial_dependency_data$SMR_2017, 
          nb2listw(catchment_neighbours), 
          nsim = 999)
 
-moran.mc(spatial_dependency_data$observed_2018, 
+moran.mc(spatial_dependency_data$SMR_2018, 
          nb2listw(catchment_neighbours), 
          nsim = 999)
 
-moran.mc(spatial_dependency_data$observed_2019, 
+moran.mc(spatial_dependency_data$SMR_2019, 
          nb2listw(catchment_neighbours), 
          nsim = 999)
 
-moran.mc(spatial_dependency_data$observed_2020, 
+moran.mc(spatial_dependency_data$SMR_2020, 
          nb2listw(catchment_neighbours), 
          nsim = 999)
 
@@ -2104,7 +2118,7 @@ moran.mc(spatial_dependency_data$observed_2020,
 adj_matrix <- spdep::nb2mat(catchment_neighbours, style = "B") # see ?nb2mat
 
 # Match row and column names with those of geographic location index 
-rownames(adj_matrix) <- colnames(adj_matrix) <- model_data_2017$rowID
+rownames(adj_matrix) <- colnames(adj_matrix) <- spatial_dependency_data$rowID
 # row.names(adj_matrix) <- NULL # alternatively
 
 # Now we can fit the model. The spatial effect is called using the adjacency function which 
