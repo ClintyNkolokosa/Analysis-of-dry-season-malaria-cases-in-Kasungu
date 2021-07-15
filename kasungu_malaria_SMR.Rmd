@@ -2282,7 +2282,7 @@ multivariate_1km_2018 <- glm(
                              data = model_data, family = 'poisson')
 
 summary(multivariate_1km_2018)
-sjPlot::tab_model(multivariate_1km_2018)
+sjPlot::tab_model(multivariate_1km_2018, show.r2 = FALSE, show.aic = TRUE)
 
 multivariate_2km_2018 <- glm(
   malaria_cases~1+prop_pop_2km_2018+factor(year)+offset(log(expected_2018)),
