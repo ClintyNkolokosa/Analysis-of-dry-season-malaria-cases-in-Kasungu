@@ -1881,7 +1881,14 @@ DescTools::PseudoR2(model_1km_2018)
 
 round(DescTools::PseudoR2(model_2km_2018), 2)
 
+round(DescTools::PseudoR2(model_1km_2019), 2)
 
+round(DescTools::PseudoR2(model_2km_2019, "all"), 2)
+
+round(DescTools::PseudoR2(model_1km_2020, "all"), 2)
+
+round(DescTools::PseudoR2(model_2km_2020, c("McFaddenAdj", "AIC", "LogLikNull",
+                                            "LogLik", "G2")), 2)
 
 
 
