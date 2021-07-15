@@ -1871,7 +1871,14 @@ caret::RMSE(predictions_1km_2020, test_data_2020$observed_2020)
 
 caret::RMSE(predictions_2km_2020, test_data_2020$observed_2020)
 
-# (b) Compute pseudo R-square --------------------------------------------------
+# (b) Compute pseudo R-square 
+# The goodness of fit of the Poisson regression model has been expressed by 
+# widely variants of pseudo R squared statistics, most of which are based on 
+# the deviance of the model: 
+#    - the Aldrich-Nelson pseudo-R2 with the Veall-Zimmermann correction, which
+#      is the best approximation of the McKelvey-Zavoina.
+# Efron, Aldrich-Nelson, McFadden and Nagelkerke approaches severely underestimate 
+# the "true R2". -----------------------------------------------------------------
 # 2017 
 DescTools::PseudoR2(model_1km_2017)
 
@@ -1887,8 +1894,8 @@ round(DescTools::PseudoR2(model_2km_2019, "all"), 2)
 
 round(DescTools::PseudoR2(model_1km_2020, "all"), 2)
 
-round(DescTools::PseudoR2(model_2km_2020, c("McFaddenAdj", "AIC", "LogLikNull",
-                                            "LogLik", "G2")), 2)
+round(DescTools::PseudoR2(model_2km_2020, c("AldrichNelson", "AIC", "LogLikNull",
+                                            "LogLik", "G2", "VeallZimmermann")), 2)
 
 
 
