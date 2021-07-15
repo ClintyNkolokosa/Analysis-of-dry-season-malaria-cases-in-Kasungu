@@ -1716,7 +1716,14 @@ Two important metrics have been used to assess the performance of the predictive
 
 $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
 
-`Pseudo R-squared goodness-of-fit` measure
+`Pseudo R-squared goodness-of-fit` measure for count data in Poisson regression which is nonlinear computed using deviance statistics:
+
+$$D=2∑ni=1{Yilog(Yi/μi)−(Yi−μi)}$$
+where
+$$μi=exp(β^0+β^1X1+...+β^pXp)$$ 
+denotes the predicted mean for observation i based on the estimated model parameters. AJKOER (https://stats.stackexchange.com/users/54013/ajkoer), Basic R-Squared in Poisson Regression, URL (version: 2020-06-28): https://stats.stackexchange.com/q/474500 
+
+
 
 ```{r, message=FALSE, warning=FALSE, fig.height=14, fig.width=15}
 
@@ -1763,7 +1770,7 @@ model_2017 <- glm(observed_2017~1+prop_pop_1km+offset(log(expected_2017)),
 summary(model_2017)
 
 # Prediction
-predicted_2017 <- predict(model_2017, test_2017)
+predicted_2017 <- predict(model_2017, test_2017, type = "response")
 
 # Compare predicted vs actual dry season malaria cases
 par(mfrow = c(2, 1))
@@ -1810,34 +1817,37 @@ train_data_2020 <- model_assessment_data_2020[training_samples_2020, ]
 test_data_2020 <- model_assessment_data_2020[-training_samples_2020, ]
 
 # Make predictions using the test data in order to evaluate the performance 
-# of our regression model aka goodness-of-fit
+# of our regression model aka goodness-of-fit. The "response" type of prediction
+# is on the scale of the response variable. Thus for a default binomial model 
+# the default predictions are of log-odds (probabilities on logit scale) and 
+# type = "response" gives the predicted probabilities. 
 # 2017 -------------------------------------------------------------------------
 predictions_1km_2017 <- model_1km_2017 |>
-  stats::predict(test_data_2017)
+  stats::predict.glm(test_data_2017, type = "response") # see ?stats::predict.glm
 
 predictions_2km_2017 <- model_2km_2017 |>
-  stats::predict(test_data_2017)
+  stats::predict(test_data_2017, type = "response")
 
 # 2018 
 predictions_1km_2018 <- model_1km_2018 |>
-  stats::predict(test_data_2018)
+  stats::predict(test_data_2018, type = "response")
 
 predictions_2km_2018 <- model_2km_2018 |>
-  stats::predict(test_data_2018)
+  stats::predict(test_data_2018, type = "response")
 
 # 2019 
 predictions_1km_2019 <- model_1km_2019 |>
-  stats::predict(test_data_2019)
+  stats::predict(test_data_2019, type = "response")
 
 predictions_2km_2019 <- model_2km_2019 |>
-  stats::predict(test_data_2019)
+  stats::predict(test_data_2019, type = "response")
 
 # 2020 
 predictions_1km_2020 <- model_1km_2020 |>
-  stats::predict(test_data_2020)
+  stats::predict(test_data_2020, type = "response")
 
 predictions_2km_2020 <- model_2km_2020 |>
-  stats::predict(test_data_2020)
+  stats::predict(test_data_2020, type = "response")
 
 # Model performance ------------------------------------------------------------
 # (a) Compute the prediction error, RMSE. The lower the RMSE, the better the model
@@ -1861,32 +1871,20 @@ caret::RMSE(predictions_1km_2020, test_data_2020$observed_2020)
 
 caret::RMSE(predictions_2km_2020, test_data_2020$observed_2020)
 
-# (b) Compute R-square ---------------------------------------------------------
+# (b) Compute pseudo R-square --------------------------------------------------
 # 2017 
-caret::R2(predictions_1km_2017, test_data_2017$observed_2017)
-# [1] 0.8549051
-# From the output above, the R2 is 0.85, meaning that the observed and the 
-# predicted outcome values are highly correlated
+DescTools::PseudoR2(model_1km_2017)
 
-caret::R2(predictions_2km_2017, test_data_2017$observed_2017)
+DescTools::PseudoR2(model_2km_2017)
 
-# 2018 
-caret::R2(predictions_1km_2018, test_data_2018$observed_2018)
-# [1] 0.4304403
-# From the output above, the R2 is 0.43, meaning that the observed and the 
-# predicted outcome values are less correlated
+DescTools::PseudoR2(model_1km_2018)
 
-caret::R2(predictions_2km_2018, test_data_2018$observed_2018)
+round(DescTools::PseudoR2(model_2km_2018), 2)
 
-# 2019 
-caret::R2(predictions_1km_2019, test_data_2019$observed_2019)
 
-caret::R2(predictions_2km_2019, test_data_2019$observed_2019)
 
-# 2020 
-caret::R2(predictions_1km_2020, test_data_2020$observed_2020)
 
-caret::R2(predictions_2km_2020, test_data_2020$observed_2020)
+
 
 
 ```
