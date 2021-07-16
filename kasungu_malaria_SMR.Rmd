@@ -2194,115 +2194,75 @@ plot(malaria_autoKrige_2017)
 ## Yearly variation in malaria cases as a risk factor
 
 ```{r, message=FALSE}
-# Custom function to merge and tidy model data ---------------------------------
-bind.model.data <- function(data_2017, data_2018, data_2019, data_2020){
-  
-  tibble_2017 <- data_2017 |> 
-    dplyr::as_tibble() |> 
-    dplyr::rename(`2017` = observed_2017,
-                  expected = expected_2017) |> 
-    dplyr::select(-geometry, -prop_pop_3km, -fid, -DN, -X, -SMR, -pop_2017,
+# Prep model data --------------------------------------------------------------
+df2017 <- model_data_2017 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2017,
+                  expected_cases = expected_2017,
+                  health_facility = Names) |> 
+    dplyr::select(-geometry, -prop_pop_3km, -fid,
+                  -DN, -X, -SMR, -pop_2017,
                   -dr_2018, -dr_2019, -dr_2020)
-                  
-  tibble_2018 <- data_2018 |> 
-    dplyr::as_tibble() |>
-    dplyr::rename(`2018` = observed_2018,
-                  expected = expected_2018) |> 
-    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X, SMR, pop_2018,
-                     dr_2017, dr_2019, dr_2020))
-  
-  tibble_2019 <- data_2019 |> 
-    dplyr::as_tibble() |>
-    dplyr::rename(`2019` = observed_2019,
-                  expected = expected_2019) |> 
-    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X, SMR, pop_2019,
-                     dr_2017, dr_2018, dr_2020))
-  
-  tibble_2020 <- data_2020 |> 
-    dplyr::as_tibble() |>
-    dplyr::rename(`2020` = observed_2020,
-                  expected = expected_2020) |> 
-    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X, SMR, pop_2020,
-                     dr_2017, dr_2018, dr_2019))
-  
-  model_data <- rbind(tibble_2017, tibble_2018, tibble_2019, tibble_2020)
-  
-  # model_data <- dplyr::bind_rows(tibble_2017, tibble_2018, tibble_2019, tibble_2020)|> 
-  #   tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
-  #                       names_to = 'year',
-  #                       values_to = 'malaria_cases')
-  
 
-    return(model_data)
+df2017$year <- "2017" # add new column
 
-}
+# df2017 <- cbind(df2017, year = "2017") # alternatively
 
-# Invoking function ------------------------------------------------------------
-model_data <- bind.model.data(model_data_2017, model_data_2018, 
-                               model_data_2019, model_data_2020) 
+df2018 <- model_data_2018 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2018,
+                  expected_cases = expected_2018) |> 
+    dplyr::select(-geometry, -prop_pop_3km, -fid,
+                  -DN, -X, -SMR, -pop_2018,
+                  -dr_2017, -dr_2019, -dr_2020)
+
+df2018$year <- "2018"
+
+colnames(df2018) <- colnames(df2017) # match columns names
+
+df2019 <- model_data_2019 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2019,
+                  expected_cases = expected_2019) |> 
+    dplyr::select(-geometry, -prop_pop_3km, -fid,
+                  -DN, -X, -SMR, -pop_2019,
+                  -dr_2017, -dr_2018, -dr_2020)
+
+df2019$year <- "2019"
+
+colnames(df2019) <- colnames(df2017) # match columns names
+
+df2020 <- model_data_2020 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2020,
+                  expected_cases = expected_2020) |> 
+    dplyr::select(-geometry, -prop_pop_3km, -fid, 
+                  -DN, -X, -SMR, -pop_2020,
+                  -dr_2017, -dr_2018, -dr_2019) 
+
+df2020$year <- "2020"
+
+colnames(df2020) <- colnames(df2017) # match columns names
+
+model_data <- rbind(df2017, df2018, df2019, df2020)
+  
 
 dplyr::glimpse(model_data)
 head(model_data)
 
 # Model fitting ----------------------------------------------------------------
-multivariate_1km_2017 <- glm(
-  malaria_cases~1+prop_pop_1km_2017+factor(year)+offset(log(expected_2017)),
-                             data = model_data, family = 'poisson')
+multivariate_1km <- glm(observed_cases~1+prop_pop_1km+factor(year)+offset(log(expected_cases)),
+                        data = model_data, family = 'poisson')
 
-summary(multivariate_1km_2017)
-sjPlot::tab_model(multivariate_1km_2017, show.r2 = FALSE, show.aic = TRUE)
-
-
-multivariate_2km_2017 <- glm(
-  malaria_cases~1+prop_pop_2km_2017+factor(year)+offset(log(expected_2017)),
-                             data = model_data, family = 'poisson')
-
-summary(multivariate_2km_2017)
-sjPlot::tab_model(multivariate_2km_2017, show.r2 = FALSE, show.aic = TRUE)
+summary(multivariate_1km)
+sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE)
 
 
-multivariate_1km_2018 <- glm(
-  malaria_cases~1+prop_pop_1km_2018+factor(year)+offset(log(expected_2018)),
-                             data = model_data, family = 'poisson')
+multivariate_2km <- glm(observed_cases~1+prop_pop_2km+factor(year)+offset(log(expected_cases)),
+                        data = model_data, family = 'poisson')
 
-summary(multivariate_1km_2018)
-sjPlot::tab_model(multivariate_1km_2018, show.r2 = FALSE, show.aic = TRUE)
-
-multivariate_2km_2018 <- glm(
-  malaria_cases~1+prop_pop_2km_2018+factor(year)+offset(log(expected_2018)),
-                             data = model_data, family = 'poisson')
-
-summary(multivariate_2km_2018)
-sjPlot::tab_model(multivariate_2km_2018, show.r2 = FALSE, show.aic = TRUE)
-
-multivariate_1km_2019 <- glm(
-  malaria_cases~1+prop_pop_1km_2019+factor(year)+offset(log(expected_2019)),
-                             data = model_data, family = 'poisson')
-
-summary(multivariate_1km_2019)
-sjPlot::tab_model(multivariate_1km_2019, show.r2 = FALSE, show.aic = TRUE)
-
-multivariate_2km_2019 <- glm(
-  malaria_cases~1+prop_pop_2km_2019+factor(year)+offset(log(expected_2019)),
-                             data = model_data, family = 'poisson')
-
-summary(multivariate_2km_2019)
-sjPlot::tab_model(multivariate_2km_2019, show.r2 = FALSE, show.aic = TRUE)
-
-
-multivariate_1km_2020 <- glm(
-  malaria_cases~1+prop_pop_1km_2020+factor(year)+offset(log(expected_2020)),
-                             data = model_data, family = 'poisson')
-
-summary(multivariate_1km_2020)
-sjPlot::tab_model(multivariate_1km_2020, show.r2 = FALSE, show.aic = TRUE)
-
-multivariate_2km_2020 <- glm(
-  malaria_cases~1+prop_pop_2km_2020+factor(year)+offset(log(expected_2020)),
-                             data = model_data, family = 'poisson')
-
-summary(multivariate_2km_2020)
-sjPlot::tab_model(multivariate_2km_2020, show.r2 = FALSE, show.aic = TRUE)
+summary(multivariate_2km)
+sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE)
 
 
 ```
