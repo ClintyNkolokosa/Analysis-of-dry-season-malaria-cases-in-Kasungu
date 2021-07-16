@@ -2195,66 +2195,50 @@ plot(malaria_autoKrige_2017)
 
 ```{r, message=FALSE}
 # Custom function to merge and tidy model data ---------------------------------
-merge.model.data <- function(data_2017, data_2018, data_2019, data_2020){
+bind.model.data <- function(data_2017, data_2018, data_2019, data_2020){
   
   tibble_2017 <- data_2017 |> 
     dplyr::as_tibble() |> 
-    dplyr::rename(prop_pop_1km_2017 = prop_pop_1km,
-                  prop_pop_2km_2017 = prop_pop_2km) |> 
-    dplyr::select(-geometry, -prop_pop_3km, -fid, -DN, -X,
-                  -dr_2018, -dr_2019, -dr_2020, -SMR)
+    dplyr::rename(`2017` = observed_2017,
+                  expected = expected_2017) |> 
+    dplyr::select(-geometry, -prop_pop_3km, -fid, -DN, -X, -SMR, -pop_2017,
+                  -dr_2018, -dr_2019, -dr_2020)
                   
   tibble_2018 <- data_2018 |> 
     dplyr::as_tibble() |>
-    dplyr::rename(prop_pop_1km_2018 = prop_pop_1km,
-                  prop_pop_2km_2018 = prop_pop_2km) |> 
-    dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
-                     DN, X, dr_2017, dr_2019, dr_2020, SMR))
+    dplyr::rename(`2018` = observed_2018,
+                  expected = expected_2018) |> 
+    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X, SMR, pop_2018,
+                     dr_2017, dr_2019, dr_2020))
   
   tibble_2019 <- data_2019 |> 
     dplyr::as_tibble() |>
-    dplyr::rename(prop_pop_1km_2019 = prop_pop_1km,
-                  prop_pop_2km_2019 = prop_pop_2km) |> 
-    dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
-                     DN, X, dr_2017, dr_2018, dr_2020, SMR))
+    dplyr::rename(`2019` = observed_2019,
+                  expected = expected_2019) |> 
+    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X, SMR, pop_2019,
+                     dr_2017, dr_2018, dr_2020))
   
   tibble_2020 <- data_2020 |> 
     dplyr::as_tibble() |>
-    dplyr::rename(prop_pop_1km_2020 = prop_pop_1km,
-                  prop_pop_2km_2020 = prop_pop_2km) |> 
-    dplyr::select(-c(Names, geometry, prop_pop_3km, fid,
-                     DN, X, dr_2017, dr_2018, dr_2019, SMR))
+    dplyr::rename(`2020` = observed_2020,
+                  expected = expected_2020) |> 
+    dplyr::select(-c(geometry, prop_pop_3km, fid, DN, X, SMR, pop_2020,
+                     dr_2017, dr_2018, dr_2019))
   
-  merged_data <- merge(
-  merge(
-    merge(
-      tibble_2017, tibble_2018, by = "rowID", all = TRUE),
-      tibble_2019, by = "rowID", all = TRUE),
-      tibble_2020, by = "rowID", all = TRUE)
+  model_data <- rbind(tibble_2017, tibble_2018, tibble_2019, tibble_2020)
   
-  model_data <- merged_data |> 
-    dplyr::rename(`2017` = observed_2017,
-                  `2018` = observed_2018,
-                  `2019` = observed_2019,
-                  `2020` = observed_2020) |> 
-    tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
-                        names_to = 'year',
-                        values_to = 'malaria_cases') |> 
-    # tidyr::pivot_longer(cols = starts_with('20'),
-    #                     names_to = 'year',
-    #                     values_to = 'malaria_cases') |> 
-    dplyr::select(rowID, Names, expected_2017, prop_pop_1km_2017, 
-                  prop_pop_2km_2017, expected_2018, prop_pop_1km_2018, 
-                  prop_pop_2km_2018, expected_2019, prop_pop_1km_2019,
-                  prop_pop_2km_2019, expected_2020, prop_pop_1km_2020,
-                  prop_pop_2km_2020, year, malaria_cases)
-    
+  # model_data <- dplyr::bind_rows(tibble_2017, tibble_2018, tibble_2019, tibble_2020)|> 
+  #   tidyr::pivot_longer(cols = c(`2017`,`2018`, `2019`,`2020`),
+  #                       names_to = 'year',
+  #                       values_to = 'malaria_cases')
+  
+
     return(model_data)
 
 }
 
 # Invoking function ------------------------------------------------------------
-model_data <- merge.model.data(model_data_2017, model_data_2018, 
+model_data <- bind.model.data(model_data_2017, model_data_2018, 
                                model_data_2019, model_data_2020) 
 
 dplyr::glimpse(model_data)
