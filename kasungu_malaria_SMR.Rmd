@@ -62,7 +62,7 @@ library(kableExtra)
 `%>%` <- magrittr::`%>%`
 ```
 
-##Tell R where the data is
+## Tell R where the data is
 
 ```{r}
 file.path(getwd(),"data")
@@ -70,7 +70,7 @@ file.path(getwd(),"data")
 here::here()
 ```
 
-#Load datasets
+# Load datasets
 
 The total dry season malaria cases recorded at health-care facilities in Kasungu from 2017 to 2019 are contained in the `KasunguData.csv` sourced from <https://dhis2.health.gov.mw/>. The `kasungu_facility_catchments_2004.shp` shapefile also contains the population and health information within each health-facility catchment area in Kasungu district.
 
@@ -191,7 +191,7 @@ bar_chart
 
 ```
 
-###Monthly variation in malaria cases
+### Monthly variation in malaria cases
 
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.cap= 'Fig.2: Seasonal variation in confirmed malaria cases'}
 
@@ -208,7 +208,7 @@ ggplot2::ggplot(monthly_malaria_2017_2021) +
 ```
 
 
-#Kasungu health-care facilities and their catchment areas
+# Kasungu health-care facilities and their catchment areas
 
 Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are oudated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
 
@@ -326,7 +326,7 @@ zipatala_aggregated_sf <- sf::st_as_sf(zipatala_aggregated,
 
 ```
 
-##View location of the health facilities in the new catchment areas
+## View location of the health facilities in the new catchment areas
 
 ```{r, message=FALSE, fig.cap='Fig 3. Kasungu health-care facilities and catchment areas'}
 
@@ -455,7 +455,7 @@ malaria_by_catchment <- assign.malaria.data(malire_new, zipatala_aggregated_sf)
 
 ```
 
-#Assign population data to the health catchment areas
+# Assign population data to the health catchment areas
 
 ```{r, message=FALSE}
 
@@ -584,7 +584,7 @@ tmap::tmap_arrange(pop_by_catchment_2017, pop_by_catchment_2018,
 
 ```
 
-##Population density by catchment
+## Population density by catchment
 
 ```{r, message=FALSE, fig.height = 5, fig.width = 9, fig.cap = 'Fig. 6: Estimated population density by health facility catchment areas'}
 # Helper function to calculate population density by catchment -----------------
@@ -1070,7 +1070,7 @@ buffer_3km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020,
 
 ```
 
-##View the created waterbody buffers
+## View the created waterbody buffers
 
 Note that blank areas in the map represent catchment areas in which no water body was detected — this may be a limitation of using moderate resolution satellite imagery (>30m spatial resolution) to identify surface water.
 
@@ -1284,7 +1284,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 ```
 
-##Mapping proportion of catchment population living within waterbodies
+## Mapping proportion of catchment population living within waterbodies
 
 ```{r, message=FALSE, warning = FALSE, fig.height = 9, fig.width = 11, fig.cap='Fig. 10. Proportion of catchment population living around water bodies'}
 
@@ -1959,7 +1959,7 @@ model_comparison
 ```
 
 
-###Visualization of indices of models’ performance
+### Visualization of indices of models’ performance
 
 ```{r, message=FALSE, warning=FALSE, fig.width=11}
 plot(performance::compare_performance(model_1km_2017, model_2km_2017,
@@ -1970,7 +1970,7 @@ plot(performance::compare_performance(model_1km_2017, model_2km_2017,
 ```
 
 
-###Check how well the fitted values line up with the observations
+### Check how well the fitted values line up with the observations
 
 The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` (i.e., proportion of catchment population living near water bodies) can help us understand malaria risk in the catchment areas.
 
