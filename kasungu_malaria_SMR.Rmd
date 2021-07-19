@@ -2248,7 +2248,6 @@ model_data <- rbind(df2017, df2018, df2019, df2020)
   
 
 dplyr::glimpse(model_data)
-head(model_data)
 
 # Model fitting ----------------------------------------------------------------
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
