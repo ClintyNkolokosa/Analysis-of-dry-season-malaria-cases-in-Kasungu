@@ -2321,11 +2321,32 @@ summary(train_model_3km)
 
 
 ```
+Model-based Geostatistics
+```{r, message=FALSE, warning=FALSE}
+separated_coord <- zipatala_aggregated_sf |>
+  as.data.frame() |>
+  dplyr::mutate(long = unlist(map(zipatala_aggregated_sf$geometry, 1)),
+                lat = unlist(map(zipatala_aggregated_sf$geometry, 2)))
 
-```{r}
-separated_coord <- model_data_2017 |> 
-  dplyr::mutate(long = unlist(map(model_data_2017$geometry, 1)),
-                lat = unlist(map(model_data_2017$geometry, 2)))
+# Function to split an scf_POINT object with single geometry columns to 
+# a columns with separate longitude and latitude columns
+separate.coordinates <- function(x, names = c("long","lat")) {
+  stopifnot(inherits(x,"sf") && inherits(sf::st_geometry(x), "sfc_POINT"))
+  ret <- do.call(rbind, sf::st_geometry(x))
+  ret <- tibble::as_tibble(ret)
+  stopifnot(length(names) == ncol(ret))
+  ret <- setNames(ret, names)
+  dplyr::bind_cols(x, ret)
+}
+
+catchment_points <- separate.coordinates(zipatala_aggregated_sf) |> 
+  dplyr::select(rowID, long, lat)
+
+
+  
+
+
+
 ```
 
 
