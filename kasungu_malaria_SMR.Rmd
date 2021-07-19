@@ -492,11 +492,11 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   
   pop_by_catchment_df <-  pop_by_catchment %>%  
   # apply unlist to the lists to have vectors as the list elements
-  lapply(unlist) %>% 
+  lapply(unlist) %>%  
   # convert vectors to data.frames
-  lapply(as_tibble) %>% 
+  lapply(as_tibble) %>%   
   # combine the list of data.frames
-  bind_rows(., .id = "rowID") %>% 
+  bind_rows(., .id = "rowID") %>%   
   # rename the value variable
   dplyr::rename(pop = value)
   
@@ -507,8 +507,8 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   pop_by_catchments <- merge(catchments, pop_by_catchment_df, by = "rowID")
   
   # Cleaning 'Inf' values
-  pop_by_catchments %>% 
-    dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) %>% 
+  pop_by_catchments |> 
+    dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) |> 
     dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
 
   return(out = pop_by_catchments)
@@ -2321,4 +2321,11 @@ summary(train_model_3km)
 
 
 ```
+
+```{r}
+separated_coord <- model_data_2017 |> 
+  dplyr::mutate(long = unlist(map(model_data_2017$geometry, 1)),
+                lat = unlist(map(model_data_2017$geometry, 2)))
+```
+
 
