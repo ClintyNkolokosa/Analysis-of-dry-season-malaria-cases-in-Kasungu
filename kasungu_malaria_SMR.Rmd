@@ -2191,7 +2191,7 @@ plot(malaria_autoKrige_2017)
 
 
 
-## Yearly variation in malaria cases as a risk factor
+## Yearly variation in observed malaria cases as a risk factor
 
 ```{r, message=FALSE}
 # Prep model data --------------------------------------------------------------
@@ -2200,9 +2200,8 @@ df2017 <- model_data_2017 |>
     dplyr::rename(observed_cases = observed_2017,
                   expected_cases = expected_2017,
                   health_facility = Names) |> 
-    dplyr::select(-geometry, -prop_pop_3km, -fid,
-                  -DN, -X, -SMR, -pop_2017,
-                  -dr_2018, -dr_2019, -dr_2020)
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR, 
+                  -pop_2017, -dr_2018, -dr_2019, -dr_2020)
 
 df2017$year <- "2017" # add new column
 
@@ -2212,9 +2211,8 @@ df2018 <- model_data_2018 |>
   dplyr::as_tibble() |> 
     dplyr::rename(observed_cases = observed_2018,
                   expected_cases = expected_2018) |> 
-    dplyr::select(-geometry, -prop_pop_3km, -fid,
-                  -DN, -X, -SMR, -pop_2018,
-                  -dr_2017, -dr_2019, -dr_2020)
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR,
+                  -pop_2018,-dr_2017, -dr_2019, -dr_2020)
 
 df2018$year <- "2018"
 
@@ -2224,9 +2222,8 @@ df2019 <- model_data_2019 |>
   dplyr::as_tibble() |> 
     dplyr::rename(observed_cases = observed_2019,
                   expected_cases = expected_2019) |> 
-    dplyr::select(-geometry, -prop_pop_3km, -fid,
-                  -DN, -X, -SMR, -pop_2019,
-                  -dr_2017, -dr_2018, -dr_2020)
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR,
+                  -pop_2019, -dr_2017, -dr_2018, -dr_2020)
 
 df2019$year <- "2019"
 
@@ -2236,9 +2233,8 @@ df2020 <- model_data_2020 |>
   dplyr::as_tibble() |> 
     dplyr::rename(observed_cases = observed_2020,
                   expected_cases = expected_2020) |> 
-    dplyr::select(-geometry, -prop_pop_3km, -fid, 
-                  -DN, -X, -SMR, -pop_2020,
-                  -dr_2017, -dr_2018, -dr_2019) 
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR,
+                  -pop_2020, -dr_2017, -dr_2018, -dr_2019) 
 
 df2020$year <- "2020"
 
@@ -2251,14 +2247,14 @@ dplyr::glimpse(model_data)
 head(model_data)
 
 # Model fitting ----------------------------------------------------------------
-multivariate_1km <- glm(observed_cases~1+prop_pop_1km+factor(year)+offset(log(expected_cases)),
+multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
 summary(multivariate_1km)
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE)
 
 
-multivariate_2km <- glm(observed_cases~1+prop_pop_2km+factor(year)+offset(log(expected_cases)),
+multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
 summary(multivariate_2km)
@@ -2266,3 +2262,45 @@ sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE)
 
 
 ```
+
+Estimate prediction error
+
+Since our dataset is small and partitioning it will lead to higher bias. Therefore, we use the Leave one out cross validation (LOOCV) method which uses all data points to measure performance of the Poisson model.
+This method works as follow:
+
+1. Leave out one data point and build the model on the rest of the data set
+2. Test the model against the data point that is left out at step 1 and record the test error associated with the prediction
+3. Repeat the process for all data points
+4. Compute the overall prediction error by taking the average of all these test error estimates recorded at step 2.
+
+*James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.*
+
+```{r, message=FALSE}
+
+# Define training control
+train_control <-  caret::trainControl(method = "LOOCV")
+
+# Removing missing values
+model_data_evaluation <- model_data[complete.cases(model_data),] 
+
+
+
+# Train the model, fit a regression model and use LOOCV to evaluate perfomance
+train_model_1km <- caret::train(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
+                                data = model_data_evaluation, method = "glm", trControl = train_control)
+
+train_model_2km <- caret::train(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
+                                data = model_data_evaluation, method = "glm", trControl = train_control)
+
+# Summarize the results
+print(train_model_1km)
+summary(train_model_1km)
+
+print(train_model_2km)
+summary(train_model_2km)
+
+# The lower the Mean Absolute Error, the more closely a model can predict the actual observations
+
+
+```
+
