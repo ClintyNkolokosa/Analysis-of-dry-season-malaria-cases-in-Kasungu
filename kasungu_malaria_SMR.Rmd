@@ -749,21 +749,21 @@ SMR_table_2017 <- SMR_2017 |>
 
 SMR_table_2018 <- SMR_2018 |> 
   dplyr::as_tibble() |> 
-   dplyr::rename(Health_facility = Names) |> 
+  dplyr::rename(Health_facility = Names) |> 
   dplyr::select(-rowID, -geometry) |>
   kable() |> 
   kableExtra::kable_styling(full_width = FALSE)
 
 SMR_table_2019 <- SMR_2019 |>
   dplyr::as_tibble() |>
-   dplyr::rename(Health_facility = Names) |> 
+  dplyr::rename(Health_facility = Names) |> 
   dplyr::select(-rowID, -geometry) |> 
   kable () |> 
   kableExtra::kable_styling(full_width = FALSE)
 
 SMR_table_2020 <- SMR_2020 |>
   dplyr::as_tibble() |> 
-   dplyr::rename(Health_facility = Names) |> 
+  dplyr::rename(Health_facility = Names) |> 
   dplyr::select(-rowID, -geometry) |> 
   kable () |> 
   kableExtra::kable_styling(full_width = FALSE)
