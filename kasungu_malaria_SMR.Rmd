@@ -58,7 +58,8 @@ library(grid)
 library(exactextractr)
 library(DataExplorer)
 library(mapview)
-library(kableExtra)
+library(kableExtra)    # create interactive tables
+library(gt)            # create interactive tables
 `%>%` <- magrittr::`%>%`
 ```
 
@@ -2249,7 +2250,9 @@ colnames(df2020) <- colnames(df2017) # match columns names
 model_data <- rbind(df2017, df2018, df2019, df2020)
   
 
-dplyr::glimpse(model_data)
+
+model_data |>     # View model data in table format
+  gt::gt()
 
 # Model fitting ----------------------------------------------------------------
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
