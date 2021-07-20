@@ -2349,15 +2349,18 @@ model_data_evaluation <- model_data[complete.cases(model_data),]
 
 
 # Train the model, fit a regression model and use LOOCV to evaluate perfomance
-train_model_1km <- caret::train(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
-                                data = model_data_evaluation, method = "glm", trControl = train_control)
+train_model_1km <- caret::train(
+  observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
+  data = model_data_evaluation, method = "glm", trControl = train_control)
 
-train_model_2km <- caret::train(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
-                                data = model_data_evaluation, method = "glm", trControl = train_control)
+train_model_2km <- caret::train(
+  observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
+  data = model_data_evaluation, method = "glm", trControl = train_control)
 
 
-train_model_3km <- caret::train(observed_cases~1+prop_pop_3km+year+offset(log(expected_cases)),
-                                data = model_data_evaluation, method = "glm", trControl = train_control)
+train_model_3km <- caret::train(
+  observed_cases~1+prop_pop_3km+year+offset(log(expected_cases)),
+  data = model_data_evaluation, method = "glm", trControl = train_control)
 
 # Summarize the results
 print(train_model_1km)
