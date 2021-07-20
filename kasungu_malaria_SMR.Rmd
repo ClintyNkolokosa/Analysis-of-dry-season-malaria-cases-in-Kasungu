@@ -2252,16 +2252,6 @@ model_data <- rbind(df2017, df2018, df2019, df2020)
 dplyr::glimpse(model_data)
 
 # Model fitting ----------------------------------------------------------------
-# Get estimated coefficients: intercept and slope
-jFun <- function(x) {
-  estCoefs <- coef(glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
-                       family = 'poisson', x))
-  names(estCoefs) <- c("intercept", "slope")
-  return(estCoefs)
-}
-
-jCoefs <- plyr::ddply(model_data,observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)), jFun)
-
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
