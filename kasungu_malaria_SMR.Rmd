@@ -81,10 +81,12 @@ The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated wate
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
 # Kasungu dry season malaria data
-dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"))
+dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"),
+                                         stringsAsFactors = FALSE)
 
 # Kasungu monthly NMCP confirmed malaria cases
-monthly_malaria_2017_2021 <- read.csv(here::here("data/Kasungu monthly malaria 2017-2021.csv"))
+monthly_malaria_2017_2021 <- read.csv(here::here("data/Kasungu monthly malaria 2017-2021.csv"),
+                                      stringsAsFactors = FALSE)
 
 monthly_malaria_2017_2021$date <- lubridate::ym(monthly_malaria_2017_2021$periodid) 
 
@@ -2338,8 +2340,19 @@ separate.coordinates <- function(x, names = c("long","lat")) {
 catchment_points <- separate.coordinates(zipatala_aggregated_sf) |> 
   dplyr::select(rowID, long, lat)
 
+ variogram_data <- merge(as.data.frame(catchment_points),
+                         as.data.frame(model_data_2017), 
+                         by = "rowID") |> 
+  dplyr::select(long, lat, prop_pop_1km, prop_pop_2km, prop_pop_3km,
+                observed_2017, expected_2017)
+ 
+ # write.csv(variogram_data, "data/variogram_data.csv")
 
-  
+# Open the MBG app in R. Type the following into the R console:
+ 
+# shiny::runGitHub(repo="MBGapp", username= "olatunjijohnson",
+#                  ref="main", subdir = "inst/MBGapp")
+
 
 
 

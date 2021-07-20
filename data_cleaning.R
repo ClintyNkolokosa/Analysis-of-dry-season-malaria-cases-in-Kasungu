@@ -5,6 +5,9 @@ library(raster)
 library(sp)
 library(sf)
 library(rgdal)
+library(ggplot2)
+
+trace(qtm, edit = T)
 
 # Tell R where the data is -----------------------------------------------------
 here::here() # make sure you are in the folder where the data is
@@ -20,19 +23,21 @@ here::here() # make sure you are in the folder where the data is
 # rainy season malaria transmission that extends to May, which is
 # why for this analysis, the dry season is starting from June to October
 
-dry_season_malaria_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.csv")) %>% 
+dry_season_malaria_2020 <- read.csv(here::here("data", "ku_2020_malaria_cases.csv"),
+                                    stringsAsFactors = FALSE) |> 
   dplyr::select(Names = `organisationunitname`,
                 June.2020, July.2020, August.2020, 
-                September.2020, October.2020) %>% 
-  dplyr::filter(Names != "Fpam Clinic Kasungu", 
-                Names != "Kamuzu Academy Clinic") %>% 
-  dplyr::rowwise() %>% 
+                September.2020, October.2020) |>  
+  dplyr::filter(Names != "Fpam Clinic Kasungu",        # don't have any records
+                Names != "Kamuzu Academy Clinic") |>  
+  dplyr::rowwise() |>  
   dplyr::mutate(dr_2020 = sum(June.2020, July.2020,
                               August.2020, September.2020, 
                               October.2020, na.rm = TRUE))
 
-dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv")) %>% 
-  dplyr::as_tibble() %>% 
+dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv"),
+                                    stringsAsFactors = FALSE) |> 
+  dplyr::as_tibble() |> 
   dplyr::rename(Names = organisationunitname,
                 January = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.January.2019,
                 February = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.February.2019,
@@ -45,19 +50,20 @@ dry_season_malaria_2019 <- read.csv(here::here("data/kasungu_malaria_2019.csv"))
                 September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2019,
                 October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2019,
                 November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2019,
-                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2019) %>% 
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2019) |>  
   dplyr::select(-c(organisationunitid, organisationunitcode, organisationunitdescription,
-                   January, February, March, April, May, November, December)) %>% 
+                   January, February, March, April, May, November, December)) |>  
   dplyr::filter(Names != "Fpam Clinic Kasungu",       # don't have any records
                 Names != "Kamuzu Academy Clinic",
                 Names != "Chilanga Health Centre",
                 Names != "Kapyanga Health Centre",
-                Names != "St Augustin Anglican Clinic (Shayona)") %>% 
-  dplyr::rowwise() %>% 
+                Names != "St Augustin Anglican Clinic (Shayona)") |>  
+  dplyr::rowwise() |> 
   dplyr::mutate(dr_2019 = sum(June, July, August, September, October, na.rm = TRUE))
 
-dry_season_malaria_2018 <- read.csv(here::here("data/kasungu_malaria_2018.csv")) %>% 
-  dplyr::as_tibble() %>% 
+dry_season_malaria_2018 <- read.csv(here::here("data/kasungu_malaria_2018.csv"),
+                                    stringsAsFactors = FALSE) |> 
+  dplyr::as_tibble() |> 
   dplyr::rename(Names = organisationunitname,
                 January = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.January.2018,
                 February = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.February.2018,
@@ -70,19 +76,20 @@ dry_season_malaria_2018 <- read.csv(here::here("data/kasungu_malaria_2018.csv"))
                 September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2018,
                 October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2018,
                 November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2018,
-                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2018) %>% 
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2018) |> 
   dplyr::select(-c(organisationunitid, organisationunitcode, organisationunitdescription,
-                   January, February, March, April, May, November, December)) %>% 
+                   January, February, March, April, May, November, December)) |>  
   dplyr::filter(Names != "Fpam Clinic Kasungu",       # don't have any records
                 Names != "Kamuzu Academy Clinic",
                 Names != "Chilanga Health Centre",
                 Names != "Kapyanga Health Centre",
-                Names != "St Augustin Anglican Clinic (Shayona)") %>% 
-  dplyr::rowwise() %>% 
+                Names != "St Augustin Anglican Clinic (Shayona)") |>  
+  dplyr::rowwise() |>  
   dplyr::mutate(dr_2018 = sum(June, July, August, September, October, na.rm = TRUE))
 
-dry_season_malaria_2017 <- read.csv(here::here("data/kasungu_malaria_2017.csv"))%>% 
-  dplyr::as_tibble() %>% 
+dry_season_malaria_2017 <- read.csv(here::here("data/kasungu_malaria_2017.csv"),
+                                    stringsAsFactors = FALSE) |>  
+  dplyr::as_tibble() |> 
   dplyr::rename(Names = organisationunitname,
                 January = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.January.2017,
                 February = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.February.2017,
@@ -95,15 +102,15 @@ dry_season_malaria_2017 <- read.csv(here::here("data/kasungu_malaria_2017.csv"))
                 September = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.September.2017,
                 October = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.October.2017,
                 November = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.November.2017,
-                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2017) %>% 
+                December = WHO.NMCP.P.Confirmed.malaria.cases.NMCP.December.2017) |>  
   dplyr::select(-c(organisationunitid, organisationunitcode, organisationunitdescription,
-                   January, February, March, April, May, November, December)) %>% 
+                   January, February, March, April, May, November, December)) |> 
   dplyr::filter(Names != "Fpam Clinic Kasungu",       # don't have any records
                 Names != "Kamuzu Academy Clinic",
                 Names != "Chilanga Health Centre",
                 Names != "Kapyanga Health Centre",
-                Names != "St Augustin Anglican Clinic (Shayona)") %>% 
-  dplyr::rowwise() %>% 
+                Names != "St Augustin Anglican Clinic (Shayona)") |>  
+  dplyr::rowwise() |> 
   dplyr::mutate(dr_2017 = sum(June, July, August, September, October, na.rm = TRUE))
 
 # Add row ID
@@ -124,23 +131,37 @@ dry_season_malaria_merge <- merge(
   dry_season_malaria_2020, by = "rowID", all = TRUE)%>% 
   dplyr::select(1, 2, 8, 15, 22, 29) # select "rowID", "Names.x", "dr_2017", 
                                      # "dr_2018", "dr_2019" and "dr_2020"
+dry_season_malaria_monthly <- merge(
+  merge(
+    merge(
+      dry_season_malaria_2017, dry_season_malaria_2018, by = "rowID", all = TRUE),
+    dry_season_malaria_2019, by = "rowID", all = TRUE),
+  dry_season_malaria_2020, by = "rowID", all = TRUE)
 
 # Get coordinates of health facility location
 coordinates <- read.csv(here::here("data", "dry_season_malaria 2015-2019.csv")) %>% 
-  dplyr::select(FID, LONGITU, LATITUD)
+  dplyr::select(FID, Names, LONGITU, LATITUD)
 
 # Add coordinates to 2017 to 2020 malaria data
+dry_season_malaria_2017_2020 <- merge(dry_season_malaria_merge, coordinates,
+                                      by.x = "rowID", by.y = "FID") %>% 
+  dplyr::select(rowID, Names, dr_2017, dr_2018,
+                dr_2019, dr_2020, LONGITU, LATITUD)
+
+# Save file
+write.csv(dry_season_malaria_2017_2020, file = "data/dry_season_malaria_2017_2020.csv")
 
 # 2015 - 2019 NMCP confirmed malaria cases by health facility
-kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv")) %>% 
+kasungu_monthly_malaria <- read.csv(here::here("data/Kasungu_Monthly_facility_ Malaria data.csv"),
+                                    stringsAsFactors = FALSE) |>  
   dplyr::select(-c(periodcode, perioddescription, 
                    nmcp.confirmed.malaria.cases.rdt_central.east.zone)) 
 
 # Helper function to rename columns by removing "nmcp.confirmed.malaria.cases.rdt_"
 foo <- function(x) gsub("^[^_]*_", "", x)
 
-kasungu_monthly_malaria_filter <- kasungu_monthly_malaria%>% 
-  dplyr::rename_all(foo) %>% 
+kasungu_monthly_malaria_filter <- kasungu_monthly_malaria |>  
+  dplyr::rename_all(foo) |> 
   dplyr::filter(!stringr::str_detect(periodname, "15"), # Remove years 2015 and 2016
                 !stringr::str_detect(periodname, "16"),
                 !stringr::str_detect(periodname, "Jan"), # Remove rainy months except may
@@ -154,12 +175,11 @@ kasungu_monthly_malaria_filter <- kasungu_monthly_malaria%>%
 subtract.2017.may.cases <- function(dry.season.malaria.df, may.malaria.df, year =NA,
                                     health.centre1 = NA, health.centre2 = NA, month = NA){
   
-  dry.season.malaria <- dry.season.malaria.df$year[which(
+dry.season.malaria.df$year[which(
     dry.season.malaria.df$Names == health.centre1)] <- dry.season.malaria.df$year[which(
              dry.season.malaria.df$Names == health.centre1)] - may.malaria.df$health.centre2[which(
                  may.malaria.df$periodname == month)]
-  
-  return(dry.season.malaria)
+  return(dry.season.malaria.df)
 }
 
 # Invoking function 
@@ -167,7 +187,7 @@ dry_season_malaria <- subtract.2017.may.cases(dry_season_malaria_2017_2020,
                                               kasungu_monthly_malaria_filter,
                                               health.centre1 = "Anchor Farm",
                                               health.centre2 = "anchor.farm.health.centre",
-                                              year = "dr_2017", month = "17-May")
+                                              year = "dr_2018", month = "18-May")
 # Subtract May malaria cases
 dry_season_malaria_2017_2020$dr_2017[which(
   dry_season_malaria_2017_2020$Names == "Anchor Farm")] <- dry_season_malaria_2017_2020$dr_2017[which(
@@ -231,14 +251,14 @@ dry_season_malaria_2017_2020$dr_2017[which(
 
 
 
-kasungu_monthly_malaria_long <- kasungu_monthly_malaria_filter %>%
+kasungu_monthly_malaria_long <- kasungu_monthly_malaria_filter |> 
   tidyr::pivot_longer(cols = wimbe.hc:anchor.farm.health.centre,
                       names_to = "Names",
                       values_to = "malaria_cases")
 
-kasungu_monthly_malaria_wide <- kasungu_monthly_malaria_long %>% 
-  pivot_wider(names_from = periodname, values_from = malaria_cases) %>% 
-  dplyr::rowwise() %>% 
+kasungu_monthly_malaria_wide <- kasungu_monthly_malaria_long |>  
+  pivot_wider(names_from = periodname, values_from = malaria_cases) |> 
+  dplyr::rowwise() |>  
   dplyr::mutate(dry_2017 = sum(`17-Jun`, `17-Jul`, `17-Aug`, `17-Sep`, `17-Oct`, na.rm = TRUE))
 
 
@@ -259,8 +279,22 @@ kasungu_monthly_malaria_wide <- kasungu_monthly_malaria_long %>%
 #                                      anchor.farm.health.centre)) %>% 
   tidyr::pivot_longer()
 
-    
-  
+# Monthly variation in  confirmed malaria cases ----------------------------------------
+kasungu_monthly_malaria_2017_2021 <- read.csv(here::here("data/Kasungu monthly malaria 2017-2021.csv"),
+                                              stringsAsFactors = FALSE) |>
+  dplyr::glimpse()
+
+kasungu_monthly_malaria_2017_2021$date <- lubridate::ym(kasungu_monthly_malaria_2017_2021$periodid) 
+
+dplyr::glimpse(kasungu_monthly_malaria_2017_2021)
+
+# Plot line graph
+ggplot2::ggplot(kasungu_monthly_malaria_2017_2021) +
+  aes(x = date, y = NMCP) +
+  geom_line(size = 0.6, colour = "#112446") +
+  scale_y_continuous(trans = "log2") +
+  labs(x = "Year", y = "Confirmed malaria cases") +
+  theme_classic()
 
 
 # Export -----------------------------------------------------------------------
@@ -404,3 +438,10 @@ mapview::mapview(new_health_fac_catchment_clip)
 
 # Save clipped new health facility catchment boundaries i.e. Kasungu NP excluded
 raster::shapefile(new_health_catchment_clip, filename = "data/new_health_fac_catchment_clip.shp", overwrite = TRUE)
+
+
+# TropWet classified imagery
+tropwet <- raster::raster(here::here("data/tropwet_classified_output_5_to_8_2017_to_2017.tif"))
+
+plot(tropwet)
+mapview::mapview(tropwet)
