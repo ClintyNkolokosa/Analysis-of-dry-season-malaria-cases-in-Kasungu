@@ -2271,7 +2271,8 @@ multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_c
 summary(multivariate_1km)
 # Build regression model table
 regression_table_1km <- gtsummary::tbl_regression(
-  multivariate_1km, exponentiate = TRUE)
+  multivariate_1km, exponentiate = TRUE) |> 
+  gtsummary::bold_p()
 
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE)
 
@@ -2282,7 +2283,8 @@ multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_c
 summary(multivariate_2km)
 
 regression_table_2km <- gtsummary::tbl_regression(
-  multivariate_2km)
+  multivariate_2km)|> 
+  gtsummary::bold_p()
 
 sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE)
 
