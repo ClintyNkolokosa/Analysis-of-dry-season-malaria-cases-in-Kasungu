@@ -2260,7 +2260,10 @@ multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_c
                         data = model_data, family = 'poisson')
 
 summary(multivariate_1km)
-regression_table_1km <- gtsummary::tbl_regression(multivariate_1km, exponentiate = TRUE)
+# Build regression model table
+regression_table_1km <- gtsummary::tbl_regression(
+  multivariate_1km, exponentiate = TRUE)
+
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE)
 
 
@@ -2268,7 +2271,10 @@ multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_c
                         data = model_data, family = 'poisson')
 
 summary(multivariate_2km)
-regression_table_2km <- gtsummary::tbl_regression(multivariate_2km, exponentiate = TRUE)
+
+regression_table_2km <- gtsummary::tbl_regression(
+  multivariate_2km, exponentiate = TRUE)
+
 sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE)
 
 
@@ -2276,8 +2282,10 @@ multivariate_3km <- glm(observed_cases~1+prop_pop_3km+year+offset(log(expected_c
                         data = model_data, family = 'poisson')
 
 summary(multivariate_3km)
-# Build regression model table
-regression_table_3km <- gtsummary::tbl_regression(multivariate_3km, exponentiate = TRUE)
+
+regression_table_3km <- gtsummary::tbl_regression(
+  multivariate_3km, exponentiate = TRUE)
+
 sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE)
 
 # merge regression model tables 
@@ -2287,10 +2295,10 @@ table_merge <-gtsummary::tbl_merge(
                 regression_table_3km),
     tab_spanner = c("**Model 1km**", 
                     "**Model 2km**", 
-                    "**Model 3km**")
-    )
+                    "**Model 3km**"))
 
 table_merge
+
 ```
 
 ## Estimate prediction error
