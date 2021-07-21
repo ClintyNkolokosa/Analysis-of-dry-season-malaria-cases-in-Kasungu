@@ -25,43 +25,48 @@ knitr::opts_chunk$set(fig.align = 'center', echo = TRUE)
 Loading the R packages that will be used to read in, view, transform and model the malaria cases and spatial datasets.
 
 ```{r, warning = FALSE, message = FALSE}
-library(SpatialEpi)
-library(spdep)
-library(spaMM)
-library(popEpi)
-library(Epi)
-library(epitools)      # compute confidence intervals of malaria data
-library(tidyverse)
-library(caret)         # easily compute cross-validation methods to test model perfomance
-library(stats)
-library(performance)   # check linear model performance
-library(see)           # to plot model assumptions
-library(caTools)       # splitting data into training and test data sets
-library(qqplotr)
-library(automap)       # auto krigging
-library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
-library(gtsummary)     # easily display regression model outputs, such as P value, CI
-library(ggpubr)
-library(plotly)
-library(lubridate)
-library(knitr)
-library(raster)
-library(rgdal)
-library(rgeos)
-library(sf)
-library(sp)
-library(tmap)
-library(spdep)
-library(maptools)
-library(gridExtra)
-library(ggsci)
-library(grid)
-library(exactextractr)
-library(DataExplorer)
-library(mapview)
-library(kableExtra)    # create interactive tables
-library(gt)            # create beautiful HTML tables
-`%>%` <- magrittr::`%>%`
+suppressPackageStartupMessages({
+  library(SpatialEpi)
+  library(spdep)
+  library(spaMM)
+  library(popEpi)
+  library(Epi)
+  library(epitools)      # compute confidence intervals of malaria data
+  library(tidyverse)
+  library(caret)         # easily compute cross-validation methods to test model perfomance
+  library(stats)
+  library(performance)   # check linear model performance
+  library(see)           # to plot model assumptions
+  library(caTools)       # splitting data into training and test data sets
+  library(qqplotr)
+  library(automap)       # auto krigging
+  library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
+  library(gtsummary)     # easily display regression model outputs, such as P value, CI
+  library(ggpubr)
+  library(plotly)
+  library(lubridate)
+  library(knitr)
+  library(raster)
+  library(rgdal)
+  library(rgeos)
+  library(sf)
+  library(sp)
+  library(tmap)
+  library(spdep)
+  library(maptools)
+  library(gridExtra)
+  library(ggsci)
+  library(grid)
+  library(exactextractr)
+  library(DataExplorer)
+  library(mapview)
+  library(kableExtra)    # create interactive tables
+  library(gt)            # create beautiful HTML tables
+  `%>%` <- magrittr::`%>%`
+
+})
+  
+
 ```
 
 ## Tell R where the data is
