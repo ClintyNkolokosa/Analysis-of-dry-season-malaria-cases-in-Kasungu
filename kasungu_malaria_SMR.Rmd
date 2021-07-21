@@ -2259,9 +2259,9 @@ model_data |>     # View model data in table format
   gt::cols_label(health_facility = "Health facility",
                  observed_cases = "Observed cases",
                  expected_cases = "Expected cases",
-                 prop_pop_1km = "Proportion of population in 1km buffers %",
-                 prop_pop_2km = "Proportion of population in 2km buffers %",
-                 prop_pop_3km	= "Proportion of population in 3km buffers %",
+                 prop_pop_1km = "Proportion of population in 1km buffers%",
+                 prop_pop_2km = "Proportion of population in 2km buffers%",
+                 prop_pop_3km	= "Proportion of population in 3km buffers%",
                  year = "Year")
 
 # Model fitting ----------------------------------------------------------------
