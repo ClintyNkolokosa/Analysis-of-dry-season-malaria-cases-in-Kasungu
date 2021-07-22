@@ -1997,7 +1997,7 @@ plot(performance::compare_performance(model_1km_2017, model_2km_2017,
 
 The fitted values appear to line up particularly well with the observed data, suggesting that `prop_pop_*` (i.e., proportion of catchment population living near water bodies) can help us understand malaria risk in the catchment areas.
 
-```{r, message=FALSE, fig.height=15, fig.width=11, fig.cap='Fig. 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
+```{r, message=FALSE, fig.height=15, fig.width=10, fig.cap='Fig. 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
 plot.fitted.values <- function(fitted.values.df, model.df, title){
@@ -2049,8 +2049,11 @@ fitted_2km_2020 <- plot.fitted.values(model_2km_2020, model_data_2020, "2020: 2k
 fitted_3km_2020 <- plot.fitted.values(model_3km_2020, model_data_2020, "2020: 3km model")
 
 # Layout scatter plots ---------------------------------------------------------
-cowplot::plot_grid(fitted_1km_2017, fitted_1km_2018, fitted_2km_2018, fitted_3km_2018,
-                   fitted_1km_2019, fitted_2km_2019, fitted_1km_2020, ncol = 3, nrow = 3)
+cowplot::plot_grid(fitted_1km_2017, fitted_2km_2017, 
+                   fitted_1km_2018, fitted_2km_2018,
+                   fitted_1km_2019, fitted_2km_2019, 
+                   fitted_1km_2020, fitted_2km_2020,
+                   ncol = 2, nrow = 4)
 
 ```
 
