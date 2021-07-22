@@ -1815,9 +1815,9 @@ predicted_2017 <- predict(model_2017, test_2017, type = "response")
 # Compare predicted vs actual dry season malaria cases
 par(mfrow = c(2, 1))
 
-plot(test_2017$observed_2017, type = "l", lty = 1.8, col = "blue")
+plot(test_2017$observed_2017, type = "b", lty = 1.8, col = "blue")
 
-plot(predicted_2017, type = "l", lty = 1.8, col = "red", add = TRUE)
+plot(predicted_2017, type = "b", lty = 1.8, col = "red", add = TRUE)
 
 par(mfrow = c(1, 1)) # Create a 2 x 2 plotting matrix
 
