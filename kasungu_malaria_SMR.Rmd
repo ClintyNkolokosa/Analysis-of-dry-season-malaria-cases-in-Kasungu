@@ -2369,7 +2369,7 @@ summary(train_model_3km)
 
 ```
 Model-based Geostatistics
-```{r, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE, fig.height =13, fig.width=9}
 # Run a Kriging model ----------------------------------------------------------
 
 # Get point location of health facilities and convert to spatial object
