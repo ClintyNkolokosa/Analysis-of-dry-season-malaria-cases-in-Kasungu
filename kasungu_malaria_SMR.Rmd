@@ -1741,7 +1741,7 @@ Two important metrics have been used to assess the performance of the predictive
 
 $$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
 
-`Pseudo R-squared goodness-of-fit` measure for count data in Poisson regression which is nonlinear computed using deviance statistics:
+`Pseudo R-squared goodness-of-fit` measure for count data in Poisson regression which is nonlinear and computed using deviance statistics:
 
 $$D=2∑ni=1{Yilog(Yi/μi)−(Yi−μi)}$$
 where
