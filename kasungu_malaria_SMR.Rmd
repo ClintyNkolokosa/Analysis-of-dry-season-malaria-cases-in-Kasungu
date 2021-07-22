@@ -1187,7 +1187,8 @@ buffer_pop_1km_2017 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |>
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) 
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0))) 
 
 buffer_pop_2km_2017 <- estimate.buffer.pop(
   kasungu_population_2017,
@@ -1196,7 +1197,8 @@ buffer_pop_2km_2017 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |>
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) 
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) |> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_3km_2017 <- estimate.buffer.pop(
   kasungu_population_2017,
@@ -1205,7 +1207,8 @@ buffer_pop_3km_2017 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |>
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 # 2018 buffer population -------------------------------------------------------
 buffer_pop_1km_2018 <- estimate.buffer.pop(
@@ -1215,7 +1218,8 @@ buffer_pop_1km_2018 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_2km_2018 <- estimate.buffer.pop(
   kasungu_population_2018,
@@ -1224,7 +1228,8 @@ buffer_pop_2km_2018 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |>
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_3km_2018 <- estimate.buffer.pop(
   kasungu_population_2018,
@@ -1233,7 +1238,8 @@ buffer_pop_3km_2018 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 # 2019 buffer population -------------------------------------------------------
 buffer_pop_1km_2019 <- estimate.buffer.pop(
@@ -1243,7 +1249,8 @@ buffer_pop_1km_2019 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_2km_2019 <- estimate.buffer.pop(
   kasungu_population_2019,
@@ -1252,7 +1259,8 @@ buffer_pop_2km_2019 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_3km_2019 <- estimate.buffer.pop(
   kasungu_population_2019,
@@ -1261,7 +1269,8 @@ buffer_pop_3km_2019 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |>
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 # 2020 buffer population -------------------------------------------------------
 buffer_pop_1km_2020 <- estimate.buffer.pop(
@@ -1271,7 +1280,8 @@ buffer_pop_1km_2020 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_2km_2020 <- estimate.buffer.pop(
   kasungu_population_2020,
@@ -1280,7 +1290,8 @@ buffer_pop_2km_2020 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 buffer_pop_3km_2020 <- estimate.buffer.pop(
   kasungu_population_2020,
@@ -1290,7 +1301,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
     prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) |> 
-  replace(is.na(.), 0) #replace all NA values with zero
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
 
 
 ```
