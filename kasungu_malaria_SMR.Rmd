@@ -1819,6 +1819,12 @@ plot(test_2017$observed_2017, type = "b", lty = 1.8, col = "blue")
 
 plot(predicted_2017, type = "b", lty = 1.8, col = "red", add = TRUE)
 
+barplot(test_2017$observed_2017, main = "Observed malaria cases",
+        xlab = "Catchment area", ylab = "Observed malaria cases")
+
+barplot(predicted_2017, main = "Predicted malaria cases",
+        xlab = "Catchment area", ylab = "Predicted malaria cases")
+
 par(mfrow = c(1, 1)) # Create a 2 x 2 plotting matrix
 
 
