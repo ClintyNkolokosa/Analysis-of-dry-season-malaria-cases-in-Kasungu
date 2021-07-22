@@ -1648,13 +1648,13 @@ model_1km_2017 <- glm(observed_2017~prop_pop_1km+offset(log(expected_2017)),
 summary(model_1km_2017)
  
 # The estimated regression equation can be written as follow: 
-# observed malaria cases = -0.2263102 + 0.0247164 * percentage of catchment population living near dam 
+# observed malaria cases = -0.290015 + 0.032594 * percentage of catchment population living near dam 
 # Using this formula, for each change in number of people living near dams,
 # we can predict the number of dry season malaria case.
 #
 # For example:
 #   for a buffer population equal zero, we can expect -0.22 malaria cases. 
-#   for a buffer population equal 1000, we can expect  round(-0.22 + 0.02 * 1000) = 20 malaria cases.
+#   for a buffer population equal 1000, we can expect  round(-0.29 + 0.03 * 1000) = 30 malaria cases.
 
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
@@ -1792,7 +1792,7 @@ model_assessment_data_2020 <- model_data_2020 |>
                 prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
   dplyr::glimpse()
 
-# Note to self: do LOOCV(Leave One Out Cross-Validation) and k-fold Cross Validation
+# To do: LOOCV(Leave One Out Cross-Validation) and k-fold Cross Validation
 # Split the data into training and test set ------------------------------------
 set.seed(2) # generate random numbers
 
