@@ -2268,6 +2268,8 @@ df2020$year <- "2020"
 colnames(df2020) <- colnames(df2017) # match columns names
 
 model_data <- rbind(df2017, df2018, df2019, df2020)
+
+imputeTS::na.replace(model_data, 0) # replace NA with zero
   
 
 
