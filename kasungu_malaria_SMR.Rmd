@@ -62,6 +62,7 @@ suppressPackageStartupMessages({
   library(mapview)
   library(kableExtra)    # create interactive tables
   library(gt)            # create beautiful HTML tables
+  library(imputeTS)      # easily remove NAs
   `%>%` <- magrittr::`%>%`
 
 })
