@@ -1289,7 +1289,9 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
   dplyr::rename(catchment_pop = pop,
                 buffer_pop = buffer_pop_aggregated) |> 
   dplyr::mutate(
-    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) |> 
+  replace(is.na(.), 0) #replace all NA values with zero
+
 
 ```
 
@@ -2356,7 +2358,8 @@ model_data_evaluation <- model_data[complete.cases(model_data),]
 # Train the model, fit a regression model and use LOOCV to evaluate perfomance
 train_model_1km <- caret::train(
   observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
-  data = model_data_evaluation, method = "glm", trControl = train_control)
+  data = model_data_evaluation, method = "glm", 
+  trControl = train_control, family = "poisson")
 
 train_model_2km <- caret::train(
   observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
