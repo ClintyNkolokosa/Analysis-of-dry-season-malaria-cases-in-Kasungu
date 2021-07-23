@@ -2378,22 +2378,6 @@ performance::compare_performance(
   metrics = c("AIC", "BIC", "RMSE", "Sigma"), rank = TRUE)
 
 
-# Predict the number of cases per 1000 population for a new data set -----------
-fitted(multivariate_1km)
-
-fitted(multivariate_2km)
-
-# create a test dataframe containing new values of variables
-test_data <-  data.frame(health_facility = "Kasungu District Hospital", 
-                         observed_cases = 10000, prop_pop_1km = 100, year = "2017",
-                         expected_cases = 1000, log_expected = log(1000))
-
-# predict outcomes (responses) using 'predict()'
-predicted_value <- predict(model_data, test_data, type = "response")
-
-
-
-
 ```
 
 ## Estimate prediction error
