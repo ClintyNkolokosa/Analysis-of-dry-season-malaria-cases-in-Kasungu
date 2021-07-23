@@ -1744,6 +1744,10 @@ summary(model_3km_2019)
 sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
 
+# In the summaries above, we can see that all p values, are less than 0.001, 
+# hence, the explanatory variable (percentage of people living near water bodies) 
+# has significant effect on dry season malaria cases
+
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
@@ -1765,6 +1769,8 @@ model_3km_2020 <- glm(observed_2020~1+prop_pop_3km+offset(log(expected_2020)),
 summary(model_3km_2020)
 sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
+
+
 
 ```
 
