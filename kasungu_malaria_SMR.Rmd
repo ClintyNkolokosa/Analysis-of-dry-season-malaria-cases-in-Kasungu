@@ -1619,7 +1619,7 @@ graphics::hist(model_data_2017$observed_2017,
                main = "Histogram of 2017 dry season malaria cases ",
                xlab = "Malaria cases",
                las = 1)
-# Clearly, the data is not in the form of a bell curve like in a normal distribution.
+# Clearly, the data is not in the form of a bell curve like in a normal distribution
 
 graphics::hist(model_data_2018$observed_2018, 
                main = "Histogram of 2018 dry season malaria cases ",
@@ -1635,6 +1635,20 @@ graphics::hist(model_data_2020$observed_2020,
                main = "Histogram of 2020 dry season malaria cases ",
                xlab = "Malaria cases",
                las = 1)
+
+# Let’s check out the mean and variance of the dependent variable:
+
+mean(model_data_2017$observed_2017)
+var(model_data_2017$observed_2017)
+# The variance (7693348) is much greater than the mean (2491.923), which suggests 
+# that we will have over-dispersion in the 2017 model.
+
+mean(model_data_2018$observed_2018)
+var(model_data_2018$observed_2018)
+
+mean(model_data_2019$observed_2019)
+var(model_data_2019$observed_2019)
+
 
 # Fit generalised linear model -------------------------------------------------
 # Defining model parameters:
