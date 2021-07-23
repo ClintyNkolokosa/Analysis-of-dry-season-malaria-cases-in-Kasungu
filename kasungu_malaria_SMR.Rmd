@@ -1756,7 +1756,8 @@ sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
 # only the intercept (grand mean) whereas residual with the inclusion of independent variables.
 # Above, for example model_1km_2017, we can see that the addition of 1 (25-24 = 1) independent
 # variable decreased the deviance to 9587.9 from 12787.5. The greater difference in values 
-# means a bad fit.
+# means a bad fit. And the dispersion parameter is 399.4958 (9587.9/24) which is large, so 
+# the model is a bad fit.
 
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
@@ -2284,6 +2285,13 @@ colnames(df2020) <- colnames(df2017) # match columns names
 model_data <- rbind(df2017, df2018, df2019, df2020)
 
 imputeTS::na.replace(model_data, 0) # replace NA with zero
+
+# find the log(n) of each value in 'expected' column. It is the fourth column
+log_expected <- log(model_data[ ,4]) |> 
+  dplyr::rename(log_expected = expected_cases)
+
+# add the log values to the dataframe using 'cbind()'
+model_data <-  cbind(model_data, log_expected)
   
 
 
@@ -2297,11 +2305,12 @@ model_data |>     # View model data in table format
                  prop_pop_1km = "Proportion of population in 1km buffers%",
                  prop_pop_2km = "Proportion of population in 2km buffers%",
                  prop_pop_3km	= "Proportion of population in 3km buffers%",
+                 log_expected = "Log of expected cases",
                  year = "Year")
 
 # Model fitting ----------------------------------------------------------------
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
-                        data = model_data, family = 'poisson')
+                        data = model_data, family = poisson(link = "log"))
 
 summary(multivariate_1km)
 # Build regression model table
@@ -2324,7 +2333,7 @@ regression_table_2km <- gtsummary::tbl_regression(
 sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE)
 
 
-multivariate_3km <- glm(observed_cases~1+prop_pop_3km+year+offset(log(expected_cases)),
+multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
 summary(multivariate_3km)
