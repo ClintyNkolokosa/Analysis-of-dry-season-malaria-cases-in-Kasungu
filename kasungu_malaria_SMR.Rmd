@@ -1748,6 +1748,10 @@ sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
 # hence, the explanatory variable (percentage of people living near water bodies) 
 # has significant effect on dry season malaria cases
 
+# The Residual Deviance is greater than the degrees of freedom, indicating 
+# that over-dispersion exists, as anticipated. This means that the estimates are correct, 
+# but the standard errors (Std. Error, standard deviation) are unaccounted for by the model.
+
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
                       data = model_data_2020, family = 'poisson')
