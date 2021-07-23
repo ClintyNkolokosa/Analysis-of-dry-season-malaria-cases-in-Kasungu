@@ -49,6 +49,7 @@ suppressPackageStartupMessages({
   library(raster)
   library(rgdal)
   library(rgeos)
+  library(readr)
   library(sf)
   library(sp)
   library(tmap)
@@ -89,8 +90,11 @@ The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated wate
 ```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE}
 
 # Kasungu dry season malaria data
-dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"),
-                                         stringsAsFactors = FALSE)
+dry_season_malaria_2017_2020 <- readr::read_csv(
+  "https://raw.githubusercontent.com/ClintyNkolokosa/Analysis-of-dry-season-malaria-cases-in-Kasungu/main/data/dry_season_malaria_2017_2020.csv")
+
+# dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"),
+#                                          stringsAsFactors = FALSE)
 
 # Kasungu monthly NMCP confirmed malaria cases
 monthly_malaria_2017_2021 <- read.csv(here::here("data/Kasungu monthly malaria 2017-2021.csv"),
