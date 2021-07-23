@@ -1619,7 +1619,10 @@ graphics::hist(model_data_2017$observed_2017,
                main = "Histogram of 2017 dry season malaria cases ",
                xlab = "Malaria cases",
                las = 1)
-# Clearly, the data is not in the form of a bell curve like in a normal distribution
+# Clearly, the data is not in the form of a bell curve like in a normal distribution.
+# Many health facilities reported no malaria cases or very few cases. A few health facilities
+# have a large number of cases making for a distribution that appears to be far from normal.
+# Therefore, Poisson regression should be used to model our dry season malaria data.
 
 graphics::hist(model_data_2018$observed_2018, 
                main = "Histogram of 2018 dry season malaria cases ",
