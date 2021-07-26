@@ -1655,6 +1655,7 @@ var(model_data_2020$observed_2020)
 
 # The variance is much greater than the mean, which suggests 
 # that we will have over-dispersion in the model.
+# Overdispersion suggests that there is more variation in the response than the model implies.
 
 
 # Fit generalised linear model -------------------------------------------------
@@ -1759,8 +1760,10 @@ sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
 # only the intercept (grand mean) whereas residual with the inclusion of independent variables.
 # Above, for example model_1km_2017, we can see that the addition of 1 (25-24 = 1) independent
 # variable decreased the deviance to 9587.9 from 12787.5. The greater difference in values 
-# means a bad fit. And the dispersion parameter is 399.4958 (9587.9/24) which is large, so 
-# the model is a bad fit.
+# means a bad fit. And the dispersion parameter is 399.4958 (9587.9/24) which is large. 
+# One possibility is that there are other important covariates that could be used to 
+# describe the differences in the violent crime rates. We consider overdispersion 
+# as a possible explanation of the significant lack-of-fit. 
 
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
@@ -1863,8 +1866,7 @@ par(mfrow = c(2, 1))
 # plot(predicted_2017, type = "b", lty = 1.8, col = "red", add = TRUE)
 
 barplot(test_2017$observed_2017, main = "Observed malaria cases",
-        xlab = "Catchment area", ylab = "Observed malaria cases",
-        col = "white", border = "steelblue")
+        xlab = "Catchment area", ylab = "Observed malaria cases")
 
 barplot(predicted_2017, main = "Predicted malaria cases",
         xlab = "Catchment area", ylab = "Predicted malaria cases")
