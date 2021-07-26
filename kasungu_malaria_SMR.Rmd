@@ -1686,8 +1686,9 @@ summary(model_1km_2017)
 sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
 
-# From the output above, the R2 is 1, meaning that the observed and the predicted 
-# outcome values are highly correlated, which is very good. 
+# From the output above, the p-value is 0.001 - way less than the alpha value of 0.05, 
+# we therefore reject our null hypothesis, meaning that there is a difference in 
+# dry season malaria risk between people living close to water bodies than those living far away.
 
 model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
                       data = model_data_2017, family = poisson(link = "log"))
