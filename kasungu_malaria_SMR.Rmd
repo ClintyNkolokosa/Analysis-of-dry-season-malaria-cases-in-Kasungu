@@ -1763,8 +1763,8 @@ sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
 # variable decreased the deviance to 9587.9 from 12787.5. The greater difference in values 
 # means a bad fit. And the dispersion parameter is 399.4958 (9587.9/24) which is large. 
 # One possibility is that there are other important covariates that could be used to 
-# describe the differences in the violent crime rates. We consider overdispersion 
-# as a possible explanation of the significant lack-of-fit. 
+# describe the differences in the observed dry season malaria cases. 
+# We consider overdispersion as a possible explanation of the significant lack-of-fit. 
 
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
