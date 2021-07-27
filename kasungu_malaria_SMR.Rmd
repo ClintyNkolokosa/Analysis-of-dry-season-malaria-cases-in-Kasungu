@@ -2358,7 +2358,7 @@ sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE)
 
 # In this combined dataset, we can see that the residual deviance is far from
 # degrees of freedom, and the dispersion parameter is 576.9798 (57121/99 ) which is large, 
-# so the model is a bad fit.
+# so the model is not a very good fit.
 
 # merge regression model tables 
 table_merge <-gtsummary::tbl_merge(
