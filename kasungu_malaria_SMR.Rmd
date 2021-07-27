@@ -1573,7 +1573,7 @@ dependent variable, 𝑦 = observed malaria cases;
 independent variable, 𝑥 = percentage of people living near dams; and
 offset, 𝑒 = expected malaria cases.
 
-To cope with the malaria count data coming from populations of different sizes, we specify an offset argument. This adds a constant term for each row of the data in the model. The log of the population is used in the offset term.
+To cope with the malaria count data coming from populations of different sizes, we specify an offset argument. This adds a constant term for each row of the data in the model. The log of the expected cases is used in the offset term.
 
 
 Summary outputs:
