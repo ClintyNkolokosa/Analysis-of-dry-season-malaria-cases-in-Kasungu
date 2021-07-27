@@ -331,7 +331,7 @@ zipatala_aggregated <- zipatala |>
 # Save csv file
 # write.csv(zipatala_aggregated, "data/zipatala_aggregated.csv")
 
-# Convert to csv to sf object
+# Convert to sf object
 zipatala_aggregated_sf <- sf::st_as_sf(zipatala_aggregated,
                                         coords = c("LONGITU", "LATITUD"),
                                         crs = 4326, agr = "constant")
