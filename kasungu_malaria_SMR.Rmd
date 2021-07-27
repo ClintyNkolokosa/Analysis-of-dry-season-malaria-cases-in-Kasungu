@@ -2360,7 +2360,9 @@ sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE)
 # degrees of freedom, and the dispersion parameter is 576.9798 (57121/99 ) which is large.
 # What does this indicate? This value indicates poor fit. That is, a significant difference 
 # between fitted values and observed values.
-# This means that there is extra variance not accounted for by the model.
+# This means that there is extra variance not accounted for by the model. One way to deal with
+# over-dispersion is to run a quasi-poisson model, which fits an extra dispersion parameter to
+# account for that extra variance.
 # The negative coefficient for the predictors is highly significant (p<2e-16).
 # We see that yearly variation influences observed cases negatively, 
 # but percentage of people living close to dams influences observed cases positively. 
