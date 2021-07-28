@@ -1546,10 +1546,6 @@ graphics::hist(model_data_2017$observed_2017,
                main = "Histogram of 2017 dry season malaria cases ",
                xlab = "Malaria cases",
                las = 1)
-# Clearly, the data is not in the form of a bell curve like in a normal distribution.
-# Many health facilities reported very few malaria cases. A few health facilities
-# have a large number of cases making for a distribution that appears to be far from normal.
-# Therefore, Poisson regression should be used to model our dry season malaria data.
 
 graphics::hist(model_data_2018$observed_2018, 
                main = "Histogram of 2018 dry season malaria cases ",
@@ -1565,6 +1561,10 @@ graphics::hist(model_data_2020$observed_2020,
                main = "Histogram of 2020 dry season malaria cases ",
                xlab = "Malaria cases",
                las = 1)
+# Clearly, the data is not in the form of a bell curve like in a normal distribution.
+# Many health facilities reported very few malaria cases. A few health facilities
+# have a large number of cases making for a distribution that appears to be far from normal.
+# Therefore, Poisson regression should be used to model our dry season malaria data.
 
 # Let’s check out the mean and variance of the dependent variable:
 
@@ -1582,7 +1582,7 @@ var(model_data_2020$observed_2020)
 
 # The variance is much greater than the mean, which suggests 
 # that we will have over-dispersion in the model.
-# Overdispersion suggests that there is more variation in the response than the model implies.
+# Over-dispersion suggests that there is more variation in the response than the model implies.
 ```
 
 # Model fitting
@@ -1705,23 +1705,6 @@ summary(model_3km_2019)
 sjPlot::tab_model(model_3km_2019, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
 
-# In the summaries above, we can see that all p values, are less than 0.001, 
-# hence, the explanatory variable (percentage of people living near water bodies) 
-# has significant effect on dry season malaria cases.
-
-# The Residual Deviance is greater than the degrees of freedom, indicating 
-# that over-dispersion exists, as anticipated. This means that the estimates are correct, 
-# but the standard errors (Std. Error i.e., standard deviation) are unaccounted for by the model.
-
-# The Null deviance shows how well the response variable is predicted by a model that includes 
-# only the intercept (grand mean) whereas residual with the inclusion of independent variables.
-# Above, for example model_1km_2017, we can see that the addition of 1 (25-24 = 1) independent
-# variable decreased the deviance to 9587.9 from 12787.5. The greater difference in values 
-# means a poor fit. And the dispersion parameter is 399.4958 (9587.9/24) which is large. 
-# One possibility is that there are other important covariates that could be used to 
-# describe the differences in the observed dry season malaria cases. 
-# We consider overdispersion as a possible explanation of the significant lack-of-fit. 
-
 # 2020 -------------------------------------------------------------------------
 model_1km_2020 <- glm(observed_2020~1+prop_pop_1km+offset(log(expected_2020)),
                       data = model_data_2020, family = poisson(link = "log"))
@@ -1747,6 +1730,10 @@ sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3,
 
 
 ```
+In the summaries above, we can see that all p values, are less than 0.001, hence, the explanatory variable (percentage of people living near water bodies) has significant effect on dry season malaria cases. The Residual Deviance is greater than the degrees of freedom, indicating that over-dispersion exists, as anticipated. This means that the estimates are correct, but the standard errors (Std. Error i.e., standard deviation) are unaccounted for by the model.
+
+The Null deviance shows how well the response variable is predicted by a model that includes only the intercept (grand mean) whereas residual with the inclusion of independent variables.
+Above, for example model_1km_2017, we can see that the addition of 1 (25-24 = 1) independent variable decreased the deviance to 9587.9 from 12787.5. The greater difference in values means a poor fit. And the dispersion parameter is 399.4958 (9587.9/24) which is large. One possibility is that there are other important covariates that could be used to describe the differences in the observed dry season malaria cases. We consider overdispersion as a possible explanation of the significant lack-of-fit.
 
 # Assess the performance and accuracy of the regression model. 
 Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the prediction is close to the real value.
@@ -1773,27 +1760,23 @@ denotes the predicted mean for observation i based on the estimated model parame
 model_assessment_data_2017 <- model_data_2017 |>
   dplyr::as_tibble() |>
   dplyr::select(Names, observed_2017, expected_2017,
-                prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
-  dplyr::glimpse()
+                prop_pop_1km, prop_pop_2km, prop_pop_3km) 
 
 model_assessment_data_2018 <- model_data_2018 |>
   dplyr::as_tibble() |>
   dplyr::select(Names, observed_2018, expected_2018,
-                prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
-  dplyr::glimpse()
+                prop_pop_1km, prop_pop_2km, prop_pop_3km) 
 
 
 model_assessment_data_2019 <- model_data_2019 |>
   dplyr::as_tibble() |>
   dplyr::select(Names, observed_2019, expected_2019,
-                prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
-  dplyr::glimpse()
+                prop_pop_1km, prop_pop_2km, prop_pop_3km) 
 
 model_assessment_data_2020 <- model_data_2020 |>
   dplyr::as_tibble() |>
   dplyr::select(Names, observed_2020, expected_2020,
-                prop_pop_1km, prop_pop_2km, prop_pop_3km) |>
-  dplyr::glimpse()
+                prop_pop_1km, prop_pop_2km, prop_pop_3km) 
 
 # To do: LOOCV(Leave One Out Cross-Validation) and k-fold Cross Validation
 # Split the data into training and test set ------------------------------------
