@@ -170,38 +170,9 @@ bar_chart <- dry_season_malaria_2017_2020 |>
                                pad = 2))
 bar_chart
 
-
-# Pivot longer -----------------------------------------------------------------
-# dry_season_malaria_longer <- dry_season_malaria_2017_2020 |>
-#   dplyr::filter(Names != "K2 Taso Clinic",                       
-#                 Names != "Kalikeni Private Clinic",
-#                 Names != "Kakwale Health Centre",
-#                 Names != "St Andrews Community Hospital",
-#                 Names != "St. Faith Health Centre",
-#                 Names != "Chambwe Health Centre") |>
-#   dplyr::rename(`2017` = dr_2017,
-#                 `2018` = dr_2018,
-#                 `2019` = dr_2019,
-#                 `2020` = dr_2020) |>
-#   tidyr::pivot_longer(cols = `2017`:`2020`,
-#                       names_to = 'year',
-#                       values_to = 'malaria_cases')
-# 
-# ggplot2::ggplot(dry_season_malaria_longer, 
-#                 aes(x = malaria_cases, 
-#                     y = Names,
-#                     fill = year))+
-#   ggplot2::geom_bar(stat ='identity',
-#                     position = "dodge")+
-#   ggplot2::labs(x = "Dry season malaria cases",
-#                 y = " ")+
-#   ggplot2::theme_classic()+
-#   ggsci::scale_fill_jama()
-
-
 ```
 
-### Monthly variation in malaria cases
+### Yearly variation in malaria cases
 
 ```{r, message=FALSE, warning=FALSE, fig.width=10, fig.cap= 'Fig.2: Seasonal variation in confirmed malaria cases'}
 
@@ -220,7 +191,7 @@ ggplot2::ggplot(monthly_malaria_2017_2021) +
 
 # Kasungu health-care facilities and their catchment areas
 
-Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are oudated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
+Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are outdated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm in QGIS were run to make the final output map of new health facility catchment boundaries.
 
 ```{r, warning = FALSE, message = FALSE}
 
@@ -232,7 +203,7 @@ zipatala <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_
 #  a) Kasalika Health Centre and Kasungu District Hospital, 
 #  b) Bua and Mziza Health Centres, and 
 #  c) Kaluluma and Nkhamenya Rural Hospitals 
-#  d) Anchor and Santhe Health Centres in order to 
+#  d) Anchor and Santhe Health Centres are combined in order to 
 # generate catchment areas that are geographically correct
 
 zipatala$dr_2017[which(
@@ -366,16 +337,7 @@ tm_shape(malire_new)+
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 9, fig.width = 10, fig.cap = 'Fig.4 Estimated total number of people per 1km grid-cell'}
 
-# Take a glimpse at the WorldPop raster layers
-kasungu_population_2017
-
-kasungu_population_2018
-
-kasungu_population_2019
-
-kasungu_population_2020
-
-# Helper function to create a raster population map
+# Custom function to create a raster population map ----------------------------
 create.population.map <- function(population.raster, title){
   # raster population map
   # arguments:
@@ -396,9 +358,11 @@ create.population.map <- function(population.raster, title){
                     frame = FALSE)+
     tmap::tm_scale_bar(position = c("left", "bottom"))
 }
+
 # Set to static map
  tmap_mode("plot")
-
+ 
+# Invoking function ------------------------------------------------------------
 estimated_pop_2017 <- create.population.map(kasungu_population_2017, title = "2017 Population")
 
 estimated_pop_2018 <- create.population.map(kasungu_population_2018, title = "2018 Population")
