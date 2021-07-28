@@ -382,7 +382,7 @@ tmap::tmap_arrange(estimated_pop_2017, estimated_pop_2018,
 The WorldPop `aggregated population` e.g. `kasungu_population_2017.tif`, and DHIS2 malaria `dry_season_malaria_2017_2020` datasets are assigned to the new health facility catchments.
 
 ```{r, message=FALSE, warning=FALSE}
-# Helper function that assigns malaria data from health facilities to their catchments areas -------
+# Helper function that assigns malaria data from health facilities to their catchments areas 
 assign.malaria.data <- function(catchment_boundary, malaria_data){
   # arguments:
   #   catchment_boundary: sf polygon object of new catchment boundaries
@@ -424,23 +424,25 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
 }
 
 
-# Invoking the function ------------------------------------------------------------------
+# Invoking the function --------------------------------------------------------
 malaria_by_catchment <- assign.malaria.data(malire_new, zipatala_aggregated_sf)
 
 ```
 
 # Assign population data to the health catchment areas
 
+The population raster is a continuous gridded surface layer that has an estimated population density value to every square in their grid. The population values are extracted using `raster::extract()`, summed and apportioned to the catchment polygons.
+
 ```{r, message=FALSE}
 
-# Helper unction to extract population from WorldPop raster file and assign ---------------------------
+# Helper unction to extract population from WorldPop raster file and assign
 # the values to the new catchments.
 
 extract.pop.values <- function(kasungu_pop_raster, catchments){
   # function to extract population from raster file and assign the population to catchments
   # arguments:
   #   kasungu_pop_raster: population raster file clipped to Kasungu district
-  #   catchments: shapefile containing the polygons that we wish to use as boundaries
+  #   catchments: shapefile containing the polygons that we will use as boundaries
   # returns:
   #   catchments_malaria_pop_sf: sf polygon object containing malaria and population data
   
@@ -453,15 +455,8 @@ extract.pop.values <- function(kasungu_pop_raster, catchments){
   # Crop and mask the population raster to exclude Kasungu National Park
   pop_raster_clip <- raster::crop(kasungu_pop_raster, extent(catchments_sp)) |>
     raster::mask(catchments_sp)
-  # pop_raster_clip <- raster::mask(raster::crop(kasungu_pop_raster, extent(catchments_sp)), catchments_sp)
   
-  # Extracting zonal statistics from a population raster layer. 
-  # The population raster is a continuous gridded surface layer that has an 
-  # estimated population density value to every square in their grid. 
-  # The population values are then summed and apportioned to the catchment polygons
-  # catchments_malaria_pop <- catchments %>% 
-  #   dplyr::mutate(pop = round(raster::extract(pop_raster_clip, catchments, fun = sum, na.rm = TRUE)))
-  
+  # Extracting zonal statistics from a population raster layer
   pop_by_catchment <- round(raster::extract(pop_raster_clip, catchments, fun = sum, na.rm = TRUE))
   
   pop_by_catchment_df <-  pop_by_catchment %>%  
