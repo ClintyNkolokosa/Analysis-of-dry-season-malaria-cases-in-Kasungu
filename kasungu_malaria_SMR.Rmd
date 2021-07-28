@@ -86,7 +86,7 @@ The aggregated population raster layers for Malawi e.g.,`ku_pop_2017_1km_aggrega
 
 The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated waterbodies polygons, detected using the Tropical Wetland Unmixing Tool (TropWet). TropWet is a Google Earth Engine hosted toolbox that uses the Landsat archive to map tropical wetlands and can be accessed through: <https://www.aber.ac.uk/en/dges/research/earth-observation-laboratory/research/tropwet/>
 
-```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE, results='hide', `results = FALSE`}
+```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE, results='hide'}
 
 # Kasungu dry season malaria data
 # dry_season_malaria_2017_2020 <- readr::read_csv(
@@ -142,9 +142,6 @@ Lets have a closer look at the malaria dataset.
 We observe that Kasungu district has 30 health facilities classified as dispensary, health centre, district hospital and rural hospital, and the highest malaria cases were recorded at Kasungu District Hospital.
 
 ```{r, warning = FALSE, message = FALSE, fig.height = 10, fig.width = 8, fig.cap = 'Fig.1 The total malaria cases recorded at each health-care facility in Kasungu district'}
-
-dry_season_malaria_2017_2020 |>
-  summary()
 
 # Plotly bar chart -------------------------------------------------------------
 bar_chart <- dry_season_malaria_2017_2020 |>  
@@ -879,7 +876,7 @@ tmap::tmap_arrange(observed_malaria_2017_map, expected_malaria_2017_map,
 
 ## View SMR by catchment
 
-A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred.
+A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred. This means that, catchments with SMRs above 1 have high dry season malaria risk.
 
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 8: Standardised morbidity ratio of malaria by health facility catchment'}
 
