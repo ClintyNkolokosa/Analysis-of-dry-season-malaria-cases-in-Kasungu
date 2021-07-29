@@ -1764,7 +1764,7 @@ denotes the predicted mean for observation i based on the estimated model parame
 
 
 
-```{r, message=FALSE, warning=FALSE, fig.height=14, fig.width=15}
+```{r, message=FALSE, warning=FALSE, fig.height=11, fig.width=10}
 
 # Tidy model assessment data ---------------------------------------------------
 model_assessment_data_2017 <- model_data_2017 |>
@@ -1822,12 +1822,6 @@ barplot(predicted_2017, main = "Predicted malaria cases",
         xlab = "Catchment area", ylab = "Predicted malaria cases")
 
 par(mfrow = c(1, 1)) # Create a 2 x 2 plotting matrix
-
-ggplot(test_2017) +
-  aes(x = Names, weight = observed_2017) +
-  geom_bar(fill = "#959698") +
-  theme_classic(axis.title.x=element_blank(),
-                axis.text.x=element_blank())
 
 
 # Split the data into training and test set 
