@@ -2346,6 +2346,17 @@ performance::compare_performance(
 
 ```
 
+# Overdisperion
+
+```{r}
+# Account for overdispersion using quasi-Poisson model--------------------------
+quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson, 
+                         offset = log(expected_cases), data = model_data)
+
+summary(quassipoisson_1km)
+```
+
+
 ## Estimate prediction error
 
 Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the Leave one out cross validation (LOOCV) method which uses all data points to measure performance of the Poisson model.
