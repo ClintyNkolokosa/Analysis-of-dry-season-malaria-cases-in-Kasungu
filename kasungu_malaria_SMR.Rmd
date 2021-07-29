@@ -1542,15 +1542,15 @@ model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all
 # Check whether the dependent variable follows a poisson distribution
 # Dry season malaria cases appear to be non normally distributed i.e highly skewed 
 
-graphics::hist(model_data_2017$observed_2017, 
-               main = "Histogram of 2017 dry season malaria cases ",
-               xlab = "Malaria cases",
-               las = 1)
+histogram_2017 <- graphics::hist(model_data_2017$observed_2017, 
+                                 main = "Histogram of 2017 dry season malaria cases ",
+                                 xlab = "Malaria cases",
+                                 las = 1)
 
-graphics::hist(model_data_2018$observed_2018, 
-               main = "Histogram of 2018 dry season malaria cases ",
-               xlab = "Malaria cases",
-               las = 1)
+histigram_2018 <- graphics::hist(model_data_2018$observed_2018, 
+                                 main = "Histogram of 2018 dry season malaria cases ",
+                                 xlab = "Malaria cases",
+                                 las = 1)
 
 graphics::hist(model_data_2019$observed_2019,
                main = "Histogram of 2019 dry season malaria cases ",
