@@ -2193,6 +2193,8 @@ MI_2017 <- spdep::moran(model_data_2017$observed_2017,
 
 The findings from the univariate model above suggest the risk of dry season malaria transmission may vary depending on the year, so we consider a model with an interaction between proportion of people close to dams and year.
 
+We also compare the effect of removing intercept from the multiple linear regression. Mathematically, $𝜷_0 = 0$. Hence our multivariate model without intercept can be written as: $$ ln (E(y)) = {𝜷_1} {x_i}_{1} + ln(𝒆_𝒊),  i = 1,2,3,⋯,n$$
+
 ```{r, message=FALSE, warning=FALSE, fig.height=14, fig.width=15}
 # Prep model data --------------------------------------------------------------
 df2017 <- model_data_2017 |> 
