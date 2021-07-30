@@ -2266,7 +2266,8 @@ model_data |>     # View model data in table format
                  log_expected = "Log of expected cases",
                  year = "Year")
 
-# Model fitting ----------------------------------------------------------------
+# Model fitting 
+# 1km model --------------------------------------------------------------------
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
                         data = model_data, family = poisson(link = "log"))
 
@@ -2279,14 +2280,18 @@ regression_table_1km <- gtsummary::tbl_regression(
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
 
-# Effect of removing intercept
+# Check effect of removing intercept
 multivariate_1km_no_intercept <- glm(observed_cases~-1+prop_pop_1km+year,
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
 summary(multivariate_1km_no_intercept)
-sjPlot::tab_model(multivariate_1km_no_intercept, show.r2 = FALSE, show.aic = TRUE,
+
+sjPlot::tab_model(multivariate_1km_no_intercept, 
+                  show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
+
+
 
 # Alternatively
 multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expected),
@@ -2294,6 +2299,7 @@ multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expecte
 
 summary(multivariate_1km_rate)
 
+# 2km model --------------------------------------------------------------------
 
 multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
@@ -2304,10 +2310,24 @@ regression_table_2km <- gtsummary::tbl_regression(
   multivariate_2km)|> 
   gtsummary::bold_p()
 
-sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE,
+sjPlot::tab_model(multivariate_2km, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+# Check effect of removing intercept
+multivariate_2km_no_intercept <- glm(observed_cases~-1+prop_pop_2km+year,
+                                     offset = log(expected_cases),
+                                     data = model_data, 
+                                     family = poisson(link = "log"))
+
+summary(multivariate_2km_no_intercept)
+
+sjPlot::tab_model(multivariate_2km_no_intercept, 
+                  show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
 
 
+# 3km model --------------------------------------------------------------------
 multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
