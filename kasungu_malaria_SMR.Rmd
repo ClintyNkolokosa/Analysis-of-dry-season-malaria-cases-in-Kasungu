@@ -2279,7 +2279,7 @@ summary.glm(multivariate_1km)
 # Check effect of removing intercept.
 # When you remove an intercept from a regression model, you’re setting 
 # it equal to 0 rather than estimating it from the data.
-multivariate_1km_no_intercept <- glm(observed_cases~prop_pop_1km+year-1,
+multivariate_1km_no_intercept <- glm(observed_cases~0+prop_pop_1km+year # leaving the intercept out 
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
