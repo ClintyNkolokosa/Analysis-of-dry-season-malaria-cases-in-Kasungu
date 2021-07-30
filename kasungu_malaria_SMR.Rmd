@@ -1650,7 +1650,7 @@ summary(model_1km_2017)
 #   for a buffer population equal zero, we can expect -0.22 malaria cases. 
 #   for a buffer population equal 1000, we can expect  round(-0.29 + 0.03 * 1000) = 30 malaria cases.
 
-sjPlot::tab_model(model_1km_2017, digits = 3, digits.re = 3,
+sjPlot::tab_model(model_1km_2017, digits = 4, digits.re = 4,
                   show.r2 = FALSE, show.aic = TRUE)
 
 # From the output above, the p-value is 0.001 - way less than the alpha value of 0.05, 
@@ -2276,7 +2276,8 @@ regression_table_1km <- gtsummary::tbl_regression(
   multivariate_1km, exponentiate = FALSE) |> 
   gtsummary::bold_p()
 
-sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE)
+sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
 
 # Alternatively
 multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expected),
@@ -2294,7 +2295,8 @@ regression_table_2km <- gtsummary::tbl_regression(
   multivariate_2km)|> 
   gtsummary::bold_p()
 
-sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE)
+sjPlot::tab_model(multivariate_2km, show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
 
 
 multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cases)),
@@ -2306,7 +2308,8 @@ regression_table_3km <- gtsummary::tbl_regression(
   multivariate_3km, exponentiate = FALSE) |> 
   gtsummary::bold_p()
 
-sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE)
+sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
 
 # In this combined dataset, we can see that the residual deviance is far from
 # degrees of freedom, and the dispersion parameter is 576.9798 (57121/99 ) which is large.
@@ -2353,7 +2356,7 @@ Here we apply a `quassi-Poisson` and `negative binomial` regression models to th
 Mathemeatically, `negative binomial` can be expressed as a `Poisson` model where $λ$ is also random, following a gamma distribution. Specifically, if $Y|λ∼Poisson(λ)$ and $λ∼gamma(r, \frac{1-p}{p})$, then $Y∼NegBinom(r, p)$ where $E(Y) = \frac{pr}{1− p} = μ$ and $Var(Y) = \frac{pr}{(1−p)^2} = μ+\frac{μ^2}{r}$. The overdispersion in this case is given by $\frac{μ^2}{r}$, which approaches $0$ as $r$ increases (so smaller values of $r$ indicate greater overdispersion).
 
 
-In a `quassi-Poisson` model, the `standard errors` are inflated by multiplying the `variance` by $ϕ$, so that the `standard errors` are larger than the likelihood approach would imply; i.e., $SEQ(β) = √ϕ∗SE(β)$, where $Q$ stands for “quasi-Poisson” since multiplying variances by $ϕ$ is an ad-hoc solution (Roback and Legler, 2021).
+In a `quassi-Poisson` model, the `standard errors` are inflated by multiplying the `variance` by $\phi$, so that the `standard errors` are larger than the likelihood approach would imply; i.e., $SEQ(\hat{β}) = √\hat{ϕ}∗SE(\hat{β})$, where $Q$ stands for “quasi-Poisson” since multiplying variances by $ϕ$ is an ad-hoc solution (Roback and Legler, 2021).
 
 
 
@@ -2364,6 +2367,10 @@ quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson
                          offset = log(expected_cases), data = model_data)
 
 summary(quassipoisson_1km)
+# In the absence of overdispersion, we expect the dispersion parameter estimate to be 1.0. The estimated dispersion parameter here is much larger than 1.0 (594.1947) indicating overdispersion (extra variance) that should be accounted for. 
+
+sjPlot::tab_model(quassipoisson_1km, show.r2 = FALSE,
+                  digits = 3, digits.re = 3)
 
 quassipoisson_2km <- glm(observed_cases~prop_pop_2km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
