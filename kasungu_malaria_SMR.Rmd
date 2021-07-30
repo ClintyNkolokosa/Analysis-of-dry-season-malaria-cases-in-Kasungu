@@ -2347,6 +2347,8 @@ performance::compare_performance(
 
 # Overdisperion
 
+Here we apply a `quassi-Poisson` and `negative binomial` regression models to the interaction model, which we have observed that it suffers from overdispersion issues under regular `Poisson` regression.
+
 ```{r}
 # Account for overdispersion using quasi-Poisson model--------------------------
 quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson, 
