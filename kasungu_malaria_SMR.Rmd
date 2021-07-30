@@ -2347,7 +2347,7 @@ performance::compare_performance(
 
 # Overdisperion
 
-Here we apply a `quassi-Poisson` and `negative binomial` regression models to the interaction model, which we have observed that it suffers from overdispersion issues under regular `Poisson` regression.
+Here we apply a `quassi-Poisson` and `negative binomial` regression models to the interaction model, which we have observed that it suffers from overdispersion issues under regular `Poisson` regression. One approach to dealing with overdispersion is to model the response using a `negative binomial` instead of a `Poisson` distribution. An advantage of this approach is that it introduces another parameter in addition to *λ*, which gives the model more flexibility and, unlike the `quasi-Poisson model`, the `negative binomial` model assumes an explicit likelihood model.
 
 ```{r}
 # Account for overdispersion using quasi-Poisson model--------------------------
