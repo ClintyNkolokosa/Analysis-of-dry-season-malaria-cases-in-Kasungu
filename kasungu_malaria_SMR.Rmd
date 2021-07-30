@@ -2337,7 +2337,8 @@ regression_table_3km <- gtsummary::tbl_regression(
   multivariate_3km, exponentiate = FALSE) |> 
   gtsummary::bold_p()
 
-sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE,
+sjPlot::tab_model(multivariate_3km, 
+                  show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
 
 # In this combined dataset, we can see that the residual deviance is far from
@@ -2351,7 +2352,19 @@ sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE,
 # We see that yearly variation influences observed cases negatively, 
 # but percentage of people living close to dams influences observed cases positively. 
 
-# merge regression model tables 
+# Check effect of removing intercept
+multivariate_3km_no_intercept <- glm(observed_cases~-1+prop_pop_3km+year,
+                                     offset = log(expected_cases),
+                                     data = model_data, 
+                                     family = poisson(link = "log"))
+
+summary(multivariate_3km_no_intercept)
+
+sjPlot::tab_model(multivariate_3km_no_intercept, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+# merge regression model tables ------------------------------------------------
 table_merge <-gtsummary::tbl_merge(
     tbls = list(regression_table_1km,
                 regression_table_2km,
