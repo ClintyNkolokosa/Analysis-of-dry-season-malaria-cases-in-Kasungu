@@ -2279,7 +2279,7 @@ summary.glm(multivariate_1km)
 # Check effect of removing intercept.
 # When you remove an intercept from a regression model, you’re setting 
 # it equal to 0 rather than estimating it from the data.
-multivariate_1km_no_intercept <- glm(observed_cases~-1+prop_pop_1km+year,
+multivariate_1km_no_intercept <- glm(observed_cases~prop_pop_1km+year-1,
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
@@ -2308,7 +2308,7 @@ multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_c
 summary(multivariate_2km)
 
 # Check effect of removing intercept
-multivariate_2km_no_intercept <- glm(observed_cases~-1+prop_pop_2km+year,
+multivariate_2km_no_intercept <- glm(observed_cases~prop_pop_2km+year-1,
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
@@ -2342,7 +2342,7 @@ summary(multivariate_3km)
 # but percentage of people living close to dams influences observed cases positively. 
 
 # Check effect of removing intercept
-multivariate_3km_no_intercept <- glm(observed_cases~-1+prop_pop_3km+year,
+multivariate_3km_no_intercept <- glm(observed_cases~prop_pop_3km+year-1,
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
