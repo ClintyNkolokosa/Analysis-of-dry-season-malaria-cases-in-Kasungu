@@ -5,6 +5,7 @@ output:
     toc: yes
     toc_float: yes
     number_sections: yes
+    code_download: true
 latex_engine: MiKTeX
 author: Clinton Nkolokosa
 date: " Last edited `r format(Sys.time(),'%d %B %Y')`"
@@ -1574,8 +1575,7 @@ histogram_2020 <- ggplot2::ggplot(model_data_2020, aes(x = observed_2020)) +
   labs(title = "2020", x = "Observed malaria cases", y = "Count")+
   theme_classic()
 
-gridExtra::grid.arrange(histogram_2017, histogram_2018,
-                        histogram_2019, histogram_2020)
+gridExtra::grid.arrange(histogram_2017, histogram_2018, histogram_2019, histogram_2020)
 
 # Let’s check out the mean and variance of the dependent variable:
 
@@ -2318,8 +2318,6 @@ sjPlot::tab_model(multivariate_3km, show.r2 = FALSE, show.aic = TRUE)
 # We see that yearly variation influences observed cases negatively, 
 # but percentage of people living close to dams influences observed cases positively. 
 
-plot(model_data$year, model_data$observed_cases, xlab = "Year", ylab = "Observed malaria", pch = 16)
-
 # merge regression model tables 
 table_merge <-gtsummary::tbl_merge(
     tbls = list(regression_table_1km,
@@ -2354,10 +2352,24 @@ quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson
                          offset = log(expected_cases), data = model_data)
 
 summary(quassipoisson_1km)
+
+quassipoisson_2km <- glm(observed_cases~prop_pop_2km+year, family = quasipoisson, 
+                         offset = log(expected_cases), data = model_data)
+
+summary(quassipoisson_2km)
+
+quassipoisson_3km <- glm(observed_cases~prop_pop_3km+year, family = quasipoisson, 
+                         offset = log(expected_cases), data = model_data)
+
+summary(quassipoisson_3km)
+
+# Account for overdispersion using negative binomial model----------------------
+
+
 ```
 
 
-## Estimate prediction error
+# Estimate prediction error
 
 Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the Leave one out cross validation (LOOCV) method which uses all data points to measure performance of the Poisson model.
 This method works as follow:
