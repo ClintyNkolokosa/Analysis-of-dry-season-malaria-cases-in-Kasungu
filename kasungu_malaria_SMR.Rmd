@@ -36,6 +36,7 @@ suppressPackageStartupMessages({
   library(tidyverse)
   library(caret)         # easily compute cross-validation methods to test model perfomance
   library(stats)
+  library(MASS)          # fit negative binomial model
   library(performance)   # check linear model performance
   library(see)           # to plot model assumptions
   library(caTools)       # splitting data into training and test data sets
@@ -1740,7 +1741,7 @@ sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3,
 
 
 ```
-In the summaries above, we can see that all **p**-values, are less than 0.001 (except 2020 model), hence, the explanatory variable (percentage of people living near water bodies) has significant effect on dry season malaria cases. The `Residual deviance` is greater than the `degrees of freedom`, indicating that over-dispersion exists, as anticipated. This means that the estimates are correct, but the standard errors (`Std. Error` i.e., standard deviation) are unaccounted for by the model.
+In the summaries above, we can see that all *p*-values, are less than 0.001 (except 2020 model), hence, the explanatory variable (percentage of people living near water bodies) has significant effect on dry season malaria cases. The `Residual deviance` is greater than the `degrees of freedom`, indicating that over-dispersion exists, as anticipated. This means that the estimates are correct, but the standard errors (`Std. Error` i.e., standard deviation) are unaccounted for by the model.
 
 The `Null deviance` shows how well the response variable is predicted by a model that includes only the `intercept` (grand mean) whereas residual with the inclusion of independent variables.
 Above, for example model_1km_2017, we can see that the addition of 1 (25-24 = 1) independent variable decreased the deviance to 9587.9 from 12787.5. The greater difference in values means a poor fit. And the `dispersion parameter` is 399.4958 (9587.9/24) which is large. One possibility is that there are other important covariates that could be used to describe the differences in the observed dry season malaria cases. We consider overdispersion as a possible explanation of the significant lack-of-fit. Over-dispersion suggests that there is more variation in the response than the model implies.
@@ -2364,7 +2365,10 @@ quassipoisson_3km <- glm(observed_cases~prop_pop_3km+year, family = quasipoisson
 summary(quassipoisson_3km)
 
 # Account for overdispersion using negative binomial model----------------------
+binomial_1km <- MASS::glm.nb(observed_cases~prop_pop_1km+year, 
+                             offset(log(expected_cases)), data = model_data)
 
+summary(binomial_1km)
 
 ```
 
