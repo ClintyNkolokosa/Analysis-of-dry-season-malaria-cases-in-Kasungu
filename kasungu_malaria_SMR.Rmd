@@ -2273,7 +2273,7 @@ model_data |>     # View model data in table format
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
                         data = model_data, family = poisson(link = "log"))
 
-summary(multivariate_1km)
+summary.glm(multivariate_1km)
 
 
 # Check effect of removing intercept.
@@ -2283,7 +2283,7 @@ multivariate_1km_no_intercept <- glm(observed_cases~-1+prop_pop_1km+year,
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
-summary(multivariate_1km_no_intercept)
+summary.glm(multivariate_1km_no_intercept)
 
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
