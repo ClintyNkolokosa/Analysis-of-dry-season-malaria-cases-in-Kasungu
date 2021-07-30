@@ -2280,7 +2280,9 @@ regression_table_1km <- gtsummary::tbl_regression(
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
 
-# Check effect of removing intercept
+# Check effect of removing intercept.
+# When you remove an intercept from a regression model, you’re setting 
+# it equal to 0 rather than estimating it from the data.
 multivariate_1km_no_intercept <- glm(observed_cases~-1+prop_pop_1km+year,
                                      offset = log(expected_cases),
                                      data = model_data, 
