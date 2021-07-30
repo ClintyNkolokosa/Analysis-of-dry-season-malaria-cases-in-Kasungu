@@ -2193,7 +2193,7 @@ MI_2017 <- spdep::moran(model_data_2017$observed_2017,
 
 The findings from the univariate model above suggest the risk of dry season malaria transmission may vary depending on the year, so we consider a model with an interaction between proportion of people close to dams and year.
 
-We also compare the effect of removing intercept from the multiple linear regression. Mathematically, $𝜷_0 = 0$. Hence our multivariate model without intercept can be written as: $$ ln (E(y)) = {𝜷_1} {x_i}_{1} + ln(𝒆_𝒊),  i = 1,2,3,⋯,n$$
+We also compare the effect of removing intercept from the multiple linear regression. Mathematically, $𝜷_0 = 0$. Hence our multivariate model without intercept can be written as: $ ln (E(y)) = {𝜷_1} {x_i}_{1} + ln(𝒆_𝒊)$ where,  $i = 1,2,3,⋯,n$
 
 ```{r, message=FALSE, warning=FALSE, fig.height=14, fig.width=15}
 # Prep model data --------------------------------------------------------------
@@ -2247,7 +2247,7 @@ model_data <- rbind(df2017, df2018, df2019, df2020)
 model_data <- imputeTS::na.replace(model_data, 0) # replace NA with zero
 
 # find the log(n) of each value in 'expected' column. It is the fourth column
-log_expected <- log(model_data[ ,4]) |> 
+log_expected <- log(model_data[ , 4]) |> 
   dplyr::rename(log_expected = expected_cases)
 
 # add the log values to the dataframe using 'cbind()'
