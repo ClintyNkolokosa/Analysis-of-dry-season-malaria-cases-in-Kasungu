@@ -2389,6 +2389,24 @@ binomial_1km <- MASS::glm.nb(observed_cases~prop_pop_1km+year,
                              offset(log(expected_cases)), data = model_data)
 
 summary(binomial_1km)
+sjPlot::tab_model(binomial_1km, show.r2 = FALSE,
+                  digits = 3, digits.re = 3)
+
+
+binomial_2km <- MASS::glm.nb(observed_cases~prop_pop_2km+year, 
+                             offset(log(expected_cases)), data = model_data)
+
+summary(binomial_2km)
+sjPlot::tab_model(binomial_1km, show.r2 = FALSE,
+                  digits = 3, digits.re = 3)
+
+
+binomial_3km <- MASS::glm.nb(observed_cases~prop_pop_3km+year, 
+                             offset(log(expected_cases)), data = model_data)
+
+summary(binomial_3km)
+sjPlot::tab_model(binomial_1km, show.r2 = FALSE,
+                  digits = 3, digits.re = 3)
 
 ```
 
