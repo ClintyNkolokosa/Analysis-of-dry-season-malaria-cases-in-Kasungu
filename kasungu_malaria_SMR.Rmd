@@ -2367,7 +2367,9 @@ quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson
                          offset = log(expected_cases), data = model_data)
 
 summary(quassipoisson_1km)
-# In the absence of overdispersion, we expect the dispersion parameter estimate to be 1.0. The estimated dispersion parameter here is much larger than 1.0 (594.1947) indicating overdispersion (extra variance) that should be accounted for. 
+# In the absence of overdispersion, we expect the dispersion parameter estimate to be 1.0. 
+# The estimated dispersion parameter here is much larger than 1.0 (594.1947) indicating
+# overdispersion (extra variance) that should be accounted for. 
 
 sjPlot::tab_model(quassipoisson_1km, show.r2 = FALSE,
                   digits = 3, digits.re = 3)
