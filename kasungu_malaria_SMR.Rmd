@@ -2242,7 +2242,7 @@ colnames(df2020) <- colnames(df2017) # match columns names
 
 model_data <- rbind(df2017, df2018, df2019, df2020)
 
-imputeTS::na.replace(model_data, 0) # replace NA with zero
+model_data <- imputeTS::na.replace(model_data, 0) # replace NA with zero
 
 # find the log(n) of each value in 'expected' column. It is the fourth column
 log_expected <- log(model_data[ ,4]) |> 
@@ -2277,6 +2277,15 @@ regression_table_1km <- gtsummary::tbl_regression(
   gtsummary::bold_p()
 
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+# Effect of removing intercept
+multivariate_1km_no_intercept <- glm(observed_cases~-1+prop_pop_1km+year,
+                                     offset = log(expected_cases),
+                                     data = model_data, 
+                                     family = poisson(link = "log"))
+summary(multivariate_1km_no_intercept)
+sjPlot::tab_model(multivariate_1km_no_intercept, show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
 
 # Alternatively
@@ -2413,7 +2422,7 @@ sjPlot::tab_model(binomial_1km, show.r2 = FALSE,
 
 # Estimate prediction error
 
-Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the Leave one out cross validation (LOOCV) method which uses all data points to measure performance of the Poisson model.
+Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the `Leave one out cross validation` (LOOCV) method which uses all data points to measure performance of the Poisson model.
 This method works as follow:
 
 1. Leave out one data point and build the model on the rest of the data set
