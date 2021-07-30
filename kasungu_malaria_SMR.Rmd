@@ -2272,10 +2272,6 @@ multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_c
                         data = model_data, family = poisson(link = "log"))
 
 summary(multivariate_1km)
-# Build regression model table
-regression_table_1km <- gtsummary::tbl_regression(
-  multivariate_1km, exponentiate = FALSE) |> 
-  gtsummary::bold_p()
 
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
@@ -2308,10 +2304,6 @@ multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_c
 
 summary(multivariate_2km)
 
-regression_table_2km <- gtsummary::tbl_regression(
-  multivariate_2km)|> 
-  gtsummary::bold_p()
-
 sjPlot::tab_model(multivariate_2km, 
                   show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
@@ -2334,10 +2326,6 @@ multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cas
                         data = model_data, family = 'poisson')
 
 summary(multivariate_3km)
-
-regression_table_3km <- gtsummary::tbl_regression(
-  multivariate_3km, exponentiate = FALSE) |> 
-  gtsummary::bold_p()
 
 sjPlot::tab_model(multivariate_3km, 
                   show.r2 = FALSE, show.aic = TRUE,
@@ -2365,6 +2353,21 @@ summary(multivariate_3km_no_intercept)
 sjPlot::tab_model(multivariate_3km_no_intercept, 
                   show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
+
+# Build regression model table -------------------------------------------------
+regression_table_1km <- gtsummary::tbl_regression(
+  multivariate_1km, exponentiate = FALSE) |> 
+  gtsummary::bold_p()
+
+
+regression_table_2km <- gtsummary::tbl_regression(
+  multivariate_2km)|> 
+  gtsummary::bold_p()
+
+
+regression_table_3km <- gtsummary::tbl_regression(
+  multivariate_3km, exponentiate = FALSE) |> 
+  gtsummary::bold_p()
 
 # merge regression model tables ------------------------------------------------
 table_merge <-gtsummary::tbl_merge(
