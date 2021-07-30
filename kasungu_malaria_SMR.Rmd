@@ -2273,8 +2273,6 @@ multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_c
 
 summary(multivariate_1km)
 
-sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
-                  digits = 3, digits.re = 3)
 
 # Check effect of removing intercept.
 # When you remove an intercept from a regression model, you’re setting 
@@ -2284,6 +2282,9 @@ multivariate_1km_no_intercept <- glm(observed_cases~-1+prop_pop_1km+year,
                                      data = model_data, 
                                      family = poisson(link = "log"))
 summary(multivariate_1km_no_intercept)
+
+sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
 
 sjPlot::tab_model(multivariate_1km_no_intercept, 
                   show.r2 = FALSE, show.aic = TRUE,
@@ -2304,10 +2305,6 @@ multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_c
 
 summary(multivariate_2km)
 
-sjPlot::tab_model(multivariate_2km, 
-                  show.r2 = FALSE, show.aic = TRUE,
-                  digits = 3, digits.re = 3)
-
 # Check effect of removing intercept
 multivariate_2km_no_intercept <- glm(observed_cases~-1+prop_pop_2km+year,
                                      offset = log(expected_cases),
@@ -2315,6 +2312,10 @@ multivariate_2km_no_intercept <- glm(observed_cases~-1+prop_pop_2km+year,
                                      family = poisson(link = "log"))
 
 summary(multivariate_2km_no_intercept)
+
+sjPlot::tab_model(multivariate_2km, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
 
 sjPlot::tab_model(multivariate_2km_no_intercept, 
                   show.r2 = FALSE, show.aic = TRUE,
@@ -2326,10 +2327,6 @@ multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cas
                         data = model_data, family = 'poisson')
 
 summary(multivariate_3km)
-
-sjPlot::tab_model(multivariate_3km, 
-                  show.r2 = FALSE, show.aic = TRUE,
-                  digits = 3, digits.re = 3)
 
 # In this combined dataset, we can see that the residual deviance is far from
 # degrees of freedom, and the dispersion parameter is 576.9798 (57121/99 ) which is large.
@@ -2349,6 +2346,10 @@ multivariate_3km_no_intercept <- glm(observed_cases~-1+prop_pop_3km+year,
                                      family = poisson(link = "log"))
 
 summary(multivariate_3km_no_intercept)
+
+sjPlot::tab_model(multivariate_3km, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
 
 sjPlot::tab_model(multivariate_3km_no_intercept, 
                   show.r2 = FALSE, show.aic = TRUE,
