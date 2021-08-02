@@ -2364,28 +2364,30 @@ sjPlot::tab_model(multivariate_3km_no_intercept,
                   digits = 3, digits.re = 3)
 
 # Build regression model table -------------------------------------------------
-regression_table_1km <- gtsummary::tbl_regression(
-  multivariate_1km, exponentiate = FALSE) |> 
+regression_table_1km <- gtsummary::tbl_regression(multivariate_1km, 
+                                                  exponentiate = FALSE) |>
   gtsummary::bold_p()
 
 
-regression_table_2km <- gtsummary::tbl_regression(
-  multivariate_2km)|> 
+regression_table_2km <- gtsummary::tbl_regression(multivariate_2km) |>
   gtsummary::bold_p()
 
 
-regression_table_3km <- gtsummary::tbl_regression(
-  multivariate_3km, exponentiate = FALSE) |> 
+regression_table_3km <- gtsummary::tbl_regression(multivariate_3km, 
+                                                  exponentiate = FALSE) |>
   gtsummary::bold_p()
 
 # merge regression model tables ------------------------------------------------
-table_merge <-gtsummary::tbl_merge(
-    tbls = list(regression_table_1km,
-                regression_table_2km,
-                regression_table_3km),
-    tab_spanner = c("**Model 1km**", 
-                    "**Model 2km**", 
-                    "**Model 3km**"))
+table_merge <- gtsummary::tbl_merge(
+  tbls = list(
+    regression_table_1km,
+    regression_table_2km,
+    regression_table_3km
+  ),
+  tab_spanner = c("**Model 1km**",
+                  "**Model 2km**",
+                  "**Model 3km**")
+)
 
 table_merge
 
