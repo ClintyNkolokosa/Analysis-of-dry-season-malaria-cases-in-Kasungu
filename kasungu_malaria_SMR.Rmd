@@ -68,6 +68,7 @@ suppressPackageStartupMessages({
   library(mapview)
   library(kableExtra)    # create interactive tables
   library(gt)            # create beautiful HTML tables
+  library(pander)        # improves the aesthetics of R outputs
   library(imputeTS)      # easily remove NAs
   `%>%` <- magrittr::`%>%`
 
