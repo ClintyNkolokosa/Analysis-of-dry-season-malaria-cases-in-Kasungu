@@ -19,6 +19,10 @@ Buffers around waterbodies are created and then combined with population data in
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.align = 'center', echo = TRUE)
+
+ thematic::thematic_rmd()
+
+ theme_set(theme_bw())
 ```
 
 # Load packages
@@ -61,6 +65,7 @@ suppressPackageStartupMessages({
   library(grid)
   library(exactextractr)
   library(DataExplorer)
+  library(thematic)
   library(mapview)
   library(kableExtra)    # create interactive tables
   library(gt)            # create beautiful HTML tables
