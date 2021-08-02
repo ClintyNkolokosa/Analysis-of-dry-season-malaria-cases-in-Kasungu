@@ -1748,6 +1748,7 @@ sjPlot::tab_model(model_3km_2020, digits = 3, digits.re = 3,
 
 
 ```
+
 In the summaries above, we can see that all *p*-values, are less than 0.001 (except 2020 model), hence, the explanatory variable (percentage of people living near water bodies) has significant effect on dry season malaria cases. The `Residual deviance` is greater than the `degrees of freedom`, indicating that over-dispersion exists, as anticipated. This means that the estimates are correct, but the standard errors (`Std. Error` i.e., standard deviation) are unaccounted for by the model.
 
 The `Null deviance` shows how well the response variable is predicted by a model that includes only the `intercept` (grand mean) whereas residual with the inclusion of independent variables.
@@ -1993,6 +1994,8 @@ model_comparison
 
 
 ### Visualization of indices of models’ performance
+
+The 8 models are ranked on each of the four parameters: `AIC`, `BIC`, `RMSE` and adjusted `R-squared`. The radar chart gives an indication of which model performed well or poorly against each parameter. For example, `model_2km_2020` has the lowest `AIC`, `RMSE` and `BIC` ranking, and `model_1km_2020` has significantly lowest ranking for all the parameters when compared to the other models (`model_1km_2017`, `model_2km_2017`, `model_1km_2018`, `model_1km_2018`, `model_1km_2019`, `model_2km_2019`), which have higher ranking in `AIC`, `BIC`, `RMSE` and `R-squared`.
 
 ```{r, message=FALSE, warning=FALSE, fig.width=11}
 plot(performance::compare_performance(model_1km_2017, model_2km_2017,
