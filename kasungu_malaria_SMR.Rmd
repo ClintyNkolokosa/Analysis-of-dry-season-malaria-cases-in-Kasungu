@@ -43,6 +43,7 @@ suppressPackageStartupMessages({
   library(performance)   # check linear model performance
   library(see)           # to plot model assumptions
   library(caTools)       # splitting data into training and test data sets
+  library(glmmTMB)       # check overdispersion
   library(qqplotr)
   library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
   library(gtsummary)     # easily display regression model outputs, such as P value, CI
@@ -2340,6 +2341,7 @@ sjPlot::tab_model(multivariate_2km_no_intercept,
 # 3km model --------------------------------------------------------------------
 multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
+
 
 summary(multivariate_3km)
 
