@@ -1659,7 +1659,7 @@ report::report(model_1km_2017)
 # we can predict the number of dry season malaria case.
 #
 # For example:
-#   for a buffer population equal zero, we can expect -0.22 malaria cases. 
+#   for a buffer population equal zero, we can expect -0.29 malaria cases. 
 #   for a buffer population equal 1000, we can expect  round(-0.29 + 0.03 * 1000) = 30 malaria cases.
 
 sjPlot::tab_model(model_1km_2017, digits = 4, digits.re = 4,
@@ -2021,7 +2021,7 @@ model_comparison
 ```
 
 
-### Visualization of indices of models’ performance
+### Comaprison of model indices
 
 The 8 models are ranked on each of the four parameters: `AIC`, `BIC`, `RMSE` and adjusted `R-squared`. The radar chart gives an indication of which model performed well or poorly against each parameter. For example, `model_1km_2020` and `model_2km_2020` have significantly the lowest ranking for all the parameters when compared to the other models (`model_1km_2017`, `model_2km_2017`, `model_1km_2018`, `model_1km_2018`, `model_1km_2019`, `model_2km_2019`), which have higher ranking in `AIC`, `BIC`, `RMSE` and `R-squared`.
 
@@ -2451,7 +2451,7 @@ performance::compare_performance(
 Here we apply a `quassi-Poisson` and `negative binomial` regression models to the multivariate model, which we have observed that it suffers from overdispersion issues under regular `Poisson` regression. One approach to dealing with overdispersion is to model the response using a `negative binomial` instead of a `Poisson` distribution. An advantage of this approach is that it introduces another parameter in addition to $λ$, which gives the model more flexibility and, unlike the `quasi-Poisson model`, the `negative binomial` model assumes an explicit likelihood model. 
 
 
-Mathemeatically, `negative binomial` can be expressed as a `Poisson` model where $λ$ is also random, following a gamma distribution. Specifically, if $Y|λ∼Poisson(λ)$ and $λ∼gamma(r, \frac{1-p}{p})$, then $Y∼NegBinom(r, p)$ where $E(Y) = \frac{pr}{1− p} = μ$ and $Var(Y) = \frac{pr}{(1−p)^2} = μ+\frac{μ^2}{r}$. The overdispersion in this case is given by $\frac{μ^2}{r}$, which approaches $0$ as $r$ increases (so smaller values of $r$ indicate greater overdispersion).
+Mathematically, `negative binomial` can be expressed as a `Poisson` model where $λ$ is also random, following a gamma distribution. Specifically, if $Y|λ∼Poisson(λ)$ and $λ∼gamma(r, \frac{1-p}{p})$, then $Y∼NegBinom(r, p)$ where $E(Y) = \frac{pr}{1− p} = μ$ and $Var(Y) = \frac{pr}{(1−p)^2} = μ+\frac{μ^2}{r}$. The overdispersion in this case is given by $\frac{μ^2}{r}$, which approaches $0$ as $r$ increases (so smaller values of $r$ indicate greater overdispersion).
 
 
 In a `quassi-Poisson` model, the `standard errors` are inflated by multiplying the `variance` by $\phi$, so that the `standard errors` are larger than the likelihood approach would imply; i.e., $SEQ(\hat{β}) = √\hat{ϕ}∗SE(\hat{β})$, where $Q$ stands for “quasi-Poisson” since multiplying variances by $ϕ$ is an ad-hoc solution (Roback and Legler, 2021).
