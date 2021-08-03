@@ -1995,7 +1995,7 @@ model_comparison
 
 ### Visualization of indices of models’ performance
 
-The 8 models are ranked on each of the four parameters: `AIC`, `BIC`, `RMSE` and adjusted `R-squared`. The radar chart gives an indication of which model performed well or poorly against each parameter. For example, `model_2km_2020` has the lowest `AIC`, `RMSE` and `BIC` ranking, and `model_1km_2020` has significantly lowest ranking for all the parameters when compared to the other models (`model_1km_2017`, `model_2km_2017`, `model_1km_2018`, `model_1km_2018`, `model_1km_2019`, `model_2km_2019`), which have higher ranking in `AIC`, `BIC`, `RMSE` and `R-squared`.
+The 8 models are ranked on each of the four parameters: `AIC`, `BIC`, `RMSE` and adjusted `R-squared`. The radar chart gives an indication of which model performed well or poorly against each parameter. For example, `model_1km_2020` and `model_2km_2020` have significantly the lowest ranking for all the parameters when compared to the other models (`model_1km_2017`, `model_2km_2017`, `model_1km_2018`, `model_1km_2018`, `model_1km_2019`, `model_2km_2019`), which have higher ranking in `AIC`, `BIC`, `RMSE` and `R-squared`.
 
 ```{r, message=FALSE, warning=FALSE, fig.width=11}
 plot(performance::compare_performance(model_1km_2017, model_2km_2017,
