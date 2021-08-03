@@ -1710,6 +1710,8 @@ model_3km_2018 <- glm(observed_2018~1+prop_pop_3km+offset(log(expected_2018)),
                       data = model_data_2018, family = poisson(link = "log"))
 
 # summary(model_3km_2018)
+report::report(model_3km_2018)
+
 sjPlot::tab_model(model_3km_2018, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
 
@@ -1717,7 +1719,9 @@ sjPlot::tab_model(model_3km_2018, digits = 3, digits.re = 3,
 model_1km_2019 <- glm(observed_2019~1+prop_pop_1km+offset(log(expected_2019)),
                       data = model_data_2019, family = poisson(link = "log"))
 
-summary(model_1km_2019)
+# summary(model_1km_2019)
+report::report(model_1km_2019)
+
 sjPlot::tab_model(model_1km_2019, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
 
@@ -1725,7 +1729,9 @@ sjPlot::tab_model(model_1km_2019, digits = 3, digits.re = 3,
 model_2km_2019 <- glm(observed_2019~1+prop_pop_2km+offset(log(expected_2019)),
                       data = model_data_2019, family = poisson(link = "log"))
 
-summary(model_2km_2019)
+# summary(model_2km_2019)
+report::report(model_2km_2019)
+
 sjPlot::tab_model(model_2km_2019, digits = 3, digits.re = 3,
                   show.r2 = FALSE, show.aic = TRUE)
 
