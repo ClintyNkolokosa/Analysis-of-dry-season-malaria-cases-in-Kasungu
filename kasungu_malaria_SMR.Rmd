@@ -2313,7 +2313,7 @@ model_data |>     # View model data in table format
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
                         data = model_data, family = poisson(link = "log"))
 
-summary.glm(multivariate_1km)
+#summary.glm(multivariate_1km)
 report::report(multivariate_1km)
 
 
@@ -2324,7 +2324,9 @@ multivariate_1km_no_intercept <- glm(observed_cases~0+prop_pop_1km+year, # leavi
                                      offset = log(expected_cases),
                                      data = model_data, 
                                      family = poisson(link = "log"))
-summary.glm(multivariate_1km_no_intercept)
+
+#summary.glm(multivariate_1km_no_intercept)
+report::report(multivariate_1km_no_intercept)
 
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
@@ -2336,17 +2338,19 @@ sjPlot::tab_model(multivariate_1km_no_intercept,
 
 
 # Alternatively
-multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expected),
-                             data = model_data, family = poisson(link = "log"))
-
-summary(multivariate_1km_rate)
+# multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expected),
+#                              data = model_data, family = poisson(link = "log"))
+ 
+# summary(multivariate_1km_rate)
+# report:report(multivariate_1km_rate)
 
 # 2km model --------------------------------------------------------------------
 
 multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
-summary(multivariate_2km)
+# summary(multivariate_2km)
+report::report(multivariate_2km)
 
 # Check effect of removing intercept
 multivariate_2km_no_intercept <- glm(observed_cases~prop_pop_2km+year-1,
@@ -2354,7 +2358,8 @@ multivariate_2km_no_intercept <- glm(observed_cases~prop_pop_2km+year-1,
                                      data = model_data, 
                                      family = poisson(link = "log"))
 
-summary(multivariate_2km_no_intercept)
+# summary(multivariate_2km_no_intercept)
+report::report(multivariate_2km_no_intercept)
 
 sjPlot::tab_model(multivariate_2km, 
                   show.r2 = FALSE, show.aic = TRUE,
@@ -2370,8 +2375,8 @@ multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cas
                         data = model_data, family = 'poisson')
 
 
-summary(multivariate_3km)
-
+# summary(multivariate_3km)
+report::report(multivariate_3km)
 ```
 In this combined dataset, we can see that the `residual deviance` is far from `degrees of freedom`, and the `dispersion parameter` is e.g., 576.9798 (57121/99 ) which is large.
 What does this indicate? This value indicates poor fit. That is, a significant difference between fitted values and observed values.
@@ -2387,7 +2392,8 @@ multivariate_3km_no_intercept <- glm(observed_cases~prop_pop_3km+year-1,
                                      data = model_data, 
                                      family = poisson(link = "log"))
 
-summary(multivariate_3km_no_intercept)
+# summary(multivariate_3km_no_intercept)
+report::report(multivariate_3km_no_intercept)
 
 sjPlot::tab_model(multivariate_3km, 
                   show.r2 = FALSE, show.aic = TRUE,
@@ -2458,7 +2464,8 @@ In a `quassi-Poisson` model, the `standard errors` are inflated by multiplying t
 quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
 
-summary(quassipoisson_1km)
+# summary(quassipoisson_1km)
+report::report(quassipoisson_1km)
 # In the absence of overdispersion, we expect the dispersion parameter estimate to be 1.0. 
 # The estimated dispersion parameter here is much larger than 1.0 (594.1947) indicating
 # overdispersion (extra variance) that should be accounted for. 
@@ -2469,12 +2476,14 @@ sjPlot::tab_model(quassipoisson_1km, show.r2 = FALSE,
 quassipoisson_2km <- glm(observed_cases~prop_pop_2km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
 
-summary(quassipoisson_2km)
+# summary(quassipoisson_2km)
+report::report(quassipoisson_2km)
 
 quassipoisson_3km <- glm(observed_cases~prop_pop_3km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
 
-summary(quassipoisson_3km)
+# summary(quassipoisson_3km)
+report::report(quassipoisson_3km)
 
 # Account for overdispersion using negative binomial model----------------------
 binomial_1km <- MASS::glm.nb(observed_cases~prop_pop_1km+year, 
