@@ -1959,6 +1959,7 @@ round(DescTools::PseudoR2(model_2km_2020, c("AldrichNelson", "AIC", "LogLikNull"
 
 
 ```
+
 ### Check for collinearity, normality or heteroscedasticity
 ```{r, message=FALSE, warning=FALSE, fig.height=17, fig.width=16}
 # Check for collinearity, normality or heteroscedasticity --------------------
@@ -2350,7 +2351,7 @@ The negative coefficient for the predictors is highly significant (`p<2e-16`).
 We also see that yearly variation influences observed cases negatively, but percentage of people living close to dams influences observed cases positively. 
 
 
-```{r}
+```{r, message=FALSE, fig.height=17, fig.width=16}
 # Check effect of removing intercept
 multivariate_3km_no_intercept <- glm(observed_cases~prop_pop_3km+year-1,
                                      offset = log(expected_cases),
