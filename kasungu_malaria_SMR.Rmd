@@ -44,6 +44,8 @@ suppressPackageStartupMessages({
   library(see)           # to plot model assumptions
   library(caTools)       # splitting data into training and test data sets
   library(glmmTMB)       # check overdispersion
+  library(lme4)          # fit GLM
+  library(report)        # automatically produce regression model reports
   library(qqplotr)
   library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
   library(gtsummary)     # easily display regression model outputs, such as P value, CI
@@ -2288,6 +2290,7 @@ multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_c
                         data = model_data, family = poisson(link = "log"))
 
 summary.glm(multivariate_1km)
+lme4::report
 
 
 # Check effect of removing intercept.
