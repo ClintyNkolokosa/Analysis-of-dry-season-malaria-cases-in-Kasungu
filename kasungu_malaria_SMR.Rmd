@@ -1657,10 +1657,15 @@ report::report(model_1km_2017)
 # observed malaria cases = -0.290015 + 0.032594 * percentage of catchment population living near dam 
 # Using this formula, for each change in number of people living near dams,
 # we can predict the number of dry season malaria case.
+# Our estimated model:
+#       dry season malaria risk = -0.29 + 0.03 + ln(e)
+# If the number of people living around dams was 0, dry season malaria risk would be -0.29
+
 #
 # For example:
 #   for a buffer population equal zero, we can expect -0.29 malaria cases. 
 #   for a buffer population equal 1000, we can expect  round(-0.29 + 0.03 * 1000) = 30 malaria cases.
+# For every unit increase in people living close to dams, dry season malaria risk increases by 
 
 sjPlot::tab_model(model_1km_2017, digits = 4, digits.re = 4,
                   show.r2 = FALSE, show.aic = TRUE)
@@ -1668,6 +1673,7 @@ sjPlot::tab_model(model_1km_2017, digits = 4, digits.re = 4,
 # From the output above, the p-value is 0.001 - way less than the alpha value of 0.05, 
 # we therefore reject our null hypothesis, meaning that there is a difference in 
 # dry season malaria risk between people living close to water bodies than those living far away.
+
 
 model_2km_2017 <- glm(observed_2017~1+prop_pop_2km+offset(log(expected_2017)),
                       data = model_data_2017, family = poisson(link = "log"))
