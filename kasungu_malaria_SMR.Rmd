@@ -1652,20 +1652,21 @@ model_1km_2017 <- glm(observed_2017~prop_pop_1km+offset(log(expected_2017)),
 # summary(model_1km_2017)
 # generate model report according to best practices guidelines
 report::report(model_1km_2017)
- 
-# The estimated regression equation can be written as follow: 
-# observed malaria cases = -0.290015 + 0.032594 * percentage of catchment population living near dam 
-# Using this formula, for each change in number of people living near dams,
-# we can predict the number of dry season malaria case.
-# Our estimated model:
-#       dry season malaria risk = -0.29 + 0.03 + ln(e)
-# If the number of people living around dams was 0, dry season malaria risk would be -0.29
 
-#
-# For example:
-#   for a buffer population equal zero, we can expect -0.29 malaria cases. 
-#   for a buffer population equal 1000, we can expect  round(-0.29 + 0.03 * 1000) = 30 malaria cases.
-# For every unit increase in people living close to dams, dry season malaria risk increases by 
+```
+The estimated regression equation can be written as follow:
+ observed malaria cases = -0.290015 + 0.032594 * percentage of catchment population living near dam. 
+Using this formula, for each change in number of people living near dams, we can predict the number of dry season malaria case.
+Our estimated model:
+       dry season malaria risk = -0.29 + 0.03 + ln(e)
+If the number of people living around dams was 0, dry season malaria risk would be -0.29. That is the estimate 0.29 can be interpreted as the dry season malaria risk in a catchment with no people living near waterbodies.
+
+For example:
+   - for a buffer population equal zero, we can expect -0.29 malaria cases.
+   - for a buffer population equal 1000, we can expect  round(-0.29 + 0.03 * 1000) = 30 malaria cases.
+
+
+```{r, message=FALSE}
 
 sjPlot::tab_model(model_1km_2017, digits = 4, digits.re = 4,
                   show.r2 = FALSE, show.aic = TRUE)
