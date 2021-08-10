@@ -1,5 +1,5 @@
 ---
-title: "Analysis of Role of Dams on Recorded Dry Season Malaria Incidences in Kasungu"
+title: "Geospatial Analysis of Dry Season Environmnetal Drivers of Malaria Cases in Kasungu"
 output: 
   html_document: 
     toc: yes
