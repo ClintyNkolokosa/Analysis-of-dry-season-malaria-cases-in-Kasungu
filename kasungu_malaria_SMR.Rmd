@@ -1030,19 +1030,24 @@ buffer_3km_2018 <- create.waterbody.buffer(waterbody = surface_waterbodies_2018,
 
 # sf::st_write(buffer_3km_2018, "data/buffer_3km_2018.shp")
 
- 
 # For 2019 TropWet surface water polygons ------------------------------------------------------
 buffer_1km_2019 <- create.waterbody.buffer(waterbody = surface_waterbodies_2019, 
                                            distance = 1000, 
                                            catchment = malire_new)
 
+# sf::st_write(buffer_1km_2019, "data/buffer_1km_2019.shp")
+
 buffer_2km_2019 <- create.waterbody.buffer(waterbody = surface_waterbodies_2019, 
                                            distance = 2000, 
                                            catchment = malire_new)
 
+# sf::st_write(buffer_2km_2019, "data/buffer_2km_2019.shp")
+
 buffer_3km_2019 <- create.waterbody.buffer(waterbody = surface_waterbodies_2019, 
                                            distance = 3000, 
                                            catchment = malire_new)
+
+# sf::st_write(buffer_3km_2019, "data/buffer_3km_2019.shp")
 
 # For 2020 TropWet surface water polygons ------------------------------------------------------
 buffer_1km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020, 
