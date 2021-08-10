@@ -153,14 +153,62 @@ buffer_2km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
 
 buffer_3km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
 
-# Add a row ID to water bodies polygons 
-dryseason_waterbodies_2017$ID <- 1:nrow(dryseason_waterbodies_2017)
+```
 
-dryseason_waterbodies_2018$ID <- 1:nrow(dryseason_waterbodies_2018)
+Note that blank areas in the map represent catchment areas in which no water body was detected — this may be a limitation of using moderate resolution satellite imagery (>30m spatial resolution) to identify surface water.
 
-dryseason_waterbodies_2019$ID <- 1:nrow(dryseason_waterbodies_2019)
+```{r, fig.height=9, fig.width=10, fig.cap='Fig 9. Buffers around dry season waterbodies in Kasungu'}
 
-dryseason_waterbodies_2020$ID <- 1:nrow(dryseason_waterbodies_2020)
+# Map the buffers
+create.buffer.map <- function(buffers, boundary = malire_new, title = NA){
+  # function for creating buffer map in ggplot
+  # arguments:
+  #   buffer:  waterbodies buffer polygon layer
+  #   boundary: health facility catchment polygons
+  #   title: main title
+  # returns:
+  #   a map-element (plots a map)
+  ggplot(data = buffers)+
+     geom_sf()+
+     geom_sf(data = boundary, 
+             fill = NA)+
+     theme_void()+
+     labs(title = title)
+}
+
+# Invoking the function
+# For 2017 -------------------------------------------------------------------------------
+buffer_1km_2017_map <- create.buffer.map(buffer_1km_2017, title = "2017: 1km Buffers")
+
+buffer_2km_2017_map <- create.buffer.map(buffer_2km_2017, title = "2017: 2km Buffers")
+
+buffer_3km_2017_map <- create.buffer.map(buffer_3km_2017, title = "2017: 3km Buffers")
+
+# For 2018 --------------------------------------------------------------------------------
+buffer_1km_2018_map <- create.buffer.map(buffer_1km_2018, title = "2018: 1km Buffers")
+
+buffer_2km_2018_map <- create.buffer.map(buffer_2km_2018, title = "2018: 2km Buffers")
+
+buffer_3km_2018_map <- create.buffer.map(buffer_3km_2018, title = "2018: 3km Buffers")
+
+# For 2019 ---------------------------------------------------------------------------------
+buffer_1km_2019_map <- create.buffer.map(buffer_1km_2019, title = "2019: 1km Buffers")
+
+buffer_2km_2019_map <- create.buffer.map(buffer_2km_2019, title = "2019: 2km Buffers")
+
+buffer_3km_2019_map <- create.buffer.map(buffer_3km_2019, title = "2019: 3km Buffers")
+
+# For 2020 --------------------------------------------------------------------------------
+buffer_1km_2020_map <- create.buffer.map(buffer_1km_2020, title = "2020: 1km Buffers")
+
+buffer_2km_2020_map <- create.buffer.map(buffer_2km_2020, title = "2020: 2km Buffers")
+
+buffer_3km_2020_map <- create.buffer.map(buffer_3km_2020, title = "2020: 3km Buffers")
+ 
+grid.arrange(buffer_1km_2017_map, buffer_1km_2018_map, buffer_1km_2019_map, buffer_1km_2020_map,
+             buffer_2km_2017_map, buffer_2km_2018_map, buffer_2km_2019_map, buffer_2km_2020_map, 
+             buffer_3km_2017_map, buffer_3km_2018_map, buffer_3km_2019_map, buffer_3km_2020_map, ncol = 4)
+
 
 ```
 
@@ -420,4 +468,320 @@ SMR_2020_map <- create.smr.map(SMR_2020, title = "2020")
 tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol = 2)
 
 ```
+
+# Extract the population living within waterbody buffers by catchment area
+
+```{r, message=FALSE, warning=FALSE}
+
+# Helper function to calculate estimated number of people living within waterbody buffers
+# in each catchment area
+estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
+  
+  # Extract population estimates from WorldPop raster
+  buffers$buffer_pop <- raster::extract(catchment.population,
+                                        buffers, 
+                                        fun = sum, 
+                                        na.rm = TRUE)
+                                               
+                                              
+  # Find which catchment each polygon belongs to using its centroid - a point dataset 
+  # representing the geographic center-points of the polygons 
+  # buffer_by_catchment <- st_intersection(st_centroid(buffers), catchment.area)
+  buffer_by_catchment <- sf::st_centroid(buffers) |>
+    sf::st_intersection(catchment.area)
+  
+  # Notice that the buffer_catchment is comprised of separate POLYGONS (buffer_by_catchment$x). 
+  # The first step is to “dissolve” away these POLYGONS into one MULTIPOLYGON. 
+  # There is no sf equivalent to the QGIS or ArcMap “dissolve” operation. 
+  # Instead we use a combination of group_by and summarize from the dplyr package. 
+  # Stats::aggregate from sf package, and dplyr::summarize both do essentially the same.
+   buffer_pop_aggregated <- buffer_by_catchment |> 
+     dplyr::group_by(DN) |>
+     dplyr::summarize(buffer_pop_aggregated = round(sum(buffer_pop, na.rm = TRUE)))
+
+  buffer_pop <- merge(catchment.area, st_drop_geometry(buffer_pop_aggregated),
+                      by = 'DN', all.x = TRUE)
+  
+  
+  
+  return(out = buffer_pop)
+  
+}
+
+# Invoking the function and calculating proportion of 
+# catchment population living within buffers
+# 2017 buffer population -------------------------------------------------------
+buffer_pop_1km_2017 <- estimate.buffer.pop(
+  kasungu_population_2017, 
+  buffer_1km_2017, 
+   malaria_pop_by_catchment_2017) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |>
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0))) 
+
+buffer_pop_2km_2017 <- estimate.buffer.pop(
+  kasungu_population_2017,
+  buffer_2km_2017,
+  malaria_pop_by_catchment_2017) |>
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |>
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) |> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+buffer_pop_3km_2017 <- estimate.buffer.pop(
+  kasungu_population_2017,
+  buffer_3km_2017,
+  malaria_pop_by_catchment_2017) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |>
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+# 2018 buffer population -------------------------------------------------------
+buffer_pop_1km_2018 <- estimate.buffer.pop(
+  kasungu_population_2018,
+  buffer_1km_2018,
+  malaria_pop_by_catchment_2018) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+buffer_pop_2km_2018 <- estimate.buffer.pop(
+  kasungu_population_2018,
+  buffer_2km_2018,
+  malaria_pop_by_catchment_2018) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |>
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+buffer_pop_3km_2018 <- estimate.buffer.pop(
+  kasungu_population_2018,
+  buffer_3km_2018,
+  malaria_pop_by_catchment_2018) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+# 2019 buffer population -------------------------------------------------------
+buffer_pop_1km_2019 <- estimate.buffer.pop(
+  kasungu_population_2019,
+  buffer_1km_2019,
+  malaria_pop_by_catchment_2019) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+buffer_pop_2km_2019 <- estimate.buffer.pop(
+  kasungu_population_2019,
+  buffer_2km_2019,
+  malaria_pop_by_catchment_2019) |>
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0))) # replace NA with zero
+
+buffer_pop_3km_2019 <- estimate.buffer.pop(
+  kasungu_population_2019,
+  buffer_3km_2019,
+  malaria_pop_by_catchment_2019) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |>
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+# 2020 buffer population -------------------------------------------------------
+buffer_pop_1km_2020 <- estimate.buffer.pop(
+  kasungu_population_2020,
+  buffer_1km_2020,
+  malaria_pop_by_catchment_2020) |>
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+buffer_pop_2km_2020 <- estimate.buffer.pop(
+  kasungu_population_2020,
+  buffer_2km_2020,
+  malaria_pop_by_catchment_2020) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100))|> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+buffer_pop_3km_2020 <- estimate.buffer.pop(
+  kasungu_population_2020,
+  buffer_3km_2020,
+  malaria_pop_by_catchment_2020) |> 
+  dplyr::rename(catchment_pop = pop,
+                buffer_pop = buffer_pop_aggregated) |> 
+  dplyr::mutate(
+    prop_buffer_catchment_pop = round((buffer_pop/catchment_pop)*100)) |> 
+  dplyr::mutate(across(everything(), .fns = ~replace_na(.,0)))
+
+
+```
+
+# Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
+
+A correlation coeeficient of more than zero (cor.coeff r \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.
+
+```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. Relationship between standardised morbidity ratio and living near waterbodies'}
+
+# Helper function to tidy and bind the SMR and proportion of -------------------
+# buffer-catchment population data frames
+tidy.data <- function(smr.df, 
+                      proportion.pop.1km, 
+                      proprotion.pop.2km,
+                      proportion.pop.3km){
+
+# Convert the sf objects to data frames-------------------------------------------
+smr_df <- as.data.frame(smr.df) |> 
+  dplyr::select(rowID, Names, SMR)
+
+proportion_pop_1km_df <- as.data.frame(proportion.pop.1km) |> 
+  dplyr::select(rowID, prop_pop_1km = `prop_buffer_catchment_pop`)
+
+proportion_pop_2km_df <- as.data.frame(proprotion.pop.2km) |> 
+  dplyr::select(rowID, prop_pop_2km = `prop_buffer_catchment_pop`)
+
+proportion_pop_3km_df <- as.data.frame(proportion.pop.3km) |>
+  dplyr::select(rowID, prop_pop_3km = `prop_buffer_catchment_pop`)
+
+# Merge SMR and population data frames -----------------------------------------
+combined_1 <- merge(smr_df, proportion_pop_1km_df, by = "rowID", all = TRUE)
+
+combined_2 <- merge(proportion_pop_2km_df, proportion_pop_3km_df)
+
+combined_fully <- merge(combined_1, combined_2, by = "rowID", all = TRUE)
+
+}
+
+# Invoking the function --------------------------------------------------------
+smr_pop_2017 <- tidy.data(SMR_2017, buffer_pop_1km_2017, buffer_pop_2km_2017, buffer_pop_3km_2017)
+
+smr_pop_2018 <- tidy.data(SMR_2018, buffer_pop_1km_2018, buffer_pop_2km_2018, buffer_pop_3km_2018)
+
+smr_pop_2019 <- tidy.data(SMR_2019, buffer_pop_1km_2019, buffer_pop_2km_2019, buffer_pop_3km_2019)
+
+smr_pop_2020 <- tidy.data(SMR_2020, buffer_pop_1km_2020, buffer_pop_2km_2020, buffer_pop_3km_2020)
+
+# Helper function to create scatter plots --------------------------------------
+create.scatter.plot <- function(smr.pop.df, 
+                                independent.var = NA,
+                                dependent.var = "SMR",
+                                x.label = NA,
+                                plot.title = NA){
+  
+  scatter.plot <- ggpubr::ggscatter(smr.pop.df,          # data frame
+                                    x = independent.var, # x-axis variable
+                                    y = dependent.var,   # y-axis variable
+                                    add = "reg.line",    # Add regression line
+                                    conf.int = TRUE,     # Add confidence interval
+                                    add.params = list(color = "red",
+                                                      fill = "lightgray"),
+                                    palette = "jco",     # journal color palette. see ?ggpar
+                                    xlab = x.label,      # x-axis label
+                                    ylab = "SMR",        # y-axis label
+                                    title = plot.title)+    
+                  ggpubr::stat_cor(label.y = 3)+         # Add correlation coefficient
+                  ggpubr::font("title", size = 10, face = "bold")+
+                  ggpubr::font("xlab", size = 10)+
+                  ggpubr::font("ylab", size = 10)
+ 
+  return(scatter.plot)
+  
+}
+
+# Invoking function 
+# 2017 scatter plots ------------------------------------------------------------
+
+scatter_1km_2017 <- create.scatter.plot(
+  smr_pop_2017, independent.var = "prop_pop_1km",
+  x.label = "Percentage of catchment population \nliving in 1km buffer",
+  plot.title = "2017")
+
+scatter_2km_2017 <- create.scatter.plot(
+  smr_pop_2017, independent.var = "prop_pop_2km",
+  x.label = "Percentage of catchment population \nliving in 2km buffer",
+  plot.title = "2017")
+
+scatter_3km_2017 <- create.scatter.plot(
+  smr_pop_2017, independent.var = "prop_pop_3km",
+  x.label = "Percentage of catchment population \nliving in 3km buffer",
+  plot.title = "2017")
+
+# 2018 scatter plots -----------------------------------------------------------
+scatter_1km_2018 <- create.scatter.plot(
+  smr_pop_2018, independent.var = "prop_pop_1km",
+  x.label = "Percentage of catchment population \nliving in 1km buffer",
+  plot.title = "2018")
+
+scatter_2km_2018 <- create.scatter.plot(
+  smr_pop_2018, independent.var = "prop_pop_2km",
+  x.label = "Percentage of catchment population \nliving in 2km buffer",
+  plot.title = "2018")
+
+scatter_3km_2018 <- create.scatter.plot(
+  smr_pop_2018, independent.var = "prop_pop_3km",
+  x.label = "Percentage of catchment population \nliving in 3km buffer",
+  plot.title = "2018")
+
+# 2019 scatter plots -----------------------------------------------------------
+scatter_1km_2019 <- create.scatter.plot(
+  smr_pop_2019, independent.var = "prop_pop_1km",
+  x.label = "Percentage of catchment population \nliving in 1km buffer",
+  plot.title = "2019")
+
+scatter_2km_2019 <- create.scatter.plot(
+  smr_pop_2019, independent.var = "prop_pop_2km",
+  x.label = "Percentage of catchment population \nliving in 2km buffer",
+  plot.title = "2019")
+
+scatter_3km_2019 <- create.scatter.plot(
+  smr_pop_2019, independent.var = "prop_pop_3km",
+  x.label = "Percentage of catchment population \nliving in 3km buffer",
+  plot.title = "2019")
+
+# 2020 scatter plots -----------------------------------------------------------
+scatter_1km_2020 <- create.scatter.plot(
+  smr_pop_2020, independent.var = "prop_pop_1km",
+  x.label = "Percentage of catchment population \nliving in 1km buffer",
+  plot.title = "2020")
+
+scatter_2km_2020 <- create.scatter.plot(
+  smr_pop_2020, independent.var = "prop_pop_2km",
+  x.label = "Percentage of catchment population \nliving in 2km buffer",
+  plot.title = "2020")
+
+scatter_3km_2020 <- create.scatter.plot(
+  smr_pop_2020, independent.var = "prop_pop_3km",
+  x.label = "Percentage of catchment population \nliving in 3km buffer",
+  plot.title = "2020")
+
+# Arrange the plots ------------------------------------------------------------
+ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
+                  scatter_1km_2018, scatter_2km_2018, scatter_3km_2018,
+                  scatter_1km_2019, scatter_2km_2019, scatter_3km_2019, 
+                  scatter_1km_2020, scatter_2km_2020, scatter_3km_2020,
+                  ncol = 3, nrow = 4)
+
+```
+
+
 

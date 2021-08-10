@@ -127,7 +127,7 @@ kasungu_population_2019 <- raster(here::here("data", "ku_pop_2019_1km_aggregated
 
 kasungu_population_2020 <- raster(here::here("data", "ku_pop_2020_1km_aggregated.tif"))
 
-# Read in waterbodies polygons 
+# TropWet derived dry season waterbody polygons 
 dryseason_waterbodies_2017 <- sf::st_read(here::here("data", "water_bodies_2017.shp"))
 
 dryseason_waterbodies_2018 <- sf::st_read(here::here("data", "kasungu_2018_water.shp"))
