@@ -1054,13 +1054,19 @@ buffer_1km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020,
                                            distance = 1000, 
                                            catchment = malire_new)
 
+# sf::st_write(buffer_1km_2020, "data/buffer_1km_2020.shp")
+
 buffer_2km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020, 
                                            distance = 2000, 
                                            catchment = malire_new)
 
+# sf::st_write(buffer_1km_2020, "data/buffer_2km_2020.shp")
+
 buffer_3km_2020 <- create.waterbody.buffer(waterbody = surface_waterbodies_2020, 
                                            distance = 3000, 
                                            catchment = malire_new)
+
+# sf::st_write(buffer_1km_2020, "data/buffer_3km_2020.shp")
 
 ```
 

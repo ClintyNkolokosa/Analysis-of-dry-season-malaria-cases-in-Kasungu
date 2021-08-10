@@ -147,7 +147,11 @@ buffer_2km_2019 <- sf::st_read(here::here("data", "buffer_2km_2019.shp"))
 
 buffer_3km_2019 <- sf::st_read(here::here("data", "buffer_3km_2019.shp"))
 
+buffer_1km_2020 <- sf::st_read(here::here("data", "buffer_1km_2020.shp"))
 
+buffer_2km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
+
+buffer_3km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
 
 # Add a row ID to water bodies polygons 
 dryseason_waterbodies_2017$ID <- 1:nrow(dryseason_waterbodies_2017)
