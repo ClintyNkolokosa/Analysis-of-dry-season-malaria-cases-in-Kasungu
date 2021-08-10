@@ -153,7 +153,7 @@ dryseason_waterbodies_2020$ID <- 1:nrow(dryseason_waterbodies_2020)
 
 ## Generate health-facility catchment areas
 
-First, in order to calculate the the `SMR` of dry season malaria cases in each health-facility catchment area, we nned to generate the catchment areas. Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are outdated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm were run in R and QGIS, respectively, to make the final output map of new health facility catchment boundaries.
+First, in order to calculate the `SMR` of dry season malaria cases for each health-facility catchment area, we need to generate the catchment areas. Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are outdated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm were run in R and QGIS, respectively, to make the final output map of new health facility catchment boundaries.
 
 ```{r, warning = FALSE, message = FALSE}
 
@@ -530,6 +530,74 @@ A ratio greater than 1.0 indicates that more malaria cases have occurred than wo
 # [1] 2.1
 # max(SMR_2020$SMR)
 # [1] 1.9
+
+# Define function to create maps of SMR by catchment ---------------------------
+create.smr.map <- function(smr.data, 
+                           variable = "SMR_category", 
+                           title = NA, 
+                           legend.title = "SMR"){
+  # SMR by catchment map
+  # smr.data: sf polygon object containing SMR by catchment data
+  # variable: variable name (as character, in qoutes)
+  # title: map title in quotes
+  # legend.title: legend title in qoutes
+  # returns:
+  #   a tmap-element (plots a map)
+  
+  # create category column
+  smr.data$SMR_category <- NA
+  
+  # assigning labels for the SMR estimate legends
+  smr.category.list <- c("<0.50", "0.51 to 0.75", "0.76 to 0.99", "1.00", 
+                         "1.10 to 1.24", "1.25 to 1.49", ">1.50")
+  
+  # assigning categories
+  smr.data$SMR_category[smr.data$SMR >= 0.00 & smr.data$SMR < 0.49] = -3
+  smr.data$SMR_category[smr.data$SMR >= 0.50 & smr.data$SMR < 0.75] = -2
+  smr.data$SMR_category[smr.data$SMR >= 0.76 & smr.data$SMR < 0.99] = -1
+  smr.data$SMR_category[smr.data$SMR >= 1.00 & smr.data$SMR < 1.09] = 0
+  smr.data$SMR_category[smr.data$SMR >= 1.10 & smr.data$SMR < 1.24] = 1
+  smr.data$SMR_category[smr.data$SMR >= 1.25 & smr.data$SMR < 1.49] = 2
+  smr.data$SMR_category[smr.data$SMR >= 1.50 & smr.data$SMR < 3.00] = 3
+  
+  # generating divergent colour schemes [Blues - Light Blues – White – Light Reds – Reds]
+  # smr.palette <- c("#33a6fe", "#cbe6fe", "#dfeffe", "#feb1b1", "#fe8e8e","#fe0000")
+  
+  tm_shape(smr.data)+
+    tm_fill(col = variable, 
+            style = "cat",
+            palette = "-RdBu",
+            title = legend.title,
+            labels = smr.category.list)+
+    tm_borders(lw = 0.6)+
+    tm_layout(legend.position = c(0.75,"bottom"),
+              legend.text.size = 0.5,
+              legend.title.size = 0.7,
+              frame = FALSE)+
+    tm_credits(title, 
+               position = c(0.2, 0.8), 
+               size = 1)
+}
+
+# Invoking function ------------------------------------------------------------
+SMR_2017_map <- create.smr.map(SMR_2017, title = "2017")
+
+SMR_2018_map <- create.smr.map(SMR_2018, title = "2018")
+
+SMR_2019_map <- create.smr.map(SMR_2019, title = "2019")
+
+SMR_2020_map <- create.smr.map(SMR_2020, title = "2020")
+
+# Layout maps ------------------------------------------------------------------
+tmap::tmap_arrange(SMR_2017_map, SMR_2018_map, SMR_2019_map, SMR_2020_map, ncol = 2)
+
+```
+
+## SMR by catchment maps
+
+A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred. This means that, catchments with SMRs above 1 have high dry season malaria risk.
+
+```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 8: Standardised morbidity ratio of malaria by health facility catchment'}
 
 # Define function to create maps of SMR by catchment ---------------------------
 create.smr.map <- function(smr.data, 
