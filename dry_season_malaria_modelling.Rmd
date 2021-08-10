@@ -1,0 +1,518 @@
+---
+title: "Analysis of Role of Dams on Recorded Dry Season Malaria Incidences in Kasungu"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+    code_download: true
+latex_engine: MiKTeX
+author: Clinton Nkolokosa
+date: " Last edited `r format(Sys.time(),'%d %B %Y')`"
+---
+
+This geospatial statistical model uses routinely collected malaria case data, population data and remotely sensed data, such as open and vegetated water bodies, to estimate population living around open water bodies, expected malaria cases, and `standardised morbidity ratio` (`SMR`) of malaria. And ultimately, quantify the association between proximity to larval habitat and malaria risk in health facility catchment areas in Kasungu. The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
+
+We do this by comparing what we *observe* (O) with what we would *expect* (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows: $$SMR_i = \frac{O_i}{E_i}$$
+
+Buffers around waterbodies are created and then combined with population data in raster format to estimate the proprtion of catcment population living within 1km, 2km and 3km of water bodies. Subsequently, the observed malaria cases are modeled using `Poisson regression` to find out if living within various distances from water bodies is causing variability in malaria risk in Kasungu district. We hypothesize that the risk of being a case in a catchment is dependent on proximity to water bodies. The data used spans from 2017 to 2020 and was derived from digitized DHIS2 malaria records, accessibility mapping, aggregated population geospatial layer and TropWet tool in Google Earth Engine.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.align = 'center', echo = TRUE)
+
+# thematic::thematic_rmd()
+
+```
+
+# Load packages
+
+Loading the R packages that will be used to read in, view, transform and model the malaria cases and spatial datasets.
+
+```{r, warning = FALSE, message = FALSE}
+suppressPackageStartupMessages({
+  library(SpatialEpi)
+  library(spdep)
+  library(spaMM)
+  library(popEpi)
+  library(Epi)
+  library(epitools)      # compute confidence intervals of malaria data
+  library(tidyverse)
+  library(caret)         # easily compute cross-validation methods to test model perfomance
+  library(stats)
+  library(MASS)          # fit negative binomial model
+  library(performance)   # check linear model performance
+  library(see)           # to plot model assumptions
+  library(caTools)       # splitting data into training and test data sets
+  library(glmmTMB)       # check overdispersion
+  library(lme4)          # fit GLM
+  library(report)        # automatically produce regression model reports
+  library(qqplotr)
+  library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
+  library(gtsummary)     # easily display regression model outputs, such as P value, CI
+  library(ggpubr)
+  library(plotly)
+  library(lubridate)
+  library(knitr)
+  library(raster)
+  library(rgdal)
+  library(rgeos)
+  library(readr)
+  library(sf)
+  library(sp)
+  library(tmap)
+  library(spdep)
+  library(maptools)
+  library(gridExtra)
+  library(ggsci)
+  library(grid)
+  library(exactextractr)
+  library(DataExplorer)
+  library(thematic)
+  library(mapview)
+  library(kableExtra)    # create interactive tables
+  library(gt)            # create beautiful HTML tables
+  library(pander)        # improves the aesthetics of R outputs
+  library(imputeTS)      # easily remove NAs
+  `%>%` <- magrittr::`%>%`
+
+})
+  
+
+```
+
+## Tell R where the data is
+
+```{r}
+file.path(getwd(),"data")
+
+here::here()
+```
+
+
+
+# Load datasets
+
+The total dry season malaria cases recorded at health-care facilities in Kasungu from 2017 to 2019 are contained in the `KasunguData.csv` sourced from <https://dhis2.health.gov.mw/>. The `kasungu_facility_catchments_2004.shp` shapefile also contains the population and health information within each health-facility catchment area in Kasungu district.
+
+The aggregated population raster layers for Malawi e.g.,`ku_pop_2017_1km_aggregated.tif` were downloaded from the Open Spatial and Demographic and Data Research website: <https://www.worldpop.org/geodata/country?iso3=MWI>. These layers estimate total number of people per grid-cell. The units are number of people per pixel with country totals adjusted to match the corresponding official United Nations population estimates. The datasets were downloaded in Geotiff at a resolution of 1km and are projected in Geographic Coordinate System, WGS84.
+
+The `kasungu_water.shp`and `water_bodies` layers contain open and vegetated waterbodies polygons, detected using the Tropical Wetland Unmixing Tool (TropWet). TropWet is a Google Earth Engine hosted toolbox that uses the Landsat archive to map tropical wetlands and can be accessed through: <https://www.aber.ac.uk/en/dges/research/earth-observation-laboratory/research/tropwet/>
+
+```{r, Kasungu water bodies polygons, malaria cases by health facility catchments and population layers, message= FALSE, results='hide'}
+
+# Kasungu dry season malaria data
+# dry_season_malaria_2017_2020 <- readr::read_csv(
+#   "https://raw.githubusercontent.com/ClintyNkolokosa/Analysis-of-dry-season-malaria-cases-in-Kasungu/main/data/dry_season_malaria_2017_2020.csv")
+
+dry_season_malaria_2017_2020 <- read.csv(here::here("data/dry_season_malaria_2017_2020.csv"),
+                                         stringsAsFactors = FALSE)
+
+# Kasungu monthly NMCP confirmed malaria cases
+monthly_malaria_2017_2021 <- read.csv(here::here("data/Kasungu monthly malaria 2017-2021.csv"),
+                                      stringsAsFactors = FALSE)
+
+monthly_malaria_2017_2021$date <- lubridate::ym(monthly_malaria_2017_2021$periodid) 
+
+# Kasungu district boundary shapefile 
+kasungu_district <- sf::st_read(here::here("data", "kasungu_district.shp"))
+  
+# Kasungu health facility catchments generated from accessibility mapping
+malire_new <- sf::st_read(here::here("data", "zipatala_catchment_areas.shp")) |> 
+              sf::st_transform(32736) # reproject to WGS UTM Zone 36 South
+
+# Kasungu population raster layer
+kasungu_population_2017 <- raster(here::here("data", "ku_pop_2017_1km_aggregated.tif"))
+
+kasungu_population_2018 <- raster(here::here("data", "ku_pop_2018_1km_aggregated.tif"))
+
+kasungu_population_2019 <- raster(here::here("data", "ku_pop_2019_1km_aggregated.tif"))
+
+kasungu_population_2020 <- raster(here::here("data", "ku_pop_2020_1km_aggregated.tif"))
+
+# Read in waterbodies polygons 
+dryseason_waterbodies_2017 <- sf::st_read(here::here("data", "water_bodies_2017.shp"))
+
+dryseason_waterbodies_2018 <- sf::st_read(here::here("data", "kasungu_2018_water.shp"))
+
+dryseason_waterbodies_2019 <- sf::st_read(here::here("data", "kasungu_2019_water.shp"))
+
+dryseason_waterbodies_2020 <- sf::st_read(here::here("data", "water_bodies_2020.shp"))
+
+# Add a row ID to water bodies polygons 
+dryseason_waterbodies_2017$ID <- 1:nrow(dryseason_waterbodies_2017)
+
+dryseason_waterbodies_2018$ID <- 1:nrow(dryseason_waterbodies_2018)
+
+dryseason_waterbodies_2019$ID <- 1:nrow(dryseason_waterbodies_2019)
+
+dryseason_waterbodies_2020$ID <- 1:nrow(dryseason_waterbodies_2020)
+
+```
+
+# Standardised Morbidity Ratio of dry season malaria cases in Kasungu
+
+## Generate health-facility catchment areas
+
+First, in order to calculate the the `SMR` of dry season malaria cases in each health-facility catchment area, we nned to generate the catchment areas. Heath facility catchment area is the area from which a health facility attracts patients. Since the available official catchment areas are outdated and no recent spatial data about the catchment areas is available, new health facility catchments polygon were generated from generic accessibility mapping script adapted from <https://malariaatlas.org/wp-content/uploads/accessibility/R_generic_accessibilty_mapping_script.r> The script requires two user supplied datasets: the `2015 friction surface`, which is available here: <http://www.map.ox.ac.uk/accessibility_to_cities/>, and a user-supplied .csv of points `dry_season_malaria_2017_2020`. The accumulated cost algorithm `accCost` and `r.Cost` algorithm were run in R and QGIS, respectively, to make the final output map of new health facility catchment boundaries.
+
+```{r, warning = FALSE, message = FALSE}
+
+# Using the complete.cases() function to select health centers with complete 
+# longitude and latitude coordinates.
+zipatala <- dry_season_malaria_2017_2020[complete.cases(dry_season_malaria_2017_2020),] 
+
+# Aggregate health facilities close to each other: 
+#  a) Kasalika Health Centre and Kasungu District Hospital, 
+#  b) Bua and Mziza Health Centres, and 
+#  c) Kaluluma and Nkhamenya Rural Hospitals 
+#  d) Anchor and Santhe Health Centres are combined in order to 
+# generate catchment areas that are geographically correct
+
+zipatala$dr_2017[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2017[which(
+      zipatala$Names == "Kasalika Health Centre")]
+
+zipatala$dr_2018[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2018[which(
+      zipatala$Names == "Kasalika Health Centre")]
+
+zipatala$dr_2019[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2019[which(
+      zipatala$Names == "Kasalika Health Centre")]
+
+zipatala$dr_2020[which(
+  zipatala$Names == "Kasungu District Hospital")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Kasungu District Hospital")] + zipatala$dr_2020[which(
+      zipatala$Names == "Kasalika Health Centre")]
+  
+zipatala$dr_2017[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2017[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
+
+zipatala$dr_2018[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] +zipatala$dr_2018[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
+
+zipatala$dr_2019[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2019[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
+
+zipatala$dr_2020[which(
+  zipatala$Names == "Nkhamenya Rural Hospital")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Nkhamenya Rural Hospital")] + zipatala$dr_2020[which(
+      zipatala$Names == "Kaluluma Rural Hospital")]
+
+zipatala$dr_2017[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2017[which(
+      zipatala$Names == "Bua Health Centre")]
+
+zipatala$dr_2018[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2018[which(
+      zipatala$Names == "Bua Health Centre")]
+
+zipatala$dr_2019[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2019[which(
+      zipatala$Names == "Bua Health Centre")] 
+  
+
+zipatala$dr_2020[which(
+  zipatala$Names == "Mziza Health Centre")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Mziza Health Centre")] + zipatala$dr_2020[which(
+      zipatala$Names == "Bua Health Centre")]
+
+zipatala$dr_2017[which(
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2017[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2017[which(
+      zipatala$Names == "Anchor Farm")]
+
+zipatala$dr_2018[which(
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2018[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2018[which(
+      zipatala$Names == "Anchor Farm")]
+
+zipatala$dr_2019[which(
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2019[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2019[which(
+      zipatala$Names == "Anchor Farm")]
+
+zipatala$dr_2020[which(
+  zipatala$Names == "Santhe Health Centre")] <- zipatala$dr_2020[which(
+    zipatala$Names == "Santhe Health Centre")] + zipatala$dr_2020[which(
+      zipatala$Names == "Anchor Farm")]
+
+
+# Drop out the other health facilities
+zipatala_aggregated <- zipatala |>
+  dplyr::filter(Names != "Kasalika Health Centre",
+                Names != "Bua Health Centre",
+                Names != "Kaluluma Rural Hospital",
+                Names != "Anchor Farm")
+
+# Save csv file
+# write.csv(zipatala_aggregated, "data/zipatala_aggregated.csv")
+
+# Convert to sf object
+zipatala_aggregated_sf <- sf::st_as_sf(zipatala_aggregated,
+                                        coords = c("LONGITU", "LATITUD"),
+                                        crs = 4326, agr = "constant")
+
+# st_write(zipatala_aggregated_sf, "data/zipatala_combined.shp")
+
+```
+
+## Assign dry season malaria cases and population density to new health facility catchments
+
+The WorldPop `aggregated population` e.g. `kasungu_population_2017.tif`, and DHIS2 malaria `dry_season_malaria_2017_2020` datasets are assigned to the new health facility catchments.
+
+```{r, message=FALSE, warning=FALSE}
+# Helper function that assigns malaria data from health facilities to their catchments areas 
+assign.malaria.data <- function(catchment_boundary, malaria_data){
+  # arguments:
+  #   catchment_boundary: sf polygon object of new catchment boundaries
+  #   malaria_data: sf point object with a data frame containing the dry season malaria cases
+  # returns:
+  #   catchments_malaria_sf: sf polygon object with a data frame containing dry season malaria cases
+
+
+  # Convert sf objects to spatial
+  catchment_shp <- as(catchment_boundary, "Spatial")
+  
+  malaria_shp <- as(malaria_data, "Spatial")
+
+  # Match CRS
+  malaria_shp <- spTransform(malaria_shp, crs(catchment_shp))
+
+  # Overlay aggregated health facility points and extract 2017 - 2020 malaria cases
+  # Using 'point.in.poly' to return a point spatial object, in this case location of health facilities
+  # and estimated population instead of sp::over function, which simply returns 
+  # a data frame, with the same no. rows.
+  # Argument 'sp = TRUE' returns an sp class object, else returns sf class object
+  # Joining the malaria and population dataset using only 'merge' function can't work due to 
+  # non-unique columns and differences in row numbers
+  
+  hospitals_in_catchment <- spatialEco::point.in.poly(malaria_shp, catchment_shp, sp = TRUE) 
+
+  # Add the extracted ID, health facility names and dry season malaria cases to 
+  # the health facility catchments (hfc)
+  hfc_malaria_shp <- merge(catchment_shp, hospitals_in_catchment, by.x = "DN", by.y = "rowID")
+
+  # Convert the shapefile containing malaria data to sf-object
+  hfc_malaria_sf <- sf::st_as_sf(hfc_malaria_shp)
+
+  # Tidy the data by dropping columns not needed
+  catchment_malaria <- hfc_malaria_sf |> 
+    dplyr::select(-c(coords.x1, coords.x2))
+
+  return(out = catchment_malaria)
+}
+
+
+# Invoking the function --------------------------------------------------------
+malaria_by_catchment <- assign.malaria.data(malire_new, zipatala_aggregated_sf)
+
+```
+
+## Assign population data to the health catchment areas
+
+The population raster is a continuous gridded surface layer that has an estimated population density value to every square in their grid. The population values are extracted using `raster::extract()`, summed and apportioned to the catchment polygons.
+
+```{r, message=FALSE}
+
+# Helper unction to extract population from WorldPop raster file and assign
+# the values to the new catchments.
+
+extract.pop.values <- function(kasungu_pop_raster, catchments){
+  # function to extract population from raster file and assign the population to catchments
+  # arguments:
+  #   kasungu_pop_raster: population raster file clipped to Kasungu district
+  #   catchments: shapefile containing the polygons that we will use as boundaries
+  # returns:
+  #   catchments_malaria_pop_sf: sf polygon object containing malaria and population data
+  
+  # convert from sf to sp
+  catchments_sp <- as(catchments, "Spatial")
+  
+  # Match extent i.e projection
+  catchments_sp <- spTransform(catchments_sp, proj4string(kasungu_pop_raster))
+  
+  # Crop and mask the population raster to exclude Kasungu National Park
+  pop_raster_clip <- raster::crop(kasungu_pop_raster, extent(catchments_sp)) |>
+    raster::mask(catchments_sp)
+  
+  # Extracting zonal statistics from a population raster layer
+  pop_by_catchment <- round(raster::extract(pop_raster_clip, catchments, fun = sum, na.rm = TRUE))
+  
+  pop_by_catchment_df <-  pop_by_catchment %>%  
+  # apply unlist to the lists to have vectors as the list elements
+  lapply(unlist) %>%  
+  # convert vectors to data.frames
+  lapply(as_tibble) %>%   
+  # combine the list of data.frames
+  bind_rows(., .id = "rowID") %>%   
+  # rename the value variable
+  dplyr::rename(pop = value)
+  
+  # Add row ID to column to catchment layer
+  catchments$rowID <- 1:nrow(catchments)
+  
+  # Merge catchment areas and population data 
+  pop_by_catchments <- merge(catchments, pop_by_catchment_df, by = "rowID")
+  
+  # Cleaning 'Inf' values
+  pop_by_catchments |> 
+    dplyr::mutate_if(is.numeric, list(~na_if(., Inf))) |> 
+    dplyr::mutate_if(is.numeric, list(~na_if(., -Inf)))
+
+  return(out = pop_by_catchments)
+  
+}
+
+# Invoking the function -------------------------------------------------------------------------
+malaria_pop_by_catchment_2017 <- extract.pop.values(kasungu_population_2017, malaria_by_catchment)
+
+malaria_pop_by_catchment_2018 <- extract.pop.values(kasungu_population_2018, malaria_by_catchment)
+
+malaria_pop_by_catchment_2019 <- extract.pop.values(kasungu_population_2019, malaria_by_catchment)
+
+malaria_pop_by_catchment_2020 <- extract.pop.values(kasungu_population_2020, malaria_by_catchment)
+
+```
+
+## Calculate the expected number of cases for each catchment area
+
+The `expected` number of dry season malaria cases in catchment *i* are calculated as the observed risk (r) of malaria i.e. the total number of malaria cases in Kasungu district divided by the total population of the district, multiplied by the number of people in the catchment area: $$E_i = \frac{\sum_i O_i}{\sum_i N_i}\times N_i$$
+
+The `expected` number of dry season malaria cases are calculated under the assumption that there is no spatial variation in risk, i.e., no difference in infection rates between the catchment areas.
+
+```{r, message=FALSE}
+# Compute and print the overall incidence of dry season malaria cases
+overall_malaria_incidence_rate_2017 <- round(sum(
+  malaria_pop_by_catchment_2017$dr_2017) / sum(
+    malaria_pop_by_catchment_2017$pop), 2)
+
+overall_malaria_incidence_rate_2017
+
+overall_malaria_incidence_rate_2018 <- round(sum(
+  malaria_pop_by_catchment_2018$dr_2018) / sum(
+    malaria_pop_by_catchment_2018$pop), 2)
+
+overall_malaria_incidence_rate_2018
+
+overall_malaria_incidence_rate_2019 <- round(sum(
+  malaria_pop_by_catchment_2019$dr_2019) / sum(
+    malaria_pop_by_catchment_2019$pop), 2)
+
+overall_malaria_incidence_rate_2019
+
+overall_malaria_incidence_rate_2020 <- round(sum(
+  malaria_pop_by_catchment_2020$dr_2020) / sum(
+    malaria_pop_by_catchment_2020$pop), 2)
+
+overall_malaria_incidence_rate_2020
+
+# Calculate expected malaria cases ------------------------------------------------
+expected_malaria_2017 <- malaria_pop_by_catchment_2017 |>
+  dplyr::rename(
+    observed_2017 = dr_2017,
+     pop_2017 = pop) |> 
+  dplyr::mutate(
+    expected_2017 = round(sum(observed_2017)/sum(pop_2017, na.rm = TRUE)*pop_2017))
+
+expected_malaria_2018 <- malaria_pop_by_catchment_2018 |>
+  dplyr::rename(
+    observed_2018 = dr_2018,
+    pop_2018 = pop) |> 
+  dplyr::mutate(
+    expected_2018 = round(sum(observed_2018)/sum(pop_2018, na.rm = TRUE)*pop_2018))
+
+expected_malaria_2019 <- malaria_pop_by_catchment_2019 |>
+  dplyr::rename(
+    observed_2019 = dr_2019,
+    pop_2019 = pop) |>
+  dplyr::mutate(
+    expected_2019 = round(sum(observed_2019)/sum(pop_2019, na.rm = TRUE)*pop_2019)) 
+
+expected_malaria_2020 <- malaria_pop_by_catchment_2020 |>
+  dplyr::rename(
+    observed_2020 = dr_2020,
+    pop_2020 = pop) |>
+  dplyr::mutate(
+    expected_2020 = round(sum(observed_2020)/sum(pop_2020, na.rm = TRUE)*pop_2020))
+
+```
+
+## Calculate the SMR of malaria incidences for each catchment area
+
+The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
+
+We do this by comparing what we `observe` (O) with what we would `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR of catchment *i* can be calculated as follows: $$SMR_i = \frac{O_i}{E_i}$$
+
+SMRs above 1 represent high risk of dry season malaria and SMRs below 1, viceversa.
+
+```{r}
+# Calculate the ratio of observed to expected (SMR) ----------------------------
+SMR_2017 <- expected_malaria_2017 |>
+  dplyr::mutate(SMR = round(observed_2017/expected_2017, 1)) |> 
+  dplyr::select(rowID,Names, pop_2017, observed_2017, expected_2017, SMR) 
+
+SMR_2018 <- expected_malaria_2018 |> 
+  dplyr::mutate(SMR = round(observed_2018/expected_2018, 1)) |> 
+  dplyr::select(rowID, Names, pop_2018, observed_2018, expected_2018, SMR) 
+
+SMR_2019 <- expected_malaria_2019 |> 
+  dplyr::mutate(SMR = round(observed_2019/expected_2019, 1)) |> 
+  dplyr::select(rowID, Names, pop_2019, observed_2019, expected_2019, SMR) 
+
+SMR_2020 <- expected_malaria_2020 |> 
+  dplyr::mutate(SMR = round(observed_2020/expected_2020, 1)) |> 
+  dplyr::select(rowID, Names, pop_2020, observed_2020, expected_2020, SMR)
+
+
+# Create SMR tables ------------------------------------------------------------
+SMR_table_2017 <- SMR_2017 |>
+  dplyr::as_tibble() |>
+  dplyr::rename(Health_facility = Names) |> 
+  dplyr::select(-rowID, -geometry) |> 
+  kable() |>
+  kableExtra::kable_styling(full_width = FALSE)
+
+SMR_table_2018 <- SMR_2018 |> 
+  dplyr::as_tibble() |> 
+  dplyr::rename(Health_facility = Names) |> 
+  dplyr::select(-rowID, -geometry) |>
+  kable() |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+SMR_table_2019 <- SMR_2019 |>
+  dplyr::as_tibble() |>
+  dplyr::rename(Health_facility = Names) |> 
+  dplyr::select(-rowID, -geometry) |> 
+  kable () |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+SMR_table_2020 <- SMR_2020 |>
+  dplyr::as_tibble() |> 
+  dplyr::rename(Health_facility = Names) |> 
+  dplyr::select(-rowID, -geometry) |> 
+  kable () |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+SMR_table_2017
+
+SMR_table_2018
+
+SMR_table_2019
+
+SMR_table_2020
+
+```
+
