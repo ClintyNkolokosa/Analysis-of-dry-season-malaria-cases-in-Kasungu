@@ -1034,16 +1034,11 @@ plot.fitted.values <- function(fitted.values.df, model.df, title){
 }
 
 # Invoking function ------------------------------------------------------------
-# Poisson model
 scatter_plot_1km <- plot.fitted.values(multivariate_1km, model_data, title = "1km model")
 
 scatter_plot_2km <- plot.fitted.values(multivariate_2km, model_data, title = "2km model")
 
 scatter_plot_3km <- plot.fitted.values(multivariate_3km, model_data, title = "3km model")
-
-# Quassi-Poisson model
-quassi_scatter_plot_1km <- plot.fitted.values(quassipoisson_1km, model_data, 
-                                              title = "Quassi-Poisson 1km model")
 
 # Layout scatter plots ---------------------------------------------------------
 cowplot::plot_grid(scatter_plot_1km, scatter_plot_2km, scatter_plot_3km, ncol = 3)
