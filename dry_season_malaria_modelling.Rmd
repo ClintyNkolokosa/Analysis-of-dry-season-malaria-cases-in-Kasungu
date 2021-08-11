@@ -155,6 +155,7 @@ buffer_3km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
 
 ```
 
+## Waterbody buffers by catchment map
 Note that blank areas in the map represent catchment areas in which no water body was detected — this may be a limitation of using moderate resolution satellite imagery (>30m spatial resolution) to identify surface water.
 
 ```{r, fig.height=9, fig.width=10, fig.cap='Fig 9. Buffers around dry season waterbodies in Kasungu'}
@@ -414,7 +415,7 @@ SMR_2020 <- expected_malaria_2020 |>
 
 ## SMR by catchment maps
 
-A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred. This means that, catchments with SMRs above 1 have high dry season malaria risk.
+SMRs above 1 represent high risk of dry season malaria and SMRs below 1, viceversa. A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred. Thus, catchments with SMRs above 1 have high dry season malaria risk.
 
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 8: Standardised morbidity ratio of malaria by health facility catchment'}
 
@@ -814,6 +815,162 @@ Summary outputs:
 `Coefficients`: Shows the regression beta coefficients and their statistical significance. Predictor variables, that are significantly associated to the outcome variable, are marked by stars.
 
 `Residual standard error` (`RSE`), and `R-squared` ($R^2$)  metrics tell how well the model fits to our data. An (adjusted) $R^2$ that is close to 1 indicates that a large proportion of the variability in the outcome has been explained by the regression model. A number near 0 indicates that the regression model did not explain much of the variability in the outcome.
+
+```{r}
+# Combine data for model fitting -----------------------------------------------
+model_data_2017 <- merge(expected_malaria_2017, smr_pop_2017, by = "rowID", all = TRUE) |>
+  dplyr::select(-Names.y) |> 
+  dplyr::rename(Names = Names.x)
+
+model_data_2018 <-  merge(expected_malaria_2018, smr_pop_2018, by = "rowID", all = TRUE) |> 
+  dplyr::select(-Names.y) |> 
+  dplyr::rename(Names = Names.x)
+
+model_data_2019 <-  merge(expected_malaria_2019, smr_pop_2019, by = "rowID", all = TRUE) |>
+  dplyr::select(-Names.y) |> 
+  dplyr::rename(Names = Names.x)
+
+model_data_2020 <-  merge(expected_malaria_2020, smr_pop_2020, by = "rowID", all = TRUE) |> 
+  dplyr::select(-Names.y) |>
+  dplyr::rename(Names = Names.x)
+
+
+# Prep model data --------------------------------------------------------------
+df2017 <- model_data_2017 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2017,
+                  expected_cases = expected_2017,
+                  health_facility = Names) |> 
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR, 
+                  -pop_2017, -dr_2018, -dr_2019, -dr_2020)
+
+df2017$year <- "2017" # add new column
+
+# df2017 <- cbind(df2017, year = "2017") # alternatively
+
+df2018 <- model_data_2018 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2018,
+                  expected_cases = expected_2018) |> 
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR,
+                  -pop_2018,-dr_2017, -dr_2019, -dr_2020)
+
+df2018$year <- "2018"
+
+colnames(df2018) <- colnames(df2017) # match columns names
+
+df2019 <- model_data_2019 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2019,
+                  expected_cases = expected_2019) |> 
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR,
+                  -pop_2019, -dr_2017, -dr_2018, -dr_2020)
+
+df2019$year <- "2019"
+
+colnames(df2019) <- colnames(df2017) # match columns names
+
+df2020 <- model_data_2020 |> 
+  dplyr::as_tibble() |> 
+    dplyr::rename(observed_cases = observed_2020,
+                  expected_cases = expected_2020) |> 
+    dplyr::select(-geometry, -fid,-DN, -X, -SMR,
+                  -pop_2020, -dr_2017, -dr_2018, -dr_2019) 
+
+df2020$year <- "2020"
+
+colnames(df2020) <- colnames(df2017) # match columns names
+
+model_data <- rbind(df2017, df2018, df2019, df2020)
+
+model_data <- imputeTS::na.replace(model_data, 0) # replace NA with zero
+
+
+model_data |>     # View model data in table format
+  gt::gt() |> 
+  gt::tab_style(style = list(cell_text(align = "center")),
+                locations = cells_column_labels() ) |> 
+  gt::cols_label(health_facility = "Health facility",
+                 observed_cases = "Observed cases",
+                 expected_cases = "Expected cases",
+                 prop_pop_1km = "Proportion of population in 1km buffers%",
+                 prop_pop_2km = "Proportion of population in 2km buffers%",
+                 prop_pop_3km	= "Proportion of population in 3km buffers%",
+                 year = "Year")
+
+
+# Model fitting 
+# 1km model --------------------------------------------------------------------
+multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
+                        data = model_data, family = poisson(link = "log"))
+
+#summary.glm(multivariate_1km)
+report::report(multivariate_1km)
+
+
+# Check effect of removing intercept.
+# When you remove an intercept from a regression model, you’re setting 
+# it equal to 0 rather than estimating it from the data.
+multivariate_1km_no_intercept <- glm(observed_cases~0+prop_pop_1km+year, # leaving the intercept out 
+                                     offset = log(expected_cases),
+                                     data = model_data, 
+                                     family = poisson(link = "log"))
+
+#summary.glm(multivariate_1km_no_intercept)
+report::report(multivariate_1km_no_intercept)
+
+sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+sjPlot::tab_model(multivariate_1km_no_intercept, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+
+
+# Alternatively
+# multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expected),
+#                              data = model_data, family = poisson(link = "log"))
+ 
+# summary(multivariate_1km_rate)
+# report:report(multivariate_1km_rate)
+
+# 2km model --------------------------------------------------------------------
+
+multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
+                        data = model_data, family = 'poisson')
+
+# summary(multivariate_2km)
+report::report(multivariate_2km)
+
+# Check effect of removing intercept
+multivariate_2km_no_intercept <- glm(observed_cases~prop_pop_2km+year-1,
+                                     offset = log(expected_cases),
+                                     data = model_data, 
+                                     family = poisson(link = "log"))
+
+# summary(multivariate_2km_no_intercept)
+report::report(multivariate_2km_no_intercept)
+
+sjPlot::tab_model(multivariate_2km, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+sjPlot::tab_model(multivariate_2km_no_intercept, 
+                  show.r2 = FALSE, show.aic = TRUE,
+                  digits = 3, digits.re = 3)
+
+
+# 3km model --------------------------------------------------------------------
+multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cases)),
+                        data = model_data, family = 'poisson')
+
+
+# summary(multivariate_3km)
+report::report(multivariate_3km)
+
+```
+
 
 
 
