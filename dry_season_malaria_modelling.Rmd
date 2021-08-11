@@ -1011,7 +1011,7 @@ report::report(quassipoisson_3km)
 # Model evaluation
 Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the prediction is close to the real value.
 
-```{r, message=FALSE, fig.height=5, fig.width=10, fig.cap='Fig. 3. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
+```{r, message=FALSE, fig.height=5, fig.width=12, fig.cap='Fig. 3. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
 plot.fitted.values <- function(fitted.values.df, model.df, title){
@@ -1034,11 +1034,16 @@ plot.fitted.values <- function(fitted.values.df, model.df, title){
 }
 
 # Invoking function ------------------------------------------------------------
+# Poisson model
 scatter_plot_1km <- plot.fitted.values(multivariate_1km, model_data, title = "1km model")
 
 scatter_plot_2km <- plot.fitted.values(multivariate_2km, model_data, title = "2km model")
 
 scatter_plot_3km <- plot.fitted.values(multivariate_3km, model_data, title = "3km model")
+
+# Quassi-Poisson model
+quassi_scatter_plot_1km <- plot.fitted.values(quassipoisson_1km, model_data, 
+                                              title = "Quassi-Poisson 1km model")
 
 # Layout scatter plots ---------------------------------------------------------
 cowplot::plot_grid(scatter_plot_1km, scatter_plot_2km, scatter_plot_3km, ncol = 3)
