@@ -971,7 +971,73 @@ report::report(multivariate_3km)
 
 ```
 
+# Overdisperion
 
+Here we apply a `quassi-Poisson` regression model to the multivariate model, which we have observed that it suffers from overdispersion issues under regular `Poisson` regression. One approach to dealing with overdispersion is to model the response using a `quassi-Poisson` instead of a `Poisson` distribution. An advantage of this approach is that it introduces another parameter in addition to $λ$, which gives the model more flexibility. 
+
+In a `quassi-Poisson` model, the `standard errors` are inflated by multiplying the `variance` by $\phi$, so that the `standard errors` are larger than the likelihood approach would imply; i.e., $SEQ(\hat{β}) = √\hat{ϕ}∗SE(\hat{β})$, where $Q$ stands for “quasi-Poisson” since multiplying variances by $ϕ$ is an ad-hoc solution (Roback and Legler, 2021).
+
+
+
+```{r}
+# Account for overdispersion using quasi-Poisson model--------------------------
+quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson, 
+                         offset = log(expected_cases), data = model_data)
+
+# summary(quassipoisson_1km)
+report::report(quassipoisson_1km)
+# In the absence of overdispersion, we expect the dispersion parameter estimate to be 1.0. 
+# The estimated dispersion parameter here is much larger than 1.0 (594.1947) indicating
+# overdispersion (extra variance) that should be accounted for. 
+
+sjPlot::tab_model(quassipoisson_1km, show.r2 = FALSE,
+                  digits = 3, digits.re = 3)
+
+quassipoisson_2km <- glm(observed_cases~prop_pop_2km+year, family = quasipoisson, 
+                         offset = log(expected_cases), data = model_data)
+
+# summary(quassipoisson_2km)
+report::report(quassipoisson_2km)
+
+quassipoisson_3km <- glm(observed_cases~prop_pop_3km+year, family = quasipoisson, 
+                         offset = log(expected_cases), data = model_data)
+
+# summary(quassipoisson_3km)
+report::report(quassipoisson_3km)
+
+```
+
+
+# Model evaluation
+Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the prediction is close to the real value.
+
+```{r, message=FALSE, fig.height=15, fig.width=9, fig.cap='Fig. 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
+# Helper function to create scatter plots to see how well 
+# fitted values line up with observed malaria cases
+plot.fitted.values <- function(fitted.values.df, model.df, title){
+  
+  # Remove missing values from model data since 
+  # model fitting deletes missing observations
+  model.df.complete <- model.df |> 
+    tidyr::drop_na() |>  
+    dplyr::rename_at(vars(starts_with("observed_")), ~ str_c("observed"))
+
+  # Plot fitted versus observed values
+  scatter.plot <- ggplot2::ggplot()+ 
+                  ggplot2::geom_point(aes(fitted.values.df$fitted.values,
+                                          model.df.complete$observed))+
+                  ggplot2::theme_classic()+
+                  ggplot2::labs(x = "Fitted values",
+                                y = "Observed values",
+                                title = title)
+  return(scatter.plot)
+}
+
+# Invoking function ------------------------------------------------------------
+scatter_plot_1km <- plot.fitted.values(multivariate_1km, model_data, title = "1km model")
+
+
+```
 
 
 
