@@ -128,7 +128,7 @@ kasungu_population_2019 <- raster(here::here("data", "ku_pop_2019_1km_aggregated
 kasungu_population_2020 <- raster(here::here("data", "ku_pop_2020_1km_aggregated.tif"))
 
 # TropWet derived dry season waterbody polygons.  
-# See Kasungu_malaria_RMD on how the buffers were generated
+# See Kasungu_malaria.RMD on how the buffers were generated
 buffer_1km_2017 <- sf::st_read(here::here("data", "buffer_1km_2017.shp"))
 
 buffer_2km_2017 <- sf::st_read(here::here("data", "buffer_2km_2017.shp"))
@@ -1011,7 +1011,7 @@ report::report(quassipoisson_3km)
 # Model evaluation
 Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the prediction is close to the real value.
 
-```{r, message=FALSE, fig.height=15, fig.width=9, fig.cap='Fig. 12. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
+```{r, message=FALSE, fig.height=5, fig.width=10, fig.cap='Fig. 3. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
 # fitted values line up with observed malaria cases
 plot.fitted.values <- function(fitted.values.df, model.df, title){
@@ -1040,6 +1040,8 @@ scatter_plot_2km <- plot.fitted.values(multivariate_2km, model_data, title = "2k
 
 scatter_plot_3km <- plot.fitted.values(multivariate_3km, model_data, title = "3km model")
 
+# Layout scatter plots ---------------------------------------------------------
+cowplot::plot_grid(scatter_plot_1km, scatter_plot_2km, scatter_plot_3km, ncol = 3)
 
 ```
 
