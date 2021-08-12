@@ -389,7 +389,7 @@ expected_malaria_2020 <- malaria_pop_by_catchment_2020 |>
 
 The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
 
-We do this by comparing what we `observe` (O) with what we would `expect` (E) if the risk of malaria was equal throughout Kasungu. The SMR of catchment *i* can be calculated as follows: $$SMR_i = \frac{O_i}{E_i}$$
+We do this by comparing what we `observe` (*O*) with what we would `expect` (*E*) if the risk of malaria was equal throughout Kasungu. The SMR of catchment *i* can be calculated as follows: $$SMR_i = \frac{O_i}{E_i}$$
 
 SMRs above 1 represent high risk of dry season malaria and SMRs below 1, viceversa.
 
@@ -415,7 +415,7 @@ SMR_2020 <- expected_malaria_2020 |>
 
 ## SMR by catchment maps
 
-SMRs above 1 represent high risk of dry season malaria and SMRs below 1, viceversa. A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred. Thus, catchments with SMRs above 1 have high dry season malaria risk.
+A ratio greater than 1.0 indicates that more malaria cases have occurred than would have been expected, while a ratio less than 1.0 indicates that less cases have occurred. Thus, catchments with SMRs above 1 have high dry season malaria risk.
 
 ```{r, message=FALSE, fig.height = 5, fig.width = 7, fig.cap = 'Fig. 8: Standardised morbidity ratio of malaria by health facility catchment'}
 
