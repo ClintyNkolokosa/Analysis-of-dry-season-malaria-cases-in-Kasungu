@@ -487,7 +487,6 @@ estimate.buffer.pop <- function(catchment.population, buffers, catchment.area){
                                               
   # Find which catchment each polygon belongs to using its centroid - a point dataset 
   # representing the geographic center-points of the polygons 
-  # buffer_by_catchment <- st_intersection(st_centroid(buffers), catchment.area)
   buffer_by_catchment <- sf::st_centroid(buffers) |>
     sf::st_intersection(catchment.area)
   
@@ -644,8 +643,8 @@ A correlation coefficient of more than zero (cor.coeff *r* \> 0.1) indicates som
 
 ```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. Relationship between standardised morbidity ratio and living near waterbodies'}
 
-# Helper function to tidy and bind the SMR and proportion of -------------------
-# buffer-catchment population data frames
+# Helper function to tidy and bind the SMR and proportion of 
+# buffer-catchment population data frames --------------------------------------
 tidy.data <- function(smr.df, 
                       proportion.pop.1km, 
                       proprotion.pop.2km,
