@@ -1039,55 +1039,67 @@ cowplot::plot_grid(scatter_plot_1km, scatter_plot_2km, scatter_plot_3km, ncol = 
 
 ## Estimate prediction error
 
-Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the `Leave one out cross validation` (LOOCV) method which uses all data points to measure performance of the `Poisson model`.
+Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the `Leave one out cross validation` (`LOOCV`) method which uses all data points to measure performance of the `Poisson model`.
 This method works as follow:
 
-1. Leave out one data point and build the model on the rest of the data set
-2. Test the model against the data point that is left out at step 1 and record the test error associated with the prediction
-3. Repeat the process for all data points
-4. Compute the overall prediction error by taking the average of all these test error estimates recorded at step 2.
+1. Split a dataset into a training set and a testing set, using all but one observation as part of the training set.
 
-*James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.*
+2. Build a model using only data from the training set.
+
+3. Use the model to predict the response value of the one observation left out of the model and calculate the ` root mean squared error` (`RMSE`).
+
+4. Repeat this process *n* times. Calculate the test `RMSE` to be the average of all of the test `RMSE`’s.
+
+Two important metrics have been used to assess the performance of the predictive regression model:
+
+`RMSE`: The `Root Mean Squared Error`, which measures the model prediction error. It corresponds to the average difference between the observed known values of the outcome and the predicted value by the model.`RMSE` is computed as `RMSE = mean((observed - predicted)^2) |> sqrt()`. The lower the `RMSE`, the more closely a model can predict the actual observations. That is, the closer the model predictions are to the observations, the smaller the `RMSE` will be. Thus, the lower the `RMSE`, the better the model. 
+
+
+$$RMSE = \sqrt \frac {\Sigma ( y - \hat{y} )^2}{N}$$
+`Rsquared`: This is a measure of the correlation between the predictions made by the model and the actual observations. The higher the `R-squared`, the more closely a model can predict the actual observations.
+
+`MAE`: The mean absolute error. This is the average absolute difference between the predictions made by the model and the actual observations. The lower the `MAE`, the more closely a model can predict the actual observations.
+
+
+*Gareth. J, Witten. D, Hastie. T, and Tibshirani. R. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.*
 
 ```{r, message=FALSE}
 
 # Define training control
 train_control <-  caret::trainControl(method = "LOOCV")
 
-# Removing missing values
-# model_data_evaluation <- model_data[complete.cases(model_data),] 
-
-
-
 # Train the model, fit a regression model and use LOOCV to evaluate perfomance
 train_multivariate_model_1km <- caret::train(
   observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
-  data = model_data_evaluation, method = "glm", 
+  data = model_data, method = "glm", 
   trControl = train_control, family = "poisson")
 
 train_multivariate_model_2km <- caret::train(
   observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
-  data = model_data_evaluation, method = "glm", 
+  data = model_data, method = "glm", 
   trControl = train_control, family = "poisson")
 
 
 train_multivariate_model_3km <- caret::train(
   observed_cases~1+prop_pop_3km+year+offset(log(expected_cases)),
-  data = model_data_evaluation, method = "glm", 
+  data = model_data, method = "glm", 
   trControl = train_control, family = "poisson")
 
 # Summarize the results
-# The lower the Mean Absolute Error, the more closely a model can predict the actual observations
+# The lower the RMSE and MAE the more closely a model can predict the actual observations
 print(train_multivariate_model_1km)
-summary(train_multivariate_model_1km)
 
 print(train_multivariate_model_2km)
-summary(train_multivariate_model_2km)
 
 print(train_multivariate_model_3km)
-summary(train_multivariate_model_3km)
 
 ```
+Here is how to interpret the output:
+
+104 different samples were used to build 104 models. Each model used 3 predictor variables.
+    No pre-processing occured. That is, we didn’t scale the data in any way before fitting the models.
+    The resampling method we used to generate the 96 samples was Leave-One-Out Cross Validation.
+    The sample size for each training set was 103.
 
 
 
