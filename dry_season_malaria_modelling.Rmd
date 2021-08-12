@@ -280,7 +280,7 @@ assign.malaria.data <- function(catchment_boundary, malaria_data){
   catchment_malaria <- hfc_malaria_sf |> 
     dplyr::select(-c(coords.x1, coords.x2))
 
-  return(out = catchment_malaria)
+  return(catchment_malaria)
 }
 
 # Invoking the function --------------------------------------------------------
@@ -640,7 +640,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 # Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
 
-A correlation coeeficient of more than zero (cor.coeff *r* \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.
+A correlation coefficient of more than zero (cor.coeff *r* \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.
 
 ```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. Relationship between standardised morbidity ratio and living near waterbodies'}
 
