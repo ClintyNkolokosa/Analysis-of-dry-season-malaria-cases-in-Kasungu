@@ -903,7 +903,7 @@ model_data |>     # View model data in table format
 multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
                         data = model_data, family = poisson(link = "log"))
 
-#summary.glm(multivariate_1km)
+summary.glm(multivariate_1km)
 report::report(multivariate_1km)
 
 
@@ -915,7 +915,7 @@ multivariate_1km_no_intercept <- glm(observed_cases~0+prop_pop_1km+year, # leavi
                                      data = model_data, 
                                      family = poisson(link = "log"))
 
-#summary.glm(multivariate_1km_no_intercept)
+summary.glm(multivariate_1km_no_intercept)
 report::report(multivariate_1km_no_intercept)
 
 sjPlot::tab_model(multivariate_1km, show.r2 = FALSE, show.aic = TRUE,
@@ -925,21 +925,12 @@ sjPlot::tab_model(multivariate_1km_no_intercept,
                   show.r2 = FALSE, show.aic = TRUE,
                   digits = 3, digits.re = 3)
 
-
-
-# Alternatively
-# multivariate_1km_rate <- glm(observed_cases~prop_pop_1km+year+offset(log_expected),
-#                              data = model_data, family = poisson(link = "log"))
- 
-# summary(multivariate_1km_rate)
-# report:report(multivariate_1km_rate)
-
 # 2km model --------------------------------------------------------------------
 
 multivariate_2km <- glm(observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
                         data = model_data, family = 'poisson')
 
-# summary(multivariate_2km)
+summary(multivariate_2km)
 report::report(multivariate_2km)
 
 # Check effect of removing intercept
@@ -948,7 +939,7 @@ multivariate_2km_no_intercept <- glm(observed_cases~prop_pop_2km+year-1,
                                      data = model_data, 
                                      family = poisson(link = "log"))
 
-# summary(multivariate_2km_no_intercept)
+summary(multivariate_2km_no_intercept)
 report::report(multivariate_2km_no_intercept)
 
 sjPlot::tab_model(multivariate_2km, 
@@ -965,7 +956,7 @@ multivariate_3km <- glm(observed_cases~prop_pop_3km+year+offset(log(expected_cas
                         data = model_data, family = 'poisson')
 
 
-# summary(multivariate_3km)
+summary(multivariate_3km)
 report::report(multivariate_3km)
 
 ```
@@ -983,7 +974,7 @@ In a `quassi-Poisson` model, the `standard errors` are inflated by multiplying t
 quassipoisson_1km <- glm(observed_cases~prop_pop_1km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
 
-# summary(quassipoisson_1km)
+summary(quassipoisson_1km)
 report::report(quassipoisson_1km)
 # In the absence of overdispersion, we expect the dispersion parameter estimate to be 1.0. 
 # The estimated dispersion parameter here is much larger than 1.0 (594.1947) indicating
@@ -995,13 +986,13 @@ sjPlot::tab_model(quassipoisson_1km, show.r2 = FALSE,
 quassipoisson_2km <- glm(observed_cases~prop_pop_2km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
 
-# summary(quassipoisson_2km)
+summary(quassipoisson_2km)
 report::report(quassipoisson_2km)
 
 quassipoisson_3km <- glm(observed_cases~prop_pop_3km+year, family = quasipoisson, 
                          offset = log(expected_cases), data = model_data)
 
-# summary(quassipoisson_3km)
+summary(quassipoisson_3km)
 report::report(quassipoisson_3km)
 
 ```
@@ -1009,6 +1000,8 @@ report::report(quassipoisson_3km)
 
 # Model evaluation
 Here, we evaluate how well the `Poisson regression` model is predicting the outcome of a new test data that have not been used to build the model i.e how close the prediction is close to the real value.
+
+## Scatter plot of fitted vs obeserved values
 
 ```{r, message=FALSE, fig.height=5, fig.width=12, fig.cap='Fig. 3. How well the percentage of catchment population living around water bodies explain observed malaria incidence'}
 # Helper function to create scatter plots to see how well 
@@ -1043,6 +1036,59 @@ scatter_plot_3km <- plot.fitted.values(multivariate_3km, model_data, title = "3k
 cowplot::plot_grid(scatter_plot_1km, scatter_plot_2km, scatter_plot_3km, ncol = 3)
 
 ```
+
+## Estimate prediction error
+
+Since our dataset is small and partitioning it will lead to higher bias, therefore, we use the `Leave one out cross validation` (LOOCV) method which uses all data points to measure performance of the `Poisson model`.
+This method works as follow:
+
+1. Leave out one data point and build the model on the rest of the data set
+2. Test the model against the data point that is left out at step 1 and record the test error associated with the prediction
+3. Repeat the process for all data points
+4. Compute the overall prediction error by taking the average of all these test error estimates recorded at step 2.
+
+*James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2014. An Introduction to Statistical Learning: With Applications in R. Springer Publishing Company, Incorporated.*
+
+```{r, message=FALSE}
+
+# Define training control
+train_control <-  caret::trainControl(method = "LOOCV")
+
+# Removing missing values
+# model_data_evaluation <- model_data[complete.cases(model_data),] 
+
+
+
+# Train the model, fit a regression model and use LOOCV to evaluate perfomance
+train_multivariate_model_1km <- caret::train(
+  observed_cases~1+prop_pop_1km+year+offset(log(expected_cases)),
+  data = model_data_evaluation, method = "glm", 
+  trControl = train_control, family = "poisson")
+
+train_multivariate_model_2km <- caret::train(
+  observed_cases~1+prop_pop_2km+year+offset(log(expected_cases)),
+  data = model_data_evaluation, method = "glm", 
+  trControl = train_control, family = "poisson")
+
+
+train_multivariate_model_3km <- caret::train(
+  observed_cases~1+prop_pop_3km+year+offset(log(expected_cases)),
+  data = model_data_evaluation, method = "glm", 
+  trControl = train_control, family = "poisson")
+
+# Summarize the results
+# The lower the Mean Absolute Error, the more closely a model can predict the actual observations
+print(train_multivariate_model_1km)
+summary(train_multivariate_model_1km)
+
+print(train_multivariate_model_2km)
+summary(train_multivariate_model_2km)
+
+print(train_multivariate_model_3km)
+summary(train_multivariate_model_3km)
+
+```
+
 
 
 
