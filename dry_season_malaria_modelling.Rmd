@@ -13,7 +13,7 @@ date: " Last edited `r format(Sys.time(),'%d %B %Y')`"
 
 This geospatial statistical model uses routinely collected malaria case data, population data and remotely sensed data, such as open and vegetated water bodies, to estimate population living around open water bodies, expected malaria cases, and `standardised morbidity ratio` (`SMR`) of malaria. And ultimately, quantify the association between proximity to larval habitat and malaria risk in health facility catchment areas in Kasungu. The `SMR` compares the risk of morbidity in a population of interest with that of a standard population. In this case, our interest is to find out whether the number of dry season malaria cases in each catchment area are greater than we would expect given the malaria rate for the entire Kasungu district.
 
-We do this by comparing what we *observe* (O) with what we would *expect* (E) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows: $$SMR_i = \frac{O_i}{E_i}$$
+We do this by comparing what we *observe* (*O*) with what we would *expect* (*E*) if the risk of malaria was equal throughout Kasungu. The SMR statistical notation of catchment *i* can be written as follows: $$SMR_i = \frac{O_i}{E_i}$$
 
 Buffers around waterbodies are created and then combined with population data in raster format to estimate the proprtion of catcment population living within 1km, 2km and 3km of water bodies. Subsequently, the observed malaria cases are modeled using `Poisson regression` to find out if living within various distances from water bodies is causing variability in malaria risk in Kasungu district. We hypothesize that the risk of being a case in a catchment is dependent on proximity to water bodies. The data used spans from 2017 to 2020 and was derived from digitized DHIS2 malaria records, accessibility mapping, aggregated population geospatial layer and TropWet tool in Google Earth Engine.
 
@@ -640,7 +640,7 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 # Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
 
-A correlation coeeficient of more than zero (cor.coeff r \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.
+A correlation coeeficient of more than zero (cor.coeff *r* \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.
 
 ```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. Relationship between standardised morbidity ratio and living near waterbodies'}
 
@@ -788,7 +788,7 @@ ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
 
 The findings from the SMR calculation above suggest the risk of dry season malaria transmission varies depending on the proportion of people living in waterbody buffers and year, so we consider a model with an interaction between proportion of people close to dams and year. We would like to explain dry season malaria risk based on the number of people living close to dams and the year.
 
-We also compare the effect of removing intercept from the multiple linear regression. Mathematically, $𝜷_0 = 0$. Hence our multivariate model without intercept can be written as: $$ln (E(y)) = {𝜷_1} {x_i}_{1} + ln(𝒆_𝒊)$$ 
+Mathematically, our multivariate model can be written as: $$ln (E(y)) = 𝜷_0 + {𝜷_1} {x_i}_{1} + ln(𝒆_𝒊)$$ 
 
 where,
 $i = 1,2,3,⋯,n$
