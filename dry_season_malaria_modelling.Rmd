@@ -49,6 +49,7 @@ suppressPackageStartupMessages({
   library(qqplotr)
   library(DescTools)     # tools for descriptive statistics e.g., pseudo R-squared
   library(gtsummary)     # easily display regression model outputs, such as P value, CI
+  library(insight)       # gain insight into statistical model (useful model info and data)
   library(ggpubr)
   library(plotly)
   library(lubridate)
@@ -639,9 +640,8 @@ buffer_pop_3km_2020 <- estimate.buffer.pop(
 
 # Scatter plots of SMR against the proportion of the catchment population living waterbody buffers
 
-A correlation coefficient of more than zero (cor.coeff *r* \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.
 
-```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. Relationship between standardised morbidity ratio and living near waterbodies'}
+```{r, message=FALSE, warning=FALSE, fig.height=15, fig.width=11, fig.cap='Fig 11. Relationship between standardised morbidity ratio and living near waterbodies. A correlation coefficient of more than zero (cor.coeff *r* \> 0.1) indicates some positive association between the SMR and the buffer population variables. That is, SMR of dry season malaria increases with increase in number of people surrounding water bodies. This implies that as the population of people living near water bodies increases, the risk of dry season malaria increases as well.'}
 
 # Helper function to tidy and bind the SMR and proportion of 
 # buffer-catchment population data frames --------------------------------------
@@ -782,6 +782,7 @@ ggpubr::ggarrange(scatter_1km_2017, scatter_2km_2017, scatter_3km_2017,
                   ncol = 3, nrow = 4)
 
 ```
+
 
 # Model fitting
 
@@ -1093,13 +1094,21 @@ print(train_multivariate_model_2km)
 
 print(train_multivariate_model_3km)
 
+# Compare model performance
+# performance::compare_performance(multivariate_1km, multivariate_2km, multivariate_3km,
+                                 metrics = "common", rank = TRUE)
+
+
 ```
 Here is how to interpret the output:
 
 104 different samples were used to build 104 models. Each model used 3 predictor variables.
-    No pre-processing occured. That is, we didn’t scale the data in any way before fitting the models.
-    The resampling method we used to generate the 96 samples was Leave-One-Out Cross Validation.
-    The sample size for each training set was 103.
+
+No pre-processing occurred. That is, we didn’t scale the data in any way before fitting the models.
+    
+The resampling method we used to generate the 104 samples was Leave-One-Out Cross Validation.
+    
+The sample size for each training set was 103. 
 
 
 
