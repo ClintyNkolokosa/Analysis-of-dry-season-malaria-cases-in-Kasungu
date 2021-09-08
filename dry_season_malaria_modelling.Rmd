@@ -152,7 +152,7 @@ buffer_1km_2020 <- sf::st_read(here::here("data", "buffer_1km_2020.shp"))
 
 buffer_2km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
 
-buffer_3km_2020 <- sf::st_read(here::here("data", "buffer_2km_2020.shp"))
+buffer_3km_2020 <- sf::st_read(here::here("data", "buffer_3km_2020.shp"))
 
 ```
 
@@ -906,6 +906,7 @@ multivariate_1km <- glm(observed_cases~1+prop_pop_1km+year+offset(log(expected_c
 
 summary.glm(multivariate_1km)
 report::report(multivariate_1km)
+insight::model_info(multivariate_1km)
 
 
 # Check effect of removing intercept.
